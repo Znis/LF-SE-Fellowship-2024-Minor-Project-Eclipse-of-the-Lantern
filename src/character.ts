@@ -1,10 +1,12 @@
-import { stateVariables } from "./stateVariables";
+import { inventory, stateVariables } from "./stateVariables";
 import { Point } from "./shapes/point";
 export class Character {
   id: string;
   startPoint: Point;
   movement_speed: number;
   default_speed: number;
+  dirX:number;
+  dirY:number;
   direction: string;
   imgSrc: string;
   images_back: HTMLImageElement[];
@@ -12,15 +14,23 @@ export class Character {
   images_right: HTMLImageElement[];
   images_left: HTMLImageElement[];
   health: number;
+  stamina: number;
   score: number;
   time: number;
   frameToShow: number;
+  isBlowingLantern: boolean;
+  isUsingMedkit: boolean;
+  frameTime: number;
+  currWeapon: string;
+
 
   constructor() {
     this.id = "";
     this.startPoint = new Point(0, 0);
-    this.movement_speed = 5;
+    this.movement_speed = 4;
     this.default_speed = this.movement_speed;
+    this.dirX = 0;
+    this.dirY = 0;
     this.direction = "r"; //'l' is left 'r' is right 'u' and 'd' is up and down
     this.imgSrc = "";
 
@@ -29,9 +39,15 @@ export class Character {
     this.images_left = [] as HTMLImageElement[];
     this.images_right = [] as HTMLImageElement[];
     this.health = 100;
+    this.stamina = 100;
     this.score = 0;
     this.time = 0;
     this.frameToShow = 0;
+    this.isBlowingLantern = false;
+    this.isUsingMedkit = false;
+    this.frameTime = 4;
+    this.currWeapon = "gun";
+
   }
 
   initialiseImages(path: string, no_of_frames: number) {
@@ -51,13 +67,27 @@ export class Character {
     this.images_right = loadImagesForDirection("right");
   }
 
-  change_frames(hit = false) {
-    let frameSpeed = 2;
-    if (hit) {
-      frameSpeed = 0;
-    }
-    if (this.time > frameSpeed) {
+increaseSpeed(){
+  if(this.stamina > 0){
+    this.movement_speed = 2 * this.default_speed;
+    this.drainStamina();
+  }else{
+    this.movement_speed = this.default_speed;
+  }
+}
 
+
+  drainStamina(){
+  if(this.stamina > 0){
+    this.stamina -= 1;
+  }else{
+    this.stamina = 0;
+  }
+  }
+
+  change_frames() {
+    
+    if (this.time > this.frameTime) {
       this.frameToShow += 1;
 
       if (this.frameToShow == this.images_back.length) {
@@ -65,77 +95,91 @@ export class Character {
       }
 
       this.time = 0;
-
     }
     this.time++;
-
   }
 
-  show(ctx: CanvasRenderingContext2D) {
+  show(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
     let img = this.images_right[this.frameToShow];
-    if (this.direction == 'r'){
+    if (this.direction == "r") {
       img = this.images_right[this.frameToShow];
-    }
-    else if (this.direction == 'l'){
+    } else if (this.direction == "l") {
       img = this.images_left[this.frameToShow];
-    }
-    else if (this.direction == 'u'){
+    } else if (this.direction == "u") {
       img = this.images_back[this.frameToShow];
-    }
-    else if (this.direction == 'd'){
+    } else if (this.direction == "d") {
       img = this.images_front[this.frameToShow];
     }
 
-    ctx.fillStyle = "rgba(20, 20, 20, 0.59)"; 
-    ctx.beginPath();
-    ctx.fill();
-    ctx.closePath();
     if (this.health > 0) {
+      ctx.fillStyle = "rgba(20, 20, 20,0.55)";
+      ctx.beginPath();
       ctx.ellipse(
         this.startPoint.x + 20,
         this.startPoint.y + 70,
-        27 / 2,
-        14 / 2,
+        14,
+        7,
         0,
         0,
         Math.PI * 2
       );
+      ctx.fill();
+      ctx.closePath();
 
       ctx.drawImage(img, this.startPoint.x, this.startPoint.y);
-
     }
   }
 
-  moveLeft() {
 
-    if (this.health > 0) {
 
-      stateVariables.bgImage.startPoint.x += this.movement_speed;
-      this.direction = "l";
-      this.change_frames();
-    }
-  }
-  moveUp() {
-    if (this.health > 0) {
-      stateVariables.bgImage.startPoint.y += this.movement_speed;
-      this.direction = "u";
-      this.change_frames();
-    }
-  }
-  moveRight() {
-    if (this.health > 0) {
-      stateVariables.bgImage.startPoint.x -= this.movement_speed;
-      this.direction = "r";
-      this.change_frames();
-    }
-  }
-  moveDown() {
-    if (this.health > 0) {
-      stateVariables.bgImage.startPoint.y -= this.movement_speed;
+  move() {
 
-      this.direction = "d";
-      this.change_frames();
+    if(!this.isBlowingLantern && !this.isUsingMedkit){
+    if (this.health > 0 && (this.dirX != 0 || this.dirY != 0)) {
+      if (
+        !stateVariables.bgImage.checkCollision(
+          stateVariables.bgImage.startPoint.x + this.movement_speed * this.dirX,
+          stateVariables.bgImage.startPoint.y + this.movement_speed * this.dirY
+        ) &&
+        stateVariables.bgImage.startPoint.x +
+          stateVariables.adjustDeviceColliderX -
+          stateVariables.windowWidth / 2 <
+          0
+          &&
+        stateVariables.bgImage.startPoint.y +
+          stateVariables.adjustDeviceColliderY -
+          stateVariables.windowHeight / 2 >
+          -stateVariables.bgImage.h &&
+          stateVariables.bgImage.startPoint.y +
+          stateVariables.adjustDeviceColliderY -
+          stateVariables.windowHeight / 2 <
+          0 &&
+          stateVariables.bgImage.startPoint.x +
+            stateVariables.adjustDeviceColliderX -
+            stateVariables.windowWidth / 2 >
+            -stateVariables.bgImage.w
+      ) {
+        stateVariables.enemiesArray.forEach((enemy) => {
+          enemy.startPoint.x += this.movement_speed * this.dirX;
+          enemy.startPoint.y += this.movement_speed * this.dirY;
+        });
+        stateVariables.bgImage.startPoint.x += this.movement_speed * this.dirX;
+        stateVariables.bgImage.startPoint.y += this.movement_speed * this.dirY;
+        this.change_frames();
+      }
+
+      
     }
   }
-  
+  }
+
+increaseHealth(){
+
+    stateVariables.player.health += 20;
+    if (stateVariables.player.health > 100) {
+      stateVariables.player.health = 100;
+    }
+    inventory.medKit--;
+
+}
 }
