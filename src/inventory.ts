@@ -1,3 +1,4 @@
+import { canvas } from "./main";
 import { inventory, stateVariables } from "./stateVariables";
 
 export class Inventory {
@@ -34,4 +35,16 @@ export class Inventory {
     ctx.drawImage(this.ammoImg, 30, 200, 40, 40);
     ctx.fillText(`x ${inventory.ammo}`, 100, 225, 100);
   }
+
+displayMessage(ctx: CanvasRenderingContext2D = stateVariables.ctx, item: string){
+  ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.font = "24px Outfit";
+
+    if(item == "health_pack") ctx.fillText(`Out of Med Kit!`, canvas.width/2, canvas.height - 50, 400);
+    if(item == "fuel") ctx.fillText(`Out of Fuel!`, canvas.width/2, canvas.height - 50, 400);
+    if(item == "ammo") ctx.fillText(`Out of Ammo!`, canvas.width/2, canvas.height - 50, 400);
+    
+}
+
 }

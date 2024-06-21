@@ -1,4 +1,4 @@
-import { GameState, inventory, stateVariables } from "./stateVariables";
+import { GameState, stateVariables } from "./stateVariables";
 import "./style.css";
 import "./controls";
 import {
@@ -35,16 +35,23 @@ function draw() {
   if (stateVariables.gameState == GameState.running) {
     if (stateVariables.rain) stateVariables.ui.renderRainParticles();
     handlePickupItems();
-    stateVariables.player.show();
-    stateVariables.bgImage.showDepth();
+    
     handleControls();
     handleEnemies();
     checkHitToEnemy();
+    stateVariables.player.show();
     stateVariables.lantern.showLuminosity();
     stateVariables.lantern.changeLuminosity();
     handleProjectiles();
     renderUi();
     renderInventory();
+    stateVariables.bgImage.showDepth();
+console.log(stateVariables.animateEnemyArray.length, stateVariables.animatePickupItemsArray.length);
+
+
+stateVariables.axe.calculateShockPoint();
+
+
     if (
       stateVariables.isHoldingRefuelKey && stateVariables.refuelStart != null) {
       drawChannelledAnimation();

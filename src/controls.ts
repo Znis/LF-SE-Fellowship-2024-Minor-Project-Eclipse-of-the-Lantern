@@ -1,8 +1,5 @@
 import { GameState, inventory, stateVariables } from "./stateVariables";
-import { Point } from "./shapes/point";
-import { BulletProjectile } from "./particles/bulletProjectile";
-import { cameraShake, getMouseCoords } from "./functions";
-import { calculateAngle } from "./utils/util";
+import {getMouseCoords } from "./functions";
 
 window.addEventListener(
   "keydown",
@@ -30,8 +27,9 @@ window.addEventListener(
 window.addEventListener(
   "click",
   function () {
-    if(stateVariables.gameState != GameState.running)
+    if(stateVariables.gameState != GameState.running){
     stateVariables.mainMenu.handleSelect();
+    }
   },
   true
 );
@@ -41,39 +39,23 @@ export const mousepress = window.addEventListener("click", () => {
   if (
     stateVariables.gameState == GameState.running &&
     !stateVariables.player.isBlowingLantern &&
-    stateVariables.player.health > 0 &&
-    inventory.ammo > 0
+    stateVariables.player.health > 0){
+    
+    if(
+    stateVariables.player.currWeapon == "gun"
   ) {
-    const mouseCoords = getMouseCoords(event as MouseEvent);
-    const angle =
-      calculateAngle(
-        new Point(mouseCoords.x, mouseCoords.y),
-        stateVariables.player.startPoint
-      ) *
-      (180 / Math.PI);
-    if (angle >= -45 && angle < 45) {
-      stateVariables.player.direction = "r";
-    } else if (angle >= 45 && angle < 135) {
-      stateVariables.player.direction = "d";
-    } else if (angle >= -135 && angle < -45) {
-      stateVariables.player.direction = "u";
-    } else {
-      stateVariables.player.direction = "l";
+    if(inventory.ammo > 0){
+    stateVariables.player.isAttacking = true;
+    stateVariables.gun.fire();
+    }else{
+      stateVariables.inventory.displayMessage(stateVariables.ctx, "ammo");
     }
-    const projectile = new BulletProjectile(
-      new Point(
-        stateVariables.player.startPoint.x + 60,
-        stateVariables.player.startPoint.y + 20
-      ),
-      stateVariables.player.direction,
-      new Point(mouseCoords.x, mouseCoords.y),
-      true
-    );
-    cameraShake(4, 10);
-    stateVariables.bulletProjectileArray.push(projectile);
-    inventory.ammo--;
+  } else if(stateVariables.player.currWeapon == "axe"){
+  stateVariables.player.isAttacking = true;
+  stateVariables.axe.calculateShockPoint();
+
   }
-});
+}});
 
 let refuelTimeout: number | null = null;
 let healTimeout: number | null = null;
@@ -137,8 +119,13 @@ export function handleControls() {
     stateVariables.player.frameTime = 4;
   }
 
+  if (stateVariables.keyState[81]) {
+    stateVariables.player.currWeapon = stateVariables.player.currWeapon == "axe" ? "gun" : "axe";
+  }
+
   if (stateVariables.keyState[32]) {
-    if (!healTimeout && stateVariables.player.health > 0 && inventory.medKit > 0) {
+    if (!healTimeout && stateVariables.player.health > 0) {
+      if(inventory.medKit > 0){
       stateVariables.healStart = new Date().getTime();
       stateVariables.isHoldingHealKey = true;
       stateVariables.player.isUsingMedkit = true;
@@ -149,7 +136,10 @@ export function handleControls() {
         stateVariables.isHoldingHealKey = false;
         stateVariables.healStart = null;
       }, stateVariables.healDuration);
+    }else{
+      stateVariables.inventory.displayMessage(stateVariables.ctx, "health_pack");
     }
+  }
   } else {
     if (healTimeout && stateVariables.player.health > 0) {
       clearTimeout(healTimeout);
@@ -161,7 +151,8 @@ export function handleControls() {
   }
 
   if (stateVariables.keyState[70]) {
-    if (!refuelTimeout && stateVariables.player.health > 0 && inventory.fuel > 0) {
+    if (!refuelTimeout && stateVariables.player.health > 0) {
+      if(inventory.fuel > 0){
       stateVariables.refuelStart = new Date().getTime();
       stateVariables.isHoldingRefuelKey = true;
       stateVariables.player.isBlowingLantern = true;
@@ -173,7 +164,10 @@ export function handleControls() {
         stateVariables.isHoldingRefuelKey = false;
         stateVariables.refuelStart = null;
       }, stateVariables.refuelDuration);
+    }else{
+      stateVariables.inventory.displayMessage(stateVariables.ctx, "fuel");
     }
+  }
   } else {
     if (refuelTimeout && stateVariables.player.health > 0) {
       clearTimeout(refuelTimeout);

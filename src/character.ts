@@ -1,5 +1,6 @@
 import { inventory, stateVariables } from "./stateVariables";
 import { Point } from "./shapes/point";
+
 export class Character {
   id: string;
   startPoint: Point;
@@ -22,8 +23,7 @@ export class Character {
   isUsingMedkit: boolean;
   frameTime: number;
   currWeapon: string;
-
-
+isAttacking: boolean;
   constructor() {
     this.id = "";
     this.startPoint = new Point(0, 0);
@@ -46,7 +46,8 @@ export class Character {
     this.isBlowingLantern = false;
     this.isUsingMedkit = false;
     this.frameTime = 4;
-    this.currWeapon = "gun";
+    this.currWeapon = "axe";
+    this.isAttacking = false;
 
   }
 
@@ -111,6 +112,8 @@ increaseSpeed(){
       img = this.images_front[this.frameToShow];
     }
 
+
+
     if (this.health > 0) {
       ctx.fillStyle = "rgba(20, 20, 20,0.55)";
       ctx.beginPath();
@@ -126,7 +129,18 @@ increaseSpeed(){
       ctx.fill();
       ctx.closePath();
 
-      ctx.drawImage(img, this.startPoint.x, this.startPoint.y);
+      if(this.direction == "d") ctx.drawImage(img, this.startPoint.x, this.startPoint.y);
+      
+
+
+      if(this.currWeapon == "axe") stateVariables.axe.show(stateVariables.ctx,this.isAttacking);
+
+      if(this.currWeapon == "gun") stateVariables.gun.show(stateVariables.ctx,this.isAttacking);
+
+      if(this.direction != "d") ctx.drawImage(img, this.startPoint.x, this.startPoint.y);
+  
+
+
     }
   }
 

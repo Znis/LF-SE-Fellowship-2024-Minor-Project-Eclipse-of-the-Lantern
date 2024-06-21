@@ -1,6 +1,6 @@
 import { AnimateEntity } from './animation.ts';
 import { BloodParticle } from './particles/bloodParticle.ts';
-import { BulletProjectile } from './particles/bulletProjectile.ts';
+import { BulletProjectile } from './weapons/bulletProjectile.ts';
 import {Character} from './character.ts';
 import { Enemy } from './enemy.ts';
 import { Lantern } from './lantern.ts';
@@ -9,6 +9,8 @@ import { Ui } from './ui.ts';
 import { MenuScreen } from './menuScreen.ts';
 import { PickupItems } from './pickupItems.ts';
 import { Inventory } from './inventory.ts';
+import { Axe } from './weapons/axe.ts';
+import { Gun } from './weapons/gun.ts';
 
 type stateVariables = {
     refuelStart: number | null;
@@ -41,6 +43,8 @@ type stateVariables = {
     pickupItemsArray: PickupItems[],
     animatePickupItemsArray: AnimateEntity[],
     cursorImage: HTMLImageElement,
+    axe: Axe,
+    gun: Gun,
 }
 
 export enum GameState {
@@ -154,5 +158,7 @@ export const stateVariables: stateVariables = {
     pickupItemsArray: [] as PickupItems[],
     animatePickupItemsArray: [] as AnimateEntity[],
     cursorImage: {} as HTMLImageElement,
+    axe: {} as Axe,
+    gun: {} as Gun
 
 }

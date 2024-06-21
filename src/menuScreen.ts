@@ -1,4 +1,4 @@
-import { cameraShake, startJourney} from "./functions";
+import {startJourney} from "./functions";
 import { Point } from "./shapes/point";
 import {GameState, gameOptions, stateVariables } from "./stateVariables";
 import "./controls.ts";
@@ -235,7 +235,6 @@ export class MenuScreen {
   }
 
   handleSelect() {
-    cameraShake(50, 20);
     if (this.hoveredChar == 1 || this.hoveredChar == 2)
       this.selectedChar = this.selectedChar == 0 ? 1 : 0;
 

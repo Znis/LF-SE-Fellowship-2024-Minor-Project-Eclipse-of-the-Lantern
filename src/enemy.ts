@@ -1,4 +1,3 @@
-import { cameraShake } from "./functions";
 import { Point } from "./shapes/point";
 import { stateVariables } from "./stateVariables";
 import { calculateAngle, distance, getRandomInt } from "./utils/util";
@@ -211,7 +210,6 @@ export class Enemy {
         this.startPoint.y == this.finalY
       ) {
         if (stateVariables.player.health > 0) {
-          cameraShake(2, 4);
           if(!this.damageTimeout){
           this.damageTimeout = setTimeout(() => {
           stateVariables.player.health -= this.damage;

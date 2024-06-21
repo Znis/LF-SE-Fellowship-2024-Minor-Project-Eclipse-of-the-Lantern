@@ -1,4 +1,5 @@
 import { Enemy } from "../enemy";
+import { drawEllipse } from "../functions";
 import { Point } from "../shapes/point";
 import { stateVariables } from "../stateVariables";
 import { distance } from "../utils/util"; 
@@ -29,12 +30,7 @@ export class BulletProjectile{
 
 
     show(ctx: CanvasRenderingContext2D = stateVariables.ctx){
-        function drawEllipse(ctx:CanvasRenderingContext2D , x:number, y:number, width:number, height:number) {
-            ctx.beginPath();
-            ctx.ellipse(x, y, width / 2, height / 2, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.closePath();
-        }
+        
 
         ctx.strokeStyle = 'none';
 

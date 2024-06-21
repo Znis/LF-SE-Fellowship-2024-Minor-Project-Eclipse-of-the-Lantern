@@ -19,6 +19,8 @@ import { MenuScreen } from "./menuScreen";
 import { Point } from "./shapes/point";
 import { PickupItems } from "./pickupItems";
 import { Inventory } from "./inventory";
+import { Axe } from "./weapons/axe";
+import { Gun } from "./weapons/gun";
 
 export function preload() {
   stateVariables.player = new Character();
@@ -26,6 +28,8 @@ export function preload() {
   stateVariables.cursorImage = new Image();
   stateVariables.cursorImage.src = "assets/axe.png";
   stateVariables.inventory = new Inventory();
+  stateVariables.axe = new Axe();
+  stateVariables.gun = new Gun();
   stateVariables.inventory.initialiseImages();
   stateVariables.ui.initialiseImages("./assets/ui");
   stateVariables.ui.initialiseRainParticles();
@@ -55,7 +59,7 @@ export function checkPlayerHealthAndLanternLuminosity() {
 export function startJourney() {
   resetStateVariables();
   stateVariables.gameState = GameState.running;
-  generateEnemy(100);
+  generateEnemy(150);
   generateRandomPickupItems(150);
   stateVariables.enemiesArray.forEach((enemy) => {
     enemy.MAX_HEALTH =
@@ -116,6 +120,8 @@ export function handlePickupItems() {
     stateVariables.pickupItemsArray[i].collect();
     if (stateVariables.pickupItemsArray[i].isUsed) {
       stateVariables.pickupItemsArray.splice(i, 1);
+      stateVariables.animatePickupItemsArray.splice(i,1);
+
     }
   }
 }
@@ -223,38 +229,10 @@ export function drawChannelledAnimation() {
     stateVariables.windowWidth / 2,
     barY - 10
   );
-  console.log(
-    stateVariables.refuelDuration,
-    stateVariables.refuelStart,
-    stateVariables.isHoldingRefuelKey,
-    remainingTime,
-    elapsedTime
-  );
+ 
 }
 
-export function cameraShake(intensity: number, shakes: number) {
-  let shakeShiftX = 0;
-  let shakeShiftY = 0;
-  for (let i = 0; i < shakes; i++) {
-    setTimeout(() => {
-      if (i % 2 == 1) {
-        shakeShiftX = -shakeShiftX;
-        shakeShiftY = -shakeShiftY;
-      } else {
-        shakeShiftX = Math.floor((2 * Math.random() - 1) * intensity);
-        shakeShiftY = Math.floor((2 * Math.random() - 1) * intensity);
-      }
-      stateVariables.player.startPoint.x += shakeShiftX;
-      stateVariables.player.startPoint.y += shakeShiftY;
-      stateVariables.enemiesArray.map((enemy) => {
-        enemy.startPoint.x += shakeShiftX;
-        enemy.startPoint.y += shakeShiftY;
-      });
-      stateVariables.bgImage.startPoint.x += shakeShiftX;
-      stateVariables.bgImage.startPoint.y += shakeShiftY;
-    }, 5 * i);
-  }
-}
+
 
 export function generateEnemy(num: number) {
   while(num != 0){
@@ -272,39 +250,61 @@ export function generateEnemy(num: number) {
   }
 }
 
-export function checkHitToEnemy() {
-  stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
-    stateVariables.enemiesArray.forEach((enemy) => {
-      if (bulletProjectile.hits(enemy)) {
-        enemy.health -= 1;
-        if (enemy.health < 1) {
-          enemy.health =
-            Math.random() * (enemy.MAX_HEALTH - enemy.MIN_HEALTH) +
-            enemy.MIN_HEALTH;
+export function drawEllipse(ctx:CanvasRenderingContext2D , x:number, y:number, width:number, height:number) {
+  ctx.beginPath();
+  ctx.ellipse(x, y, width / 2, height / 2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.closePath();
+}
 
-          enemy.startPoint.x =
-            (2 * Math.random() - 1) * stateVariables.bgImage.startPoint.x;
-          enemy.startPoint.y =
-            (2 * Math.random() - 1) * stateVariables.bgImage.startPoint.y;
-          stateVariables.player.score++;
-        }
+export function checkHitToEnemy() {
+  if(stateVariables.player.currWeapon == "gun"){
+    
+  stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
+    for(let i=0; i<stateVariables.enemiesArray.length; i++){
+      if (bulletProjectile.hits(stateVariables.enemiesArray[i])) {
+        stateVariables.enemiesArray[i].health -= 1;
         bulletProjectile.evaporate();
 
         const bloodParticle = new BloodParticle(
-          enemy.startPoint.x - stateVariables.bgImage.startPoint.x,
-          enemy.startPoint.y - stateVariables.bgImage.startPoint.y
+          stateVariables.enemiesArray[i].startPoint.x - stateVariables.bgImage.startPoint.x,
+          stateVariables.enemiesArray[i].startPoint.y - stateVariables.bgImage.startPoint.y
         );
         bloodParticle.initialiseImages("assets/blood", 7);
         stateVariables.bloodParticleArray.push(bloodParticle);
-      }
-    });
-  });
+        if (stateVariables.enemiesArray[i].health < 1) {
+          stateVariables.player.score++;
+          stateVariables.enemiesArray.splice(i,1);
+          stateVariables.animateEnemyArray.splice(i,1);
 
-  stateVariables.bloodParticleArray.forEach((bloodParticle) => {
-    bloodParticle.showAnimation();
-    if (stateVariables.bloodParticleArray[0].show)
-      stateVariables.bloodParticleArray.splice(1, 1);
+        }
+      }
+    }
   });
+  }else if(stateVariables.player.currWeapon == "axe" && stateVariables.player.isAttacking){
+    for(let i=0; i<stateVariables.enemiesArray.length; i++){
+      if (stateVariables.axe.hits(stateVariables.enemiesArray[i])) {
+        stateVariables.enemiesArray[i].health -= 0.1;
+        const bloodParticle = new BloodParticle(
+          stateVariables.enemiesArray[i].startPoint.x - stateVariables.bgImage.startPoint.x,
+          stateVariables.enemiesArray[i].startPoint.y - stateVariables.bgImage.startPoint.y
+        );
+        bloodParticle.initialiseImages("assets/blood", 7);
+        stateVariables.bloodParticleArray.push(bloodParticle);
+        if (stateVariables.enemiesArray[i].health < 1) {
+          stateVariables.player.score++;
+          stateVariables.enemiesArray.splice(i,1);
+          stateVariables.animateEnemyArray.splice(i,1);
+        }
+      }
+    }
+  }
+  for (let i = stateVariables.bloodParticleArray.length - 1; i >= 0; i--) {
+    stateVariables.bloodParticleArray[i].showAnimation();
+    if (!stateVariables.bloodParticleArray[i].show) {
+      stateVariables.bloodParticleArray.splice(i, 1);
+    }
+  }
 
   for (let i = stateVariables.bulletProjectileArray.length - 1; i >= 0; i--) {
     if (stateVariables.bulletProjectileArray[i].toDelete) {

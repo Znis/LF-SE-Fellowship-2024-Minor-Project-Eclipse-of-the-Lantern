@@ -44,6 +44,6 @@ export class BloodParticle {
     const bloodShowTimeout = setTimeout(() => {
         this.show = false;
         clearTimeout(bloodShowTimeout);
-    },10000);
+    },5000);
   }
 }

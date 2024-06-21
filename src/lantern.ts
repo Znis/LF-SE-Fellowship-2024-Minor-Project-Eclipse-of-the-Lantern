@@ -1,3 +1,4 @@
+import { canvas } from "./main";
 import { stateVariables } from "./stateVariables";
 
 export class Lantern {
@@ -31,7 +32,7 @@ export class Lantern {
 
     stateVariables.ctx.fillStyle = gradient;
 
-    stateVariables.ctx.fillRect(0, 0, stateVariables.windowWidth, stateVariables.windowHeight);
+    stateVariables.ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
   changeLuminosity(){
     if(!this.decreaseLuminosity){
