@@ -26,7 +26,7 @@ export function preload() {
   stateVariables.player = new Character();
   stateVariables.ui = new Ui();
   stateVariables.cursorImage = new Image();
-  stateVariables.cursorImage.src = "assets/axe.png";
+  stateVariables.cursorImage.src = "./assets/axe.png";
   stateVariables.inventory = new Inventory();
   stateVariables.axe = new Axe();
   stateVariables.gun = new Gun();
@@ -75,9 +75,9 @@ export function startJourney() {
 
 export function displayCursorImage(){
   if (stateVariables.player.currWeapon == "gun"){
-    stateVariables.cursorImage.src = "/assets/crosshair.png";
+    stateVariables.cursorImage.src = "./assets/crosshair.png";
   }else{
-    stateVariables.cursorImage.src = "/assets/axe.png";
+    stateVariables.cursorImage.src = "./assets/axe.png";
   }
   stateVariables.ctx.drawImage(stateVariables.cursorImage, stateVariables.mouseCoords.x , stateVariables.mouseCoords.y, 40,40);
 
@@ -127,7 +127,7 @@ export function handlePickupItems() {
 }
 
 export function resetStateVariables() {
-  stateVariables.player.health = 100;
+  stateVariables.player.health = 10000;
   stateVariables.player.score = 0;
   stateVariables.lantern.maxRadiusInnerCircle = 250;
   stateVariables.bgImage.startPoint = new Point(
@@ -166,6 +166,7 @@ export function handleEnemies() {
     enemy.move();
     enemy.determineDirection();
     enemy.updateAttributes();
+    enemy.separate();
   });
 }
 export function getMouseCoords(event: MouseEvent) {
@@ -272,7 +273,7 @@ export function checkHitToEnemy() {
         );
         bloodParticle.initialiseImages("assets/blood", 7);
         stateVariables.bloodParticleArray.push(bloodParticle);
-        if (stateVariables.enemiesArray[i].health < 1) {
+        if (!stateVariables.enemiesArray[i].isAlive) {
           stateVariables.player.score++;
           stateVariables.enemiesArray.splice(i,1);
           stateVariables.animateEnemyArray.splice(i,1);
@@ -291,7 +292,7 @@ export function checkHitToEnemy() {
         );
         bloodParticle.initialiseImages("assets/blood", 7);
         stateVariables.bloodParticleArray.push(bloodParticle);
-        if (stateVariables.enemiesArray[i].health < 1) {
+        if (!stateVariables.enemiesArray[i].isAlive) {
           stateVariables.player.score++;
           stateVariables.enemiesArray.splice(i,1);
           stateVariables.animateEnemyArray.splice(i,1);

@@ -16,9 +16,9 @@ export class Inventory {
       img.src = fullPath;
       return img;
     };
-    this.fuelImg = loadImage("/assets/inventory/fuel.png");
-    this.medKitImg = loadImage("/assets/inventory/medkit.png");
-    this.ammoImg = loadImage("/assets/inventory/ammo.png");
+    this.fuelImg = loadImage("./assets/inventory/fuel.png");
+    this.medKitImg = loadImage("./assets/inventory/medkit.png");
+    this.ammoImg = loadImage("./assets/inventory/ammo.png");
   }
 
   show(ctx: CanvasRenderingContext2D = stateVariables.ctx) {

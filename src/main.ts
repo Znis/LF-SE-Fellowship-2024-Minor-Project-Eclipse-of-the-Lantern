@@ -35,18 +35,17 @@ function draw() {
   if (stateVariables.gameState == GameState.running) {
     if (stateVariables.rain) stateVariables.ui.renderRainParticles();
     handlePickupItems();
-    
     handleControls();
-    handleEnemies();
     checkHitToEnemy();
     stateVariables.player.show();
+    handleEnemies();
     stateVariables.lantern.showLuminosity();
     stateVariables.lantern.changeLuminosity();
     handleProjectiles();
     renderUi();
     renderInventory();
     stateVariables.bgImage.showDepth();
-console.log(stateVariables.animateEnemyArray.length, stateVariables.animatePickupItemsArray.length);
+
 
 
 stateVariables.axe.calculateShockPoint();

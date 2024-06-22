@@ -24,6 +24,7 @@ export class Character {
   frameTime: number;
   currWeapon: string;
 isAttacking: boolean;
+ultiAvailable: boolean;
   constructor() {
     this.id = "";
     this.startPoint = new Point(0, 0);
@@ -38,7 +39,7 @@ isAttacking: boolean;
     this.images_front = [] as HTMLImageElement[];
     this.images_left = [] as HTMLImageElement[];
     this.images_right = [] as HTMLImageElement[];
-    this.health = 100;
+    this.health = 10000;
     this.stamina = 100;
     this.score = 0;
     this.time = 0;
@@ -48,6 +49,7 @@ isAttacking: boolean;
     this.frameTime = 4;
     this.currWeapon = "axe";
     this.isAttacking = false;
+    this.ultiAvailable = true;
 
   }
 
@@ -195,5 +197,23 @@ increaseHealth(){
     }
     inventory.medKit--;
 
+}
+
+useUltimate(){
+  if(this.ultiAvailable){
+  stateVariables.lantern.setLuminosity();
+  this.ultiAvailable = false;
+  const reset = setTimeout(() => {
+    stateVariables.lantern.resetLuminosity();
+    const ultimateCooldown = setTimeout(() => {
+      this.ultiAvailable = true;
+      clearTimeout(ultimateCooldown);
+    }, 1000);
+    clearTimeout(reset);
+  }, 5000);
+}else{
+  console.log("ulti cooldown");
+}
+  
 }
 }

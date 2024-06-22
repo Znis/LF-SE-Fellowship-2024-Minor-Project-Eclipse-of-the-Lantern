@@ -1,4 +1,5 @@
 import { Point } from "./shapes/point";
+import { enemyBack, enemyFront, enemyLeft, enemyRight } from "./sprites/enemy";
 import { stateVariables } from "./stateVariables";
 import { calculateAngle, distance, getRandomInt } from "./utils/util";
 
@@ -16,7 +17,6 @@ export class Enemy {
   finalX: number;
   finalY: number;
   direction: string;
-  frameToShow: number;
   time: number;
   h: number;
   w: number;
@@ -25,6 +25,10 @@ export class Enemy {
   default_damage: number;
   default_health: number;
   damageTimeout: number | null;
+  isAttacking: boolean;
+  spritePos: number;
+  attackType: string;
+  isAlive: boolean;
 
   constructor(x: number, y: number) {
     this.startPoint = new Point(x, y);
@@ -43,7 +47,6 @@ export class Enemy {
     this.images_left = [];
     this.images_right = [];
 
-    this.frameToShow = 0;
     this.time = 0;
 
     this.damageTimeout = null;
@@ -55,17 +58,14 @@ export class Enemy {
     this.default_movement_speed = 1;
     this.movement_speed = Math.random() + this.default_movement_speed;
 
-    this.finalX =
-      stateVariables.player.startPoint.x +
-      Math.floor((2 * Math.random() - 1) * 50) -
-      40;
+    this.finalX = stateVariables.player.startPoint.x;
 
-    this.finalY =
-      stateVariables.player.startPoint.y +
-      Math.floor((2 * Math.random() - 1) * 50) -
-      40;
+    this.finalY = stateVariables.player.startPoint.y;
+    this.isAttacking = false;
+    this.spritePos = 0;
+    this.attackType = `attackType1`;
+    this.isAlive = true;
   }
-
 
   initialiseGolblinImages(path: string, no_of_frames: number) {
     const loadImagesForDirection = (direction: string) => {
@@ -84,27 +84,13 @@ export class Enemy {
     this.images_right = loadImagesForDirection("right");
   }
 
-  change_frames() {
-    let frameSpeed = 4;
-    if (this.time > frameSpeed) {
-      this.frameToShow += 1;
-
-      if (this.frameToShow == this.images_back.length) {
-        this.frameToShow = 0;
-      }
-
-      this.time = 0;
-    }
-    this.time++;
-  }
-
-  updateAttributes(){
+  updateAttributes() {
     const dist = distance(this.startPoint, stateVariables.player.startPoint);
-    if(dist >  stateVariables.lantern.maxRadiusInnerCircle * 2){
+    if (dist > stateVariables.lantern.maxRadiusInnerCircle * 2) {
       this.movement_speed = this.default_movement_speed * 2;
       this.damage = this.default_damage * 2;
       this.health = this.default_health * 2;
-    }else{
+    } else {
       this.movement_speed = this.default_movement_speed;
       this.damage = this.default_damage;
     }
@@ -125,23 +111,99 @@ export class Enemy {
   }
 
   show(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
-    let img = this.images_right[this.frameToShow];
-    if (this.direction == "r") {
-      img = this.images_right[this.frameToShow];
-    } else if (this.direction == "l") {
-      img = this.images_left[this.frameToShow];
-    } else if (this.direction == "u") {
-      img = this.images_back[this.frameToShow];
-    } else if (this.direction == "d") {
-      img = this.images_front[this.frameToShow];
+
+    if(Math.floor(this.health) > 0){
+    if (this.isAttacking) {
+      const staggerFrame = 5;
+      let position = Math.floor(this.spritePos / staggerFrame) % 8;
+
+      if (this.direction == "l") {
+        ctx.drawImage(
+          enemyLeft[this.attackType].sprite,
+          enemyLeft[this.attackType].position[position].x -10,
+          enemyLeft[this.attackType].position[position].y -10,
+          48,
+          48,
+          this.startPoint.x,
+          this.startPoint.y,
+          this.w ,
+          this.h
+        );
+      } else if (this.direction == "r") {
+        ctx.drawImage(
+          enemyRight[this.attackType].sprite,
+          enemyRight[this.attackType].position[position].x -10,
+          enemyRight[this.attackType].position[position].y -10,
+          48,
+          48,
+          this.startPoint.x ,
+          this.startPoint.y ,
+          this.w ,
+          this.h
+        );
+      } else if (this.direction == "d") {
+        ctx.drawImage(
+          enemyFront[this.attackType].sprite,
+          enemyFront[this.attackType].position[position].x -10,
+          enemyFront[this.attackType].position[position].y -10,
+          48,
+          48,
+          this.startPoint.x,
+          this.startPoint.y,
+          this.w,
+          this.h
+        );
+      } else if (this.direction == "u") {
+        ctx.drawImage(
+          enemyBack[this.attackType].sprite,
+          enemyBack[this.attackType].position[position].x -10,
+          enemyBack[this.attackType].position[position].y -10,
+          48,
+          48,
+          this.startPoint.x ,
+          this.startPoint.y ,
+          this.w,
+          this.h
+        );
+      }
+    } else if(!this.isAttacking){
+      const staggerFrame = 5;
+      let position =
+        Math.floor(this.spritePos / staggerFrame) % this.images_right.length;
+      let img = this.images_right[position];
+      if (this.direction == "r") {
+        img = this.images_right[position];
+      } else if (this.direction == "l") {
+        img = this.images_left[position];
+      } else if (this.direction == "u") {
+        img = this.images_back[position];
+      } else if (this.direction == "d") {
+        img = this.images_front[position];
+      }
+      if (
+        this.startPoint.x > -100 &&
+        this.startPoint.x < stateVariables.windowWidth &&
+        this.startPoint.y > -100 &&
+        this.startPoint.y < stateVariables.windowHeight
+      ) {
+        ctx.drawImage(
+          img,
+          this.startPoint.x,
+          this.startPoint.y,
+          this.w,
+          this.h
+        );
+      }
     }
+
+    this.spritePos++;
 
     ctx.fillStyle = "rgba(20, 20, 20, 0.6)";
     ctx.beginPath();
-    const randomWidth = this.w/3;
-    const randomHeight = this.h/10;
+    const randomWidth = this.w / 3;
+    const randomHeight = this.h / 10;
     ctx.ellipse(
-      this.startPoint.x + this.w/2,
+      this.startPoint.x + this.w / 2,
       this.startPoint.y + this.h - 10,
       randomWidth,
       randomHeight,
@@ -150,77 +212,141 @@ export class Enemy {
       2 * Math.PI
     );
     ctx.fill();
+  }else{
 
-    if (
-      this.startPoint.x > -100 &&
-      this.startPoint.x < stateVariables.windowWidth &&
-      this.startPoint.y > -100 &&
-      this.startPoint.y < stateVariables.windowHeight
-    ) {
-      ctx.drawImage(img, this.startPoint.x, this.startPoint.y, this.w, this.h);
-    }
+      const staggerFrame = 5;
+      let position = Math.floor(this.spritePos / staggerFrame) % 8;
+
+      if (this.direction == "l") {
+        ctx.drawImage(
+          enemyLeft.enemyDead.sprite,
+          enemyLeft.enemyDead.position[position].x -10,
+          enemyLeft.enemyDead.position[position].y -10,
+          48,
+          48,
+          this.startPoint.x,
+          this.startPoint.y,
+          this.w ,
+          this.h
+        );
+      } else if (this.direction == "r") {
+        ctx.drawImage(
+          enemyRight.enemyDead.sprite,
+          enemyRight.enemyDead.position[position].x -10,
+          enemyRight.enemyDead.position[position].y -10,
+          48,
+          48,
+          this.startPoint.x ,
+          this.startPoint.y ,
+          this.w ,
+          this.h
+        );
+      } else if (this.direction == "d") {
+        ctx.drawImage(
+          enemyFront.enemyDead.sprite,
+          enemyFront.enemyDead.position[position].x -10,
+          enemyFront.enemyDead.position[position].y -10,
+          48,
+          48,
+          this.startPoint.x,
+          this.startPoint.y,
+          this.w,
+          this.h
+        );
+      } else if (this.direction == "u") {
+        ctx.drawImage(
+          enemyBack.enemyDead.sprite,
+          enemyBack.enemyDead.position[position].x -10,
+          enemyBack.enemyDead.position[position].y -10,
+          48,
+          48,
+          this.startPoint.x ,
+          this.startPoint.y ,
+          this.w,
+          this.h
+        );
+      }
+      this.spritePos++;
+      if(this.spritePos % 40 == 0) this.isAlive = false;
   }
-
+  }
 
   move() {
-    if (distance(stateVariables.player.startPoint, this.startPoint) < 1000) {
-      let delta_x = this.finalX - this.startPoint.x;
-      let delta_y = this.finalY - this.startPoint.y;
-      let dist = distance(new Point(this.finalX, this.finalY), this.startPoint);
-      if (dist > this.movement_speed) {
-        let ratio = this.movement_speed / dist;
-        let x_move = ratio * delta_x;
-        let y_move = ratio * delta_y;
+    if(this.health > 0){
+    let distanceToPlayer = distance(stateVariables.player.startPoint, this.startPoint);
 
-        if (
-          stateVariables.bgImage.checkCollision(
-            stateVariables.bgImage.startPoint.x -
-              this.startPoint.x +
-              this.finalX,
-            stateVariables.bgImage.startPoint.y -
-              this.startPoint.y +
-              this.finalY +
-              this.movement_speed
-          )
-        ) {
-          this.startPoint.x = x_move + this.startPoint.x;
-        } else if (
-          stateVariables.bgImage.checkCollision(
-            stateVariables.bgImage.startPoint.x -
-              this.startPoint.x +
-              this.finalX +
-              this.movement_speed,
-            stateVariables.bgImage.startPoint.y -
-              this.startPoint.y +
-              this.finalY
-          )
-        ) {
-          this.startPoint.y = y_move + this.startPoint.y;
-        } else {
-          this.startPoint.x = x_move + this.startPoint.x;
-          this.startPoint.y = y_move + this.startPoint.y;
+    if (distanceToPlayer < 1000) {
+        let dx = this.finalX - this.startPoint.x;
+        let dy = this.finalY - this.startPoint.y;
+        let distanceToTarget = distance(new Point(this.finalX, this.finalY), this.startPoint);
+
+        if(distanceToPlayer > 80){
+        if (distanceToTarget > this.movement_speed) {
+            let ratio = this.movement_speed / distanceToTarget;
+            let x_move = ratio * dx;
+            let y_move = ratio * dy;
+
+            if (!stateVariables.bgImage.checkCollision(this.startPoint.x + x_move, this.startPoint.y)) {
+                this.startPoint.x += x_move;
+            }
+
+            if (!stateVariables.bgImage.checkCollision(this.startPoint.x, this.startPoint.y + y_move)) {
+                this.startPoint.y += y_move;
+            }
+
+            this.isAttacking = false;
         }
-      } else {
-        this.startPoint.x = this.finalX;
-        this.startPoint.y = this.finalY;
-      }
+       } else {
 
-      if (
-        this.startPoint.x == this.finalX &&
-        this.startPoint.y == this.finalY
-      ) {
-        if (stateVariables.player.health > 0) {
-          if(!this.damageTimeout){
-          this.damageTimeout = setTimeout(() => {
+            let angle = Math.atan2(this.startPoint.y - stateVariables.player.startPoint.y, this.startPoint.x - stateVariables.player.startPoint.x);
+
+            let targetX = stateVariables.player.startPoint.x + Math.cos(angle) * 40;
+            let targetY = stateVariables.player.startPoint.y + Math.sin(angle) * 40;
+        
+            let smoothingFactor = 0.05;
+            this.startPoint.x += (targetX - this.startPoint.x) * smoothingFactor;
+            this.startPoint.y += (targetY - this.startPoint.y) * smoothingFactor;
+            this.isAttacking = true;
+            this.attack();
+        }
+    }
+  }
+}
+
+  attack() {
+    if (stateVariables.player.health > 0) {
+      if (!this.damageTimeout) {
+        this.damageTimeout = setTimeout(() => {
           stateVariables.player.health -= this.damage;
           this.damageTimeout = null;
-          }, 500);
-        }
-        }else{
-          clearTimeout(this.damageTimeout!);
-        }
+        }, 500);
       }
+    } else {
+      clearTimeout(this.damageTimeout!);
     }
-    this.change_frames();
   }
+
+separate() {
+  let moveX = 0;
+  let moveY = 0;
+        stateVariables.enemiesArray.forEach((other) => {
+            if (this != other) {
+                let dx = this.startPoint.x - other.startPoint.x;
+                let dy = this.startPoint.y - other.startPoint.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 40 && distance > 0) {
+                    let force = (40 - distance) / 40 * 20;
+                    moveX += dx / distance * force;
+                    moveY += dy / distance * force;
+                }
+            }
+        });
+
+        this.startPoint.x += moveX;
+        this.startPoint.y += moveY;
+   
+}
+
+
 }

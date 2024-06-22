@@ -1,3 +1,4 @@
+import { LANTERN_BRIGHTNESS_DECREASE_RATE } from "./constants";
 import { canvas } from "./main";
 import { stateVariables } from "./stateVariables";
 
@@ -7,6 +8,7 @@ export class Lantern {
   maxRadiusInnerCircle: number;
   maxRadiusOuterCircle: number;
   decreaseLuminosity: number | null;
+  brightnessDecreaseRate: number;
   constructor() {
     this.decreaseLuminosity  = null;
     this.x = stateVariables.player.startPoint.x + 20;
@@ -14,6 +16,7 @@ export class Lantern {
     this.maxRadiusInnerCircle = 250;
     this.maxRadiusOuterCircle =
       Math.max(stateVariables.windowWidth, stateVariables.windowHeight) / 2;
+      this.brightnessDecreaseRate = LANTERN_BRIGHTNESS_DECREASE_RATE;
   }
   showLuminosity() {
     const gradient = stateVariables.ctx.createRadialGradient(
@@ -41,7 +44,7 @@ export class Lantern {
             this.maxRadiusInnerCircle = 0;
             clearInterval(this.decreaseLuminosity!);
         }else{
-        this.maxRadiusInnerCircle -= 1;
+        this.maxRadiusInnerCircle -= this.brightnessDecreaseRate;
         }
 
     }, 200);
@@ -50,17 +53,31 @@ export class Lantern {
 
   }
   resetLuminosity(){
+    this.brightnessDecreaseRate = LANTERN_BRIGHTNESS_DECREASE_RATE;
       const resetLuminosity = setInterval(() => {
-          if(this.maxRadiusInnerCircle >= 250){
-              this.maxRadiusInnerCircle = 250;
+          if(this.maxRadiusInnerCircle == 250){
               clearInterval(resetLuminosity);
-          }else{
-          this.maxRadiusInnerCircle += 5;
+          }else if(this.maxRadiusInnerCircle > 250){
+          this.maxRadiusInnerCircle -= 1;
+          }else if(this.maxRadiusInnerCircle < 250){
+          this.maxRadiusInnerCircle += 1;      
           }
   
-      }, 10);
-    
-    
-    
+      }, 2);
+
   }
+
+  setLuminosity(){
+    this.brightnessDecreaseRate = 0;
+    const setLuminosity = setInterval(() => {
+        if(this.maxRadiusInnerCircle >= Math.max(canvas.width/2, canvas.height/2)){
+            this.maxRadiusInnerCircle = Math.max(canvas.width/2, canvas.height/2);
+            clearInterval(setLuminosity);
+        }else{
+        this.maxRadiusInnerCircle += 1;
+        }
+
+    }, 2);
+
+}
 }

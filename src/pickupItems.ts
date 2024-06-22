@@ -62,7 +62,7 @@ export class PickupItems {
     } else if (this.type.itemName == "ammo") {
       ellipseWidth = shadowFrame + 22;
       const img = new Image();
-      img.src = "/assets/inventory/ammo.png";
+      img.src = "./assets/inventory/ammo.png";
       ctx.drawImage(img, imgX, imgY, 30, 30);
     }
 

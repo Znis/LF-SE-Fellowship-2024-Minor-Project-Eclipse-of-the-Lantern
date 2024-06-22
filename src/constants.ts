@@ -2,3 +2,5 @@ export const DIMENSIONS = {
     CANVAS_WIDTH : 500,
     CANVAS_HEIGHT : 500,
 }
+
+export const LANTERN_BRIGHTNESS_DECREASE_RATE = 1;
