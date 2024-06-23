@@ -106,7 +106,7 @@ displayCursorImage();
       );
     });
   }
-  
+
   stateVariables.reqAnimFrame = requestAnimationFrame(draw);
 }
 stateVariables.reqAnimFrame = requestAnimationFrame(draw);

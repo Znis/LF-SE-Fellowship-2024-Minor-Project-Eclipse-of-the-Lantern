@@ -24,7 +24,10 @@ import { Gun } from "./weapons/gun";
 import { Boss } from "./boss";
 import { getRandomInt } from "./utils/util";
 
+
+
 export function preload() {
+
   stateVariables.player = new Character();
   stateVariables.player.initialiseImages(
     `assets/character/images/characters/${gameOptions.character}`,
@@ -53,6 +56,7 @@ export function preload() {
   stateVariables.mainMenu.initialiseImages();
   loadFonts();
   stateVariables.flameImages = loadImages("assets/flame", 30);
+
 }
 
 export function loadImages(path: string, num: number) {
