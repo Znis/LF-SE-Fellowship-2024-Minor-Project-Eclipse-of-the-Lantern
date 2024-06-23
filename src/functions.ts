@@ -156,8 +156,14 @@ export function generateRandomPickupItems(num: number) {
           ? pickupItemsTypes.ammo
           : pickupItemsTypes.health_pack
         : pickupItemsTypes.fuel;
-    let posX = Math.random() * stateVariables.bgImage.w;
-    let posY = Math.random() * stateVariables.bgImage.h;
+        let posX = getRandomInt(
+          stateVariables.bgImage.startPoint.x,
+          stateVariables.bgImage.startPoint.x + stateVariables.bgImage.w
+        );
+        let posY = getRandomInt(
+          stateVariables.bgImage.startPoint.y,
+          stateVariables.bgImage.startPoint.y + stateVariables.bgImage.h
+        );
     if (!stateVariables.bgImage.checkCollision(posX, posY)) {
       const pickupItem = new PickupItems(posX, posY, itemType);
       pickupItem.initialiseImages();
@@ -187,6 +193,10 @@ export function handlePickupItems() {
   }
 }
 
+export function resumeGame(){
+ stateVariables.gameState = GameState.running;
+}
+
 export function resetStateVariables() {
   stateVariables.player.health = 100;
   stateVariables.player.score = 0;
@@ -204,6 +214,8 @@ export function resetStateVariables() {
   stateVariables.keyState = {};
   stateVariables.animateEnemyArray = [];
   stateVariables.animatePickupItemsArray = [];
+  stateVariables.inventory.abilities[0].cooldown = 0;
+  stateVariables.inventory.abilities[1].cooldown = 0;
   inventory.medKit = 0;
   inventory.fuel = 0;
   inventory.ammo = 100;
@@ -362,11 +374,7 @@ export function checkHitToEnemy() {
           );
           bloodParticle.initialiseImages("assets/blood", 7);
           stateVariables.bloodParticleArray.push(bloodParticle);
-          if (!stateVariables.enemiesArray[i].isAlive) {
-            stateVariables.player.score++;
-            stateVariables.enemiesArray.splice(i, 1);
-            stateVariables.animateEnemyArray.splice(i, 1);
-          }
+       
         }
       }
     });
@@ -385,11 +393,7 @@ export function checkHitToEnemy() {
         );
         bloodParticle.initialiseImages("assets/blood", 7);
         stateVariables.bloodParticleArray.push(bloodParticle);
-        if (!stateVariables.enemiesArray[i].isAlive) {
-          stateVariables.player.score++;
-          stateVariables.enemiesArray.splice(i, 1);
-          stateVariables.animateEnemyArray.splice(i, 1);
-        }
+       
       }
     }
   }
@@ -420,6 +424,16 @@ export function checkHitToEnemy() {
   }
 }
   });
+  
+    
+  for(let i=0; i< stateVariables.enemiesArray.length; i++){
+  if (!stateVariables.enemiesArray[i].isAlive) {
+    stateVariables.player.score++;
+    stateVariables.enemiesArray.splice(i, 1);
+    stateVariables.animateEnemyArray.splice(i, 1);
+  }
+  }
+
   for (let i = stateVariables.bloodParticleArray.length - 1; i >= 0; i--) {
     stateVariables.bloodParticleArray[i].showAnimation();
     if (!stateVariables.bloodParticleArray[i].show) {

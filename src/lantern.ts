@@ -2,7 +2,7 @@ import { LANTERN_BRIGHTNESS_DECREASE_RATE } from "./constants";
 import { drawEllipse } from "./functions";
 import { canvas } from "./main";
 import lantern from "./sprites/lantern";
-import { stateVariables } from "./stateVariables";
+import { GameState, stateVariables } from "./stateVariables";
 
 export class Lantern {
   x: number;
@@ -138,7 +138,7 @@ export class Lantern {
           this.maxRadiusInnerCircle = 0;
           clearInterval(this.decreaseLuminosity!);
           this.decreaseLuminosity = null;
-        } else {
+        } else if(stateVariables.gameState != GameState.paused){
           this.maxRadiusInnerCircle -= this.brightnessDecreaseRate;
         }
       }, 200);

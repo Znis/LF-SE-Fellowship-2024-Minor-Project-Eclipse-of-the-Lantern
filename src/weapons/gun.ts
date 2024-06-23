@@ -3,7 +3,6 @@ import { inventory, stateVariables } from "../stateVariables";
 import { calculateAngle} from "../utils/util";
 import { gunBack, gunFront, gunLeft, gunRight } from "../sprites/gun";
 import {drawEllipse } from "../functions";
-import { FireProjectile } from "./fireProjectile";
 import { BulletProjectile } from "./bulletProjectile";
 
 export class Gun{

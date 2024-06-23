@@ -188,6 +188,10 @@ export class Character {
             enemy.startPoint.x += this.movement_speed * this.dirX;
             enemy.startPoint.y += this.movement_speed * this.dirY;
           });
+          stateVariables.pickupItemsArray.forEach((pickupItem) => {
+            pickupItem.startPoint.x += this.movement_speed * this.dirX;
+            pickupItem.startPoint.y += this.movement_speed * this.dirY;
+          });
           stateVariables.boss.startPoint.x +=
             this.movement_speed * this.dirX;
           stateVariables.boss.startPoint.y +=
@@ -220,11 +224,9 @@ export class Character {
       stateVariables.inventory.resetAbility(ability);
       const reset = setTimeout(() => {
         stateVariables.lantern.resetLuminosity();
-        const abilityCooldown = setTimeout(() => {
-          clearTimeout(abilityCooldown);
-        }, stateVariables.inventory.abilities[0].maxCooldown * 1000 - 5000);
         clearTimeout(reset);
       }, 5000);
+
     } else {
       stateVariables.inventory.displayMessage(
         stateVariables.ctx,
@@ -246,9 +248,6 @@ export class Character {
         "player"
       );
       stateVariables.fireProjectileArray.push(projectile);
-      const abilityCooldown = setTimeout(() => {
-        clearTimeout(abilityCooldown);
-      }, stateVariables.inventory.abilities[1].maxCooldown * 1000);
     
   }
 }

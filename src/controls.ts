@@ -2,7 +2,6 @@ import { GameState, inventory, stateVariables } from "./stateVariables";
 import { getMouseCoords } from "./functions";
 import { calculateAngle } from "./utils/util";
 import { Point } from "./shapes/point";
-import { FireProjectile } from "./weapons/fireProjectile";
 
 window.addEventListener(
   "keydown",
@@ -133,6 +132,9 @@ export function handleControls() {
 
   if (stateVariables.keyState[69]) {
     stateVariables.player.useAbility("light");
+  }
+  if (stateVariables.keyState[80]) {
+    stateVariables.gameState = GameState.paused;
   }
   if (stateVariables.keyState[82]) {
     if (stateVariables.inventory.abilities[1].cooldown == 0) {

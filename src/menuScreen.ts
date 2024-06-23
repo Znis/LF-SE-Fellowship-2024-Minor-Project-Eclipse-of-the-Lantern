@@ -1,6 +1,6 @@
-import {startJourney} from "./functions";
+import { resumeGame, startJourney } from "./functions";
 import { Point } from "./shapes/point";
-import {GameState, gameOptions, stateVariables } from "./stateVariables";
+import { GameState, gameOptions, stateVariables } from "./stateVariables";
 import "./controls.ts";
 export class MenuScreen {
   startPoint: Point;
@@ -20,6 +20,7 @@ export class MenuScreen {
     this.hoveredChar = -1;
     this.difficultyLevel = 0;
     this.selectedChar = 0;
+
     this.difficulties = ["GENOCIDE", "HOMICIDE", "SUICIDE"];
 
     this.menuItems = [
@@ -31,7 +32,7 @@ export class MenuScreen {
         type: 1,
       },
       {
-        text: stateVariables.gameState == GameState.retryScreen ? "RETRY" : "START JOURNEY",
+        text: "START JOURNEY",
         fontSize: stateVariables.windowWidth / 25,
         x: this.startPoint.x,
         y: this.startPoint.y + (stateVariables.windowWidth / 20) * 2,
@@ -45,55 +46,33 @@ export class MenuScreen {
         type: 0,
       },
     ];
+
     this.charItems = [
       {
         text: "SELECT CHARACTER",
         x: stateVariables.windowWidth / 1.5 + 100,
-        y: 300,
+        y: 280,
       },
       {
         text: "<",
         x: stateVariables.windowWidth / 1.5,
-        y: 500,
+        y: 480,
       },
       {
         text: ">",
         x: stateVariables.windowWidth / 1.5 + 400,
-        y: 500,
+        y: 480,
       },
     ];
     this.characterImages = [];
     this.charInfo = [
       {
         name: "Ophelia",
-        desc: "Detective",
       },
       {
         name: "Noah",
-        desc: "Detective",
       },
     ];
-    if (
-      stateVariables.windowWidth < 1330 &&
-      stateVariables.windowHeight > 600
-    ) {
-      this.charItems[0].x = this.startPoint.x;
-      this.charItems[0].y = 350;
-      this.charItems[1].x = this.startPoint.x;
-      this.charItems[1].y = 400;
-      this.charItems[2].x = this.startPoint.x + 100;
-      this.charItems[2].y = 400;
-    } else if (
-      stateVariables.windowWidth < 1550 &&
-      stateVariables.windowHeight < 600
-    ) {
-      this.charItems[0].x = 500;
-      this.charItems[0].y = 200;
-      this.charItems[1].x = 500 + 50;
-      this.charItems[1].y = 250;
-      this.charItems[2].x = 500 + 180;
-      this.charItems[2].y = 250;
-    }
   }
 
   initialiseImages() {
@@ -104,7 +83,105 @@ export class MenuScreen {
     });
   }
 
+  updateMenuItems() {
+    if (stateVariables.gameState == GameState.menuScreen) {
+      this.menuItems = [
+        {
+          text: "Eclipse of the Lantern",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 15) * 0,
+          type: 1,
+        },
+        {
+          text: "START JOURNEY",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 2,
+          type: 0,
+        },
+        {
+          text: "DIFFICULTY: ",
+          fontSize: stateVariables.windowWidth / 20,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          type: 0,
+        },
+      ];
+      this.charItems = [
+        {
+          text: "SELECT CHARACTER",
+          x: stateVariables.windowWidth / 1.5 + 100,
+          y: 280,
+        },
+        {
+          text: "<",
+          x: stateVariables.windowWidth / 1.5,
+          y: 480,
+        },
+        {
+          text: ">",
+          x: stateVariables.windowWidth / 1.5 + 400,
+          y: 480,
+        },
+      ];
+    } else if (stateVariables.gameState == GameState.paused) {
+      this.menuItems = [
+        {
+          text: "Eclipse of the Lantern",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 15) * 0,
+          type: 1,
+        },
+        {
+          text: "RESUME",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 2,
+          type: 0,
+        },
+        {
+          text: "QUIT",
+          fontSize: stateVariables.windowWidth / 20,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          type: 0,
+        },
+      ];
+      this.charItems = [];
+    } else if (stateVariables.gameState == GameState.retryScreen){
+      this.menuItems = [
+        {
+          text: "Eclipse of the Lantern",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 15) * 0,
+          type: 1,
+        },
+        {
+          text: "RETRY",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 2,
+          type: 0,
+        },
+        {
+          text: "QUIT",
+          fontSize: stateVariables.windowWidth / 20,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          type: 0,
+        },
+      ];
+      this.charItems = [];
+    }
+  }
+
   show(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
+
+    this.updateMenuItems();
+
     ctx.fillStyle = "rgba(0, 0, 0, 0.74)";
     ctx.fillRect(0, 0, stateVariables.windowWidth, stateVariables.windowHeight);
 
@@ -147,6 +224,8 @@ export class MenuScreen {
 
         ctx.fillStyle = "rgb(255, 255, 255)";
       }
+
+      if(stateVariables.gameState == GameState.menuScreen){
       if (index == 2) {
         ctx.fillText(
           menuItem.text + this.difficulties[this.difficultyLevel],
@@ -156,9 +235,12 @@ export class MenuScreen {
       } else {
         ctx.fillText(menuItem.text, menuItem.x, menuItem.y);
       }
-
+    }else{
+      ctx.fillText(menuItem.text, menuItem.x, menuItem.y);
+    }
       index++;
     });
+    if(stateVariables.gameState == GameState.menuScreen){
     if (noHover) {
       this.hoveredOption = -1;
     }
@@ -181,42 +263,10 @@ export class MenuScreen {
 
       index++;
     });
+    
     if (noHover) {
       this.hoveredChar = -1;
     }
-
-    if (
-      stateVariables.windowWidth < 1330 &&
-      stateVariables.windowHeight > 600
-    ) {
-      ctx.drawImage(
-        this.characterImages[this.selectedChar],
-        this.startPoint.x + 30,
-        370,
-        50,
-        50
-      );
-      ctx.font = "20px stat";
-      ctx.textAlign = "center";
-      ctx.fillStyle = "rgb(255, 255, 255)";
-
-      ctx.fillText(
-        this.charInfo[this.selectedChar].name,
-        this.startPoint.x,
-        450,
-        100
-      );
-    } else if (
-      stateVariables.windowWidth < 1550 &&
-      stateVariables.windowHeight < 600
-    ) {
-      ctx.drawImage(this.characterImages[this.selectedChar], 600, 210, 50, 50);
-
-      ctx.font = "20px stat";
-      ctx.textAlign = "center";
-      ctx.fillStyle = "rgb(255, 255, 255)";
-      ctx.fillText(this.charInfo[this.selectedChar].name, 575, 280, 100);
-    } else {
       ctx.drawImage(
         this.characterImages[this.selectedChar],
         stateVariables.windowWidth / 1.5 + 140,
@@ -228,13 +278,20 @@ export class MenuScreen {
       ctx.font = "40px stat";
       ctx.textAlign = "center";
       ctx.fillStyle = "rgb(255, 255, 255)";
-      ctx.fillText(this.charInfo[this.selectedChar].name, stateVariables.windowWidth / 1.5 + 200, 450, 500);
+      ctx.fillText(
+        this.charInfo[this.selectedChar].name,
+        stateVariables.windowWidth / 1.5 + 200,
+        450,
+        500
+      );
 
       ctx.font = "20px stat";
     }
   }
 
   handleSelect() {
+    if(stateVariables.gameState != GameState.paused){
+
     if (this.hoveredChar == 1 || this.hoveredChar == 2)
       this.selectedChar = this.selectedChar == 0 ? 1 : 0;
 
@@ -245,13 +302,20 @@ export class MenuScreen {
         this.difficultyLevel = 0;
       }
     }
+  }else{
+    if (this.hoveredOption == 2) {
+      stateVariables.gameState = GameState.menuScreen;
+    }
+  }
     if (this.hoveredOption == 1) {
       gameOptions.difficultyLevel = this.difficultyLevel;
       gameOptions.character = this.charInfo[this.selectedChar].name;
-      startJourney();
-
+      if(stateVariables.gameState == GameState.paused){
+        resumeGame();
+      } else{
+        startJourney();
+      }
+      
     }
-    
-
   }
 }

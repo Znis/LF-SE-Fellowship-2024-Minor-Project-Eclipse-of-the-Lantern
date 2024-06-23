@@ -25,7 +25,7 @@ export class FireProjectile{
     
         this.r = 5;
     
-        this.endPoint = endPoint;
+        this.endPoint = new Point(endPoint.x * 1.05, endPoint.y * 1.05);
     
         this.movement_speed = 10;
         this.toDelete = false;

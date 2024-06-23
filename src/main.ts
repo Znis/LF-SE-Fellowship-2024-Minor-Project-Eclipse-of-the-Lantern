@@ -67,13 +67,21 @@ stateVariables.axe.calculateShockPoint();
   }
   if (
     stateVariables.gameState == GameState.menuScreen ||
-    stateVariables.gameState == GameState.retryScreen
+    stateVariables.gameState == GameState.retryScreen 
   ) {
     stateVariables.lantern.showLuminosity();
     stateVariables.ui.renderBloodOverlay();
     stateVariables.lantern.maxRadiusInnerCircle = 10;
     renderMainMenu();
   }
+  if (
+    stateVariables.gameState == GameState.paused
+  ) {
+    stateVariables.lantern.showLuminosity();
+    stateVariables.ui.renderBloodOverlay();
+    renderMainMenu();
+  }
+
 displayCursorImage();
   
 
@@ -98,6 +106,7 @@ displayCursorImage();
       );
     });
   }
+  
   stateVariables.reqAnimFrame = requestAnimationFrame(draw);
 }
 stateVariables.reqAnimFrame = requestAnimationFrame(draw);

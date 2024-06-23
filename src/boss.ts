@@ -1,7 +1,7 @@
 import { generateEnemy } from "./functions";
 import { Point } from "./shapes/point";
 import { enemyBack, enemyFront, enemyLeft, enemyRight } from "./sprites/boss";
-import { stateVariables } from "./stateVariables";
+import { GameState, stateVariables } from "./stateVariables";
 import { calculateAngle, distance, getRandomInt} from "./utils/util";
 import { FireProjectile } from "./weapons/fireProjectile";
 
@@ -327,7 +327,7 @@ spawnEnemy(){
   if(!this.hasWakeUp && stateVariables.enemiesArray.length < 100){
   if(!this.spawnEnemyInterval){
   this.spawnEnemyInterval = setInterval(() => {
-    generateEnemy(1);
+   if(stateVariables.gameState != GameState.paused) generateEnemy(1);  
   }, 1000);
 }
 }else{

@@ -49,7 +49,8 @@ type stateVariables = {
     axe: Axe,
     gun: Gun,
     boss: Boss,
-    flameImages: HTMLImageElement[]
+    flameImages: HTMLImageElement[],
+
 }
 
 export enum GameState {

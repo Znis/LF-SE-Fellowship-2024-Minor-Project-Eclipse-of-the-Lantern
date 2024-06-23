@@ -280,19 +280,40 @@ export class Enemy {
         let dy = this.finalY - this.startPoint.y;
         let distanceToTarget = distance(new Point(this.finalX, this.finalY), this.startPoint);
 
-        if(distanceToPlayer > 80){
+        if(distanceToPlayer > 50){
         if (distanceToTarget > this.movement_speed) {
             let ratio = this.movement_speed / distanceToTarget;
             let x_move = ratio * dx;
             let y_move = ratio * dy;
 
-            if (!stateVariables.bgImage.checkCollision(this.startPoint.x + x_move, this.startPoint.y)) {
-                this.startPoint.x += x_move;
-            }
-
-            if (!stateVariables.bgImage.checkCollision(this.startPoint.x, this.startPoint.y + y_move)) {
-                this.startPoint.y += y_move;
-            }
+           if (
+          stateVariables.bgImage.checkCollision(
+            stateVariables.bgImage.startPoint.x -
+              this.startPoint.x +
+              this.finalX,
+            stateVariables.bgImage.startPoint.y -
+              this.startPoint.y +
+              this.finalY +
+              this.movement_speed
+          )
+        ) {
+          this.startPoint.x = x_move + this.startPoint.x;
+        } else if (
+          stateVariables.bgImage.checkCollision(
+            stateVariables.bgImage.startPoint.x -
+              this.startPoint.x +
+              this.finalX +
+              this.movement_speed,
+            stateVariables.bgImage.startPoint.y -
+              this.startPoint.y +
+              this.finalY
+          )
+        ) {
+          this.startPoint.y = y_move + this.startPoint.y;
+        } else {
+          this.startPoint.x = x_move + this.startPoint.x;
+          this.startPoint.y = y_move + this.startPoint.y;
+        }
 
             this.isAttacking = false;
         }

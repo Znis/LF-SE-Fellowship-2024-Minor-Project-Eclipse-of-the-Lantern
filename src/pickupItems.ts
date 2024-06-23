@@ -1,6 +1,7 @@
 import { Point } from "./shapes/point";
 import fuel from "./sprites/fuel";
 import { inventory, stateVariables } from "./stateVariables";
+import { distance } from "./utils/util";
 
 export class PickupItems {
   images: HTMLImageElement[];
@@ -31,8 +32,8 @@ export class PickupItems {
     shadowFrame: number,
     ctx: CanvasRenderingContext2D = stateVariables.ctx
   ) {
-    const imgX = stateVariables.bgImage.startPoint.x + this.startPoint.x;
-    const imgY = stateVariables.bgImage.startPoint.y + this.startPoint.y;
+    const imgX = this.startPoint.x;
+    const imgY = this.startPoint.y;
     let ellipseX = imgX + 16;
     let ellipseY = imgY + 40;
     let ellipseWidth = shadowFrame + 10;
@@ -82,26 +83,7 @@ export class PickupItems {
   }
 
   collect() {
-    if (
-      Math.sqrt(
-        Math.abs(
-          Math.pow(
-            -(
-              stateVariables.bgImage.startPoint.x -
-              stateVariables.player.startPoint.x
-            ) - this.startPoint.x,
-            2
-          ) +
-            Math.pow(
-              -(
-                stateVariables.bgImage.startPoint.y -
-                stateVariables.player.startPoint.y
-              ) - this.startPoint.y,
-              2
-            )
-        )
-      ) < 50
-    ) {
+    if (distance(this.startPoint, stateVariables.player.startPoint) < 50) {
       if (this.type.itemName == "health_pack") {
         inventory.medKit++;
       } else if (this.type.itemName == "fuel") {
