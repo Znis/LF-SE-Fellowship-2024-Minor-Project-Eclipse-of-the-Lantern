@@ -163,29 +163,32 @@ export class Character {
             stateVariables.bgImage.startPoint.x +
               this.movement_speed * this.dirX,
             stateVariables.bgImage.startPoint.y +
-              this.movement_speed * this.dirY
-          ) &&
-          stateVariables.bgImage.startPoint.x +
-            stateVariables.adjustDeviceColliderX -
-            stateVariables.windowWidth / 2 <
-            0 &&
-          stateVariables.bgImage.startPoint.y +
-            stateVariables.adjustDeviceColliderY -
-            stateVariables.windowHeight / 2 >
-            -stateVariables.bgImage.h &&
-          stateVariables.bgImage.startPoint.y +
-            stateVariables.adjustDeviceColliderY -
-            stateVariables.windowHeight / 2 <
-            0 &&
-          stateVariables.bgImage.startPoint.x +
-            stateVariables.adjustDeviceColliderX -
-            stateVariables.windowWidth / 2 >
-            -stateVariables.bgImage.w
+              this.movement_speed * this.dirY)
+          // stateVariables.bgImage.startPoint.x +
+          //   stateVariables.adjustDeviceColliderX -
+          //   stateVariables.windowWidth / 2 <
+          //   0 &&
+          // stateVariables.bgImage.startPoint.y +
+          //   stateVariables.adjustDeviceColliderY -
+          //   stateVariables.windowHeight / 2 >
+          //   -stateVariables.bgImage.h &&
+          // stateVariables.bgImage.startPoint.y +
+          //   stateVariables.adjustDeviceColliderY -
+          //   stateVariables.windowHeight / 2 <
+          //   0 &&
+          // stateVariables.bgImage.startPoint.x +
+          //   stateVariables.adjustDeviceColliderX -
+          //   stateVariables.windowWidth / 2 >
+          //   -stateVariables.bgImage.w
         ) {
           stateVariables.enemiesArray.forEach((enemy) => {
             enemy.startPoint.x += this.movement_speed * this.dirX;
             enemy.startPoint.y += this.movement_speed * this.dirY;
           });
+          stateVariables.boss.startPoint.x +=
+            this.movement_speed * this.dirX;
+          stateVariables.boss.startPoint.y +=
+            this.movement_speed * this.dirY;
           stateVariables.bgImage.startPoint.x +=
             this.movement_speed * this.dirX;
           stateVariables.bgImage.startPoint.y +=

@@ -6,6 +6,7 @@ export class Inventory {
   medKitImg: HTMLImageElement;
   ammoImg: HTMLImageElement;
   abilities: { [key: string]: {[key: string]: number} };
+  showMessage: boolean;
   constructor() {
     this.fuelImg = {} as HTMLImageElement;
     this.medKitImg = {} as HTMLImageElement;
@@ -14,6 +15,7 @@ export class Inventory {
       "light": {  maxCooldown: 20, cooldown: 0, cooldownInterval: 0 },
 
   };
+  this.showMessage = false;
   }
   initialiseImages() {
     const loadImage = (fullPath: string) => {
@@ -54,6 +56,7 @@ export class Inventory {
     item: string | void,
     message: string | void
   ) {
+
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
     ctx.font = "24px Outfit";

@@ -1,3 +1,4 @@
+import { Boss } from "../boss";
 import { Enemy } from "../enemy";
 import { drawEllipse } from "../functions";
 import { Point } from "../shapes/point";
@@ -54,7 +55,7 @@ export class BulletProjectile{
         ctx.restore();
     }
 
-    hits(enemy: Enemy){
+    hits(enemy: Enemy | Boss){
         let dist = distance(new Point(this.startPoint.x -100, this.startPoint.y - 130), new Point(enemy.startPoint.x - 50, enemy.startPoint.y - 50));
         if (dist < this.r +enemy.r)
         {

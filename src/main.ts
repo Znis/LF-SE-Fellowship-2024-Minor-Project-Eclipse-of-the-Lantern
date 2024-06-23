@@ -3,10 +3,12 @@ import "./style.css";
 import "./controls";
 import {
   adjustCanvasSize,
+  checkHitToBoss,
   checkHitToEnemy,
   checkPlayerHealthAndLanternLuminosity,
   displayCursorImage,
   drawChannelledAnimation,
+  handleBoss,
   handleEnemies,
   handlePickupItems,
   handleProjectiles,
@@ -37,7 +39,10 @@ function draw() {
     handlePickupItems();
     checkHitToEnemy();
     stateVariables.player.show();
-    // handleEnemies();
+    handleEnemies();
+console.log(stateVariables.enemiesArray.length)
+    handleBoss();
+    checkHitToBoss();
     stateVariables.lantern.showLuminosity();
     stateVariables.lantern.changeLuminosity();
     handleProjectiles();

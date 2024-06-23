@@ -3,6 +3,7 @@ import { Point } from "../shapes/point";
 import { stateVariables } from "../stateVariables";
 import { distance } from "../utils/util";
 import { axeBack, axeFront, axeLeft, axeRight } from "../sprites/axe";
+import { Boss } from "../boss";
 
 export class Axe{
     startPoint: Point;
@@ -128,7 +129,7 @@ export class Axe{
         
     }
 
-    hits(enemy: Enemy){
+    hits(enemy: Enemy | Boss){
         let dist = distance(new Point(this.shockPoint.x, this.shockPoint.y), new Point(enemy.startPoint.x + enemy.w/2, enemy.startPoint.y+enemy.h/2));
         if (dist < this.r)
         {

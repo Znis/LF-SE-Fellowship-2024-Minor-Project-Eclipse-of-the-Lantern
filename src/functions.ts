@@ -21,9 +21,16 @@ import { PickupItems } from "./pickupItems";
 import { Inventory } from "./inventory";
 import { Axe } from "./weapons/axe";
 import { Gun } from "./weapons/gun";
+import { Boss } from "./boss";
+import { getRandomInt } from "./utils/util";
 
 export function preload() {
   stateVariables.player = new Character();
+  stateVariables.player.initialiseImages(`assets/character/images/characters/${gameOptions.character}`, 4);
+  console.log(gameOptions.character)
+  stateVariables.player.direction = "r";
+  stateVariables.player.startPoint.x = stateVariables.windowWidth / 2;
+  stateVariables.player.startPoint.y = stateVariables.windowHeight / 2;
   stateVariables.ui = new Ui();
   stateVariables.cursorImage = new Image();
   stateVariables.cursorImage.src = "./assets/attack.png";
@@ -33,14 +40,14 @@ export function preload() {
   stateVariables.inventory.initialiseImages();
   stateVariables.ui.initialiseImages("./assets/ui");
   stateVariables.ui.initialiseRainParticles();
-  stateVariables.player.initialiseImages("assets/character/images/", 4);
-  stateVariables.player.direction = "r";
-  stateVariables.player.startPoint.x = stateVariables.windowWidth / 2;
-  stateVariables.player.startPoint.y = stateVariables.windowHeight / 2;
   stateVariables.lantern = new Lantern();
   stateVariables.lantern.img.src = "assets/lantern/lantern.png";
   stateVariables.bgImage = new Maps("main-map.jpg");
   stateVariables.mainMenu = new MenuScreen();
+  stateVariables.boss = new Boss();
+  stateVariables.boss.initialiseGolblinImages("assets/boss/", 6);
+  let animateEnemy = new AnimateEntity(stateVariables.boss.images_front, 2);
+  stateVariables.animateEnemyArray.push(animateEnemy);
   stateVariables.mainMenu.initialiseImages();
   loadFonts();
 }
@@ -60,8 +67,17 @@ export function checkPlayerHealthAndLanternLuminosity() {
 export function startJourney() {
   resetStateVariables();
   stateVariables.gameState = GameState.running;
-  generateEnemy(250);
-  generateRandomPickupItems(200);
+  generateEnemy(100);
+  generateRandomPickupItems(100);
+
+  
+  stateVariables.player.initialiseImages(`assets/character/images/characters/${gameOptions.character}`, 4);
+  console.log(gameOptions.character)
+  stateVariables.player.direction = "r";
+  stateVariables.player.startPoint.x = stateVariables.windowWidth / 2;
+  stateVariables.player.startPoint.y = stateVariables.windowHeight / 2;
+
+
   stateVariables.enemiesArray.forEach((enemy) => {
     enemy.MAX_HEALTH =
       difficultySetting[gameOptions.difficultyLevel].enemyMaxHealth;
@@ -170,6 +186,16 @@ export function handleEnemies() {
     enemy.separate();
   });
 }
+
+export function handleBoss() {
+    stateVariables.boss.show();
+    stateVariables.boss.move();
+    stateVariables.boss.determineDirection();
+    stateVariables.boss.updateAttributes();
+    stateVariables.boss.spawnEnemy();
+    
+}
+
 export function getMouseCoords(event: MouseEvent) {
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
@@ -238,8 +264,8 @@ export function drawChannelledAnimation() {
 
 export function generateEnemy(num: number) {
   while(num != 0){
-    let posX = Math.random() * stateVariables.bgImage.w;
-    let posY = Math.random() * stateVariables.bgImage.h;
+    let posX = getRandomInt(stateVariables.bgImage.startPoint.x, stateVariables.bgImage.startPoint.x+stateVariables.bgImage.w);
+    let posY = getRandomInt(stateVariables.bgImage.startPoint.y, stateVariables.bgImage.startPoint.y+stateVariables.bgImage.h);
     if(!stateVariables.bgImage.checkCollision(posX, posY)){
       let enemy = new Enemy(posX, posY);
       enemy.initialiseGolblinImages("assets/enemy/goblin", 6);
@@ -313,4 +339,44 @@ export function checkHitToEnemy() {
       stateVariables.bulletProjectileArray.splice(i, 1);
     }
   }
+}
+
+export function checkHitToBoss() {
+  if(stateVariables.boss.hasWakeUp){
+  if(stateVariables.player.currWeapon == "gun"){
+    
+  stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
+
+      if (bulletProjectile.hits(stateVariables.boss)) {
+        stateVariables.boss.health -= 1;
+        bulletProjectile.evaporate();
+
+        const bloodParticle = new BloodParticle(
+          stateVariables.boss.startPoint.x - stateVariables.bgImage.startPoint.x,
+          stateVariables.boss.startPoint.y - stateVariables.bgImage.startPoint.y
+        );
+        bloodParticle.initialiseImages("assets/blood", 7);
+        stateVariables.bloodParticleArray.push(bloodParticle);
+        
+      }
+    
+  });
+  }else if(stateVariables.player.currWeapon == "axe" && stateVariables.player.isAttacking){
+
+      if (stateVariables.axe.hits(stateVariables.boss)) {
+        stateVariables.boss.health -= 0.1;
+        const bloodParticle = new BloodParticle(
+          stateVariables.boss.startPoint.x - stateVariables.bgImage.startPoint.x,
+          stateVariables.boss.startPoint.y - stateVariables.bgImage.startPoint.y
+        );
+        bloodParticle.initialiseImages("assets/blood", 7);
+        stateVariables.bloodParticleArray.push(bloodParticle);
+
+      }
+    
+  }
+
+
+
+}
 }

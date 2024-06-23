@@ -99,7 +99,7 @@ export class MenuScreen {
   initialiseImages() {
     this.charInfo.forEach((character: any) => {
       const img = new Image();
-      img.src = `assets/character/images/$Characters/profile/${character.name}.png`;
+      img.src = `assets/character/images/characters/profile/${character.name}.png`;
       this.characterImages.push(img);
     });
   }

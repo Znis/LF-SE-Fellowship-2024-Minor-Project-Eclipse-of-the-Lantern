@@ -11,6 +11,7 @@ import { PickupItems } from './pickupItems.ts';
 import { Inventory } from './inventory.ts';
 import { Axe } from './weapons/axe.ts';
 import { Gun } from './weapons/gun.ts';
+import { Boss } from './boss.ts';
 
 type stateVariables = {
     refuelStart: number | null;
@@ -45,6 +46,7 @@ type stateVariables = {
     cursorImage: HTMLImageElement,
     axe: Axe,
     gun: Gun,
+    boss: Boss,
 }
 
 export enum GameState {
@@ -159,6 +161,7 @@ export const stateVariables: stateVariables = {
     animatePickupItemsArray: [] as AnimateEntity[],
     cursorImage: {} as HTMLImageElement,
     axe: {} as Axe,
-    gun: {} as Gun
+    gun: {} as Gun,
+    boss: {} as Boss,
 
 }
