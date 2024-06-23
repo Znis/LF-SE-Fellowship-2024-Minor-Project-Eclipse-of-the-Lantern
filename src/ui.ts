@@ -47,7 +47,7 @@ export class Ui {
     ctx.textAlign = "right";
     ctx.fillStyle = "white";
 
-    const xPos = stateVariables.windowWidth - 100;
+    const xPos = stateVariables.windowWidth - 30;
     ctx.fillText(`Score: ${stateVariables.player.score}`, xPos, 40);
   }
 
@@ -56,28 +56,38 @@ export class Ui {
       this.renderBloodOverlay();
     }
 
+
+    ctx.font = "14px Outfit";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "white";
+    ctx.fillText("Health", 35, 28);
+
     let initial = 0;
     for (let i = 0; i < this.healthBars; i++) {
-      ctx.drawImage(this.healthImages[0], (i + 1) * 30 + 10, 10, 30, 30);
+      ctx.drawImage(this.healthImages[0],50+(i + 1) * 30 + 10, 10, 30, 30);
 
       if (stateVariables.player.health > initial) {
-        ctx.drawImage(this.healthImages[1], (i + 1) * 30 + 10, 10, 30, 30);
+        ctx.drawImage(this.healthImages[1], 50+(i + 1) * 30 + 10, 10, 30, 30);
       } else {
-        ctx.drawImage(this.healthImages[2], (i + 1) * 30 + 10, 10, 30, 30);
+        ctx.drawImage(this.healthImages[2], 50+(i + 1) * 30 + 10, 10, 30, 30);
       }
       initial += 100 / this.healthBars;
     }
   }
 
   renderStamina(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
+    ctx.font = "14px Outfit";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "white";
+    ctx.fillText("Stamina", 300, 28);
     let initial = 0;
     for (let i = 0; i < this.staminaBars; i++) {
-      ctx.drawImage(this.healthImages[0], 200 +(i + 1) * 30 + 10, 10, 30, 30);
+      ctx.drawImage(this.healthImages[0], 330 +(i + 1) * 30 + 10, 10, 30, 30);
 
       if (stateVariables.player.stamina > initial) {
-        ctx.drawImage(this.staminaImage, 200+ (i + 1) * 30 + 10, 10, 30, 30);
+        ctx.drawImage(this.staminaImage, 330 + (i + 1) * 30 + 10, 10, 30, 30);
       } else {
-        ctx.drawImage(this.healthImages[2], 200 + (i + 1) * 30 + 10, 10, 30, 30);
+        ctx.drawImage(this.healthImages[2], 330 + (i + 1) * 30 + 10, 10, 30, 30);
       }
       initial += 100 / this.staminaBars;
     }

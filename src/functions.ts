@@ -26,7 +26,7 @@ export function preload() {
   stateVariables.player = new Character();
   stateVariables.ui = new Ui();
   stateVariables.cursorImage = new Image();
-  stateVariables.cursorImage.src = "./assets/axe.png";
+  stateVariables.cursorImage.src = "./assets/attack.png";
   stateVariables.inventory = new Inventory();
   stateVariables.axe = new Axe();
   stateVariables.gun = new Gun();
@@ -59,8 +59,8 @@ export function checkPlayerHealthAndLanternLuminosity() {
 export function startJourney() {
   resetStateVariables();
   stateVariables.gameState = GameState.running;
-  generateEnemy(150);
-  generateRandomPickupItems(150);
+  generateEnemy(250);
+  generateRandomPickupItems(200);
   stateVariables.enemiesArray.forEach((enemy) => {
     enemy.MAX_HEALTH =
       difficultySetting[gameOptions.difficultyLevel].enemyMaxHealth;
@@ -77,9 +77,9 @@ export function displayCursorImage(){
   if (stateVariables.player.currWeapon == "gun"){
     stateVariables.cursorImage.src = "./assets/crosshair.png";
   }else{
-    stateVariables.cursorImage.src = "./assets/axe.png";
+    stateVariables.cursorImage.src = "./assets/attack.png";
   }
-  stateVariables.ctx.drawImage(stateVariables.cursorImage, stateVariables.mouseCoords.x , stateVariables.mouseCoords.y, 40,40);
+  stateVariables.ctx.drawImage(stateVariables.cursorImage, stateVariables.mouseCoords.x , stateVariables.mouseCoords.y, 30,30);
 
 }
 

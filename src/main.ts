@@ -35,7 +35,6 @@ function draw() {
   if (stateVariables.gameState == GameState.running) {
     if (stateVariables.rain) stateVariables.ui.renderRainParticles();
     handlePickupItems();
-    handleControls();
     checkHitToEnemy();
     stateVariables.player.show();
     handleEnemies();
@@ -44,6 +43,8 @@ function draw() {
     handleProjectiles();
     renderUi();
     renderInventory();
+    handleControls();
+
     stateVariables.bgImage.showDepth();
 
 

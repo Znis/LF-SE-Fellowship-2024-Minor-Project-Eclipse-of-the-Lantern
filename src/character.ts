@@ -203,16 +203,17 @@ useUltimate(){
   if(this.ultiAvailable){
   stateVariables.lantern.setLuminosity();
   this.ultiAvailable = false;
+  stateVariables.inventory.resetUltimate();
   const reset = setTimeout(() => {
     stateVariables.lantern.resetLuminosity();
     const ultimateCooldown = setTimeout(() => {
       this.ultiAvailable = true;
       clearTimeout(ultimateCooldown);
-    }, 1000);
+    }, stateVariables.inventory.abilities["light"].maxCooldown * 1000 - 5000);
     clearTimeout(reset);
   }, 5000);
 }else{
-  console.log("ulti cooldown");
+ stateVariables.inventory.displayMessage(stateVariables.ctx, "", "Ability on Cooldown!");
 }
   
 }
