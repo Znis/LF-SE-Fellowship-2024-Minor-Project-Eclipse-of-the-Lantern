@@ -42,6 +42,7 @@ function draw() {
     handleEnemies();
     handleBoss();
     checkHitToBoss();
+    stateVariables.bgImage.showDepth();
     stateVariables.lantern.showLuminosity();
     stateVariables.lantern.changeLuminosity();
     handleProjectiles();
@@ -49,7 +50,6 @@ function draw() {
     renderInventory();
     handleControls();
 
-    stateVariables.bgImage.showDepth();
 
 
 

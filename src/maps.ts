@@ -79,8 +79,6 @@ export class Maps {
 
   showDepth(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
     if (
-      this.w == 0 &&
-      this.h == 0 &&
       this.mapData[this.name].size == "native"
     ) {
       ctx.drawImage(this.depthImg, this.startPoint.x, this.startPoint.y);
