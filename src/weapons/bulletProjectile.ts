@@ -11,12 +11,10 @@ export class BulletProjectile{
     r:number;
     endPoint: Point;
     movement_speed: number;
-    mouse: boolean;
     dir: string;
     toDelete: boolean;
-    constructor(startPoint: Point,dir:string,endPoint: Point, mouse:boolean=false){
+    constructor(startPoint: Point,dir:string,endPoint: Point){
         this.startPoint= new Point(startPoint.x-30, startPoint.y+30);
-    this.mouse = mouse;
     this.dir = dir;
         this.initialX = this.startPoint.x;
         this.initialY = this.startPoint.y;
@@ -72,25 +70,7 @@ export class BulletProjectile{
 
     move(){
         
-        if (!this.mouse){ 
-            
-                    if (this.dir=="u"){
-                        this.startPoint.y = this.startPoint.y -this.movement_speed ;
-                    }
-                    if (this.dir=="d"){
-                        this.startPoint.y = this.startPoint.y +this.movement_speed ;
-                    }
-                    if (this.dir=="r"){
-                        this.startPoint.x = this.startPoint.x +this.movement_speed ;
-                    }
-                    if (this.dir=="l"){
-                        this.startPoint.x = this.startPoint.x -this.movement_speed ;
-                    }
-                
-               
-        }
-        
-        if (this.mouse){
+
             let dx = this.endPoint.x - this.startPoint.x
             let dy = this.endPoint.y - this.startPoint.y
                 let dist = distance(this.endPoint, this.startPoint);
@@ -111,7 +91,7 @@ export class BulletProjectile{
                 }
 
                 
-        }
+        
         
     }
 }

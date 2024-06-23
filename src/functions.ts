@@ -48,7 +48,6 @@ export function preload() {
   stateVariables.bgImage = new Maps("main-map.jpg");
   stateVariables.mainMenu = new MenuScreen();
   stateVariables.boss = new Boss();
-  stateVariables.boss.initialiseGolblinImages("assets/boss/", 6);
   let animateEnemy = new AnimateEntity(stateVariables.boss.images_front, 2);
   stateVariables.animateEnemyArray.push(animateEnemy);
   stateVariables.mainMenu.initialiseImages();
@@ -189,15 +188,17 @@ export function handlePickupItems() {
 }
 
 export function resetStateVariables() {
-  stateVariables.player.health = 10000;
+  stateVariables.player.health = 100;
   stateVariables.player.score = 0;
   stateVariables.lantern.maxRadiusInnerCircle = 250;
   stateVariables.bgImage.startPoint = new Point(
     -2220 + stateVariables.adjustDeviceColliderX,
     -2220 + stateVariables.adjustDeviceColliderY
   );
+  stateVariables.boss = new Boss();
   stateVariables.bloodParticleArray = [];
   stateVariables.bulletProjectileArray = [];
+  stateVariables.fireProjectileArray = [];
   stateVariables.enemiesArray = [];
   stateVariables.pickupItemsArray = [];
   stateVariables.keyState = {};
@@ -205,7 +206,7 @@ export function resetStateVariables() {
   stateVariables.animatePickupItemsArray = [];
   inventory.medKit = 0;
   inventory.fuel = 0;
-  inventory.ammo = 20;
+  inventory.ammo = 100;
 }
 
 export function renderInventory() {
@@ -393,6 +394,7 @@ export function checkHitToEnemy() {
     }
   }
   stateVariables.fireProjectileArray.forEach((fireProjectile) => {
+    if(fireProjectile.owner == "player"){
     for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
       if (fireProjectile.hits(stateVariables.enemiesArray[i])) {
         stateVariables.enemiesArray[i].health -= 5;
@@ -412,6 +414,11 @@ export function checkHitToEnemy() {
         }
       }
     }
+  }else if(fireProjectile.owner == "boss"){
+    if (fireProjectile.hits(stateVariables.player)) {
+      stateVariables.player.health -= 10;
+  }
+}
   });
   for (let i = stateVariables.bloodParticleArray.length - 1; i >= 0; i--) {
     stateVariables.bloodParticleArray[i].showAnimation();
@@ -420,6 +427,7 @@ export function checkHitToEnemy() {
     }
   }
 }
+
 
 export function checkHitToBoss() {
   if (stateVariables.boss.hasWakeUp) {
@@ -455,8 +463,9 @@ export function checkHitToBoss() {
       }
     }
     stateVariables.fireProjectileArray.forEach((fireProjectile) => {
+      if(fireProjectile.owner == "player"){
       if (fireProjectile.hits(stateVariables.boss)) {
-        stateVariables.boss.health -= 5;
+        stateVariables.boss.health -= 10;
 
         const bloodParticle = new BloodParticle(
           stateVariables.boss.startPoint.x -
@@ -466,6 +475,7 @@ export function checkHitToBoss() {
         bloodParticle.initialiseImages("assets/blood", 7);
         stateVariables.bloodParticleArray.push(bloodParticle);
       }
+    }
     });
   }
 }

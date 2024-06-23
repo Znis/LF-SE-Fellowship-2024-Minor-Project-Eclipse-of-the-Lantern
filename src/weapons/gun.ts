@@ -149,8 +149,7 @@ export class Gun{
         stateVariables.player.startPoint.y + 20
       ),
       stateVariables.player.direction,
-      new Point(stateVariables.mouseCoords.x, stateVariables.mouseCoords.y),
-      true
+      new Point(stateVariables.mouseCoords.x, stateVariables.mouseCoords.y)
     );
     stateVariables.bulletProjectileArray.push(projectile);
     

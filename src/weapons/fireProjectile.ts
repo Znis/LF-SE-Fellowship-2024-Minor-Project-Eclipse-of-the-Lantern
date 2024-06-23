@@ -1,4 +1,5 @@
 import { Boss } from "../boss";
+import { Character } from "../character";
 import { Enemy } from "../enemy";
 import { Point } from "../shapes/point";
 import { stateVariables } from "../stateVariables";
@@ -10,14 +11,14 @@ export class FireProjectile{
     r:number;
     endPoint: Point;
     movement_speed: number;
-    mouse: boolean;
     dir: string;
     toDelete: boolean;
     images: HTMLImageElement[];
     spritePos: number;
-    constructor(startPoint: Point,dir:string,endPoint: Point, mouse:boolean=false){
+    owner: string;
+    constructor(startPoint: Point,dir:string,endPoint: Point, owner: string){
         this.startPoint= new Point(startPoint.x-30, startPoint.y+30);
-    this.mouse = mouse;
+  
     this.dir = dir;
         this.initialX = this.startPoint.x;
         this.initialY = this.startPoint.y;
@@ -31,6 +32,7 @@ export class FireProjectile{
         this.images = [];
         this.spritePos = 0;
         this.initialiseImages();
+        this.owner = owner;
     }
 
 initialiseImages(){
@@ -58,7 +60,7 @@ initialiseImages(){
 
     }
 
-    hits(enemy: Enemy | Boss){
+    hits(enemy: Enemy | Boss | Character){
         let dist = distance(new Point(this.startPoint.x -100, this.startPoint.y - 130), new Point(enemy.startPoint.x - 50, enemy.startPoint.y - 50));
         if (dist < this.r +enemy.r)
         {
@@ -75,25 +77,7 @@ initialiseImages(){
 
     move(){
         
-        if (!this.mouse){ 
-            
-                    if (this.dir=="u"){
-                        this.startPoint.y = this.startPoint.y -this.movement_speed ;
-                    }
-                    if (this.dir=="d"){
-                        this.startPoint.y = this.startPoint.y +this.movement_speed ;
-                    }
-                    if (this.dir=="r"){
-                        this.startPoint.x = this.startPoint.x +this.movement_speed ;
-                    }
-                    if (this.dir=="l"){
-                        this.startPoint.x = this.startPoint.x -this.movement_speed ;
-                    }
-                
-               
-        }
-        
-        if (this.mouse){
+  
             let dx = this.endPoint.x - this.startPoint.x
             let dy = this.endPoint.y - this.startPoint.y
                 let dist = distance(this.endPoint, this.startPoint);
@@ -114,7 +98,7 @@ initialiseImages(){
                 }
 
                 
-        }
+        
         
     }
 }

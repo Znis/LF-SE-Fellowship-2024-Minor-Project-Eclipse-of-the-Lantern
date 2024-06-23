@@ -3,6 +3,7 @@ import { Point } from "./shapes/point";
 import { enemyBack, enemyFront, enemyLeft, enemyRight } from "./sprites/boss";
 import { stateVariables } from "./stateVariables";
 import { calculateAngle, distance, getRandomInt} from "./utils/util";
+import { FireProjectile } from "./weapons/fireProjectile";
 
 export class Boss {
   startPoint: Point;
@@ -24,6 +25,7 @@ export class Boss {
   default_damage: number;
   default_health: number;
   damageTimeout: number | null;
+  abilityTimeout: number | null;
   isAttacking: boolean;
   spritePos: number;
   attackType: string;
@@ -48,7 +50,7 @@ export class Boss {
     this.r = 80;
 
 
-    this.default_damage = 10;
+    this.default_damage = 5;
     this.damage = this.default_damage;
 
     this.images_back = [];
@@ -59,8 +61,9 @@ export class Boss {
     this.time = 0;
 
     this.damageTimeout = null;
+    this.abilityTimeout = null;
 
-    this.default_health =10;
+    this.default_health = 100;
     this.health = this.default_health;
 
     this.default_movement_speed = 2;
@@ -75,6 +78,8 @@ export class Boss {
     this.isAlive = true;
     this.hasWakeUp = false;
     this.spawnEnemyInterval = null;
+
+    this.initialiseGolblinImages("assets/boss/", 6);
   }
 
   initialiseGolblinImages(path: string, no_of_frames: number) {
@@ -278,13 +283,13 @@ export class Boss {
   move() {
     if(this.health > 0){
     let distanceToPlayer = distance(stateVariables.player.startPoint, this.startPoint);
-    if(distanceToPlayer < 200) this.hasWakeUp = true;
+    if(distanceToPlayer < 400) this.hasWakeUp = true;
       if(this.hasWakeUp){
         let dx = this.finalX - this.startPoint.x;
         let dy = this.finalY - this.startPoint.y;
         let distanceToTarget = distance(new Point(this.finalX, this.finalY), this.startPoint);
 
-        if(distanceToPlayer > 80){
+        
         if (distanceToTarget > this.movement_speed) {
             let ratio = this.movement_speed / distanceToTarget;
             let x_move = ratio * dx;
@@ -299,17 +304,18 @@ export class Boss {
             }
 
             this.isAttacking = false;
-        }
-       } else {
-
-            let angle = Math.atan2(this.startPoint.y - stateVariables.player.startPoint.y, this.startPoint.x - stateVariables.player.startPoint.x);
-
-            let targetX = stateVariables.player.startPoint.x + Math.cos(angle) * 40;
-            let targetY = stateVariables.player.startPoint.y + Math.sin(angle) * 40;
+            if (stateVariables.player.health > 0) {
+            if (!this.abilityTimeout) {
+              this.abilityTimeout = setTimeout(() => {
+                this.useAbility();
+                this.abilityTimeout = null;
+              }, getRandomInt(2,4) * 1000);
+            }
+          }else{
+            clearTimeout(this.abilityTimeout!);
+          }
         
-            let smoothingFactor = 0.05;
-            this.startPoint.x += (targetX - this.startPoint.x) * smoothingFactor;
-            this.startPoint.y += (targetY - this.startPoint.y) * smoothingFactor;
+       } else {
             this.isAttacking = true;
             this.attack();
         }
@@ -336,14 +342,28 @@ spawnEnemy(){
         this.damageTimeout = setTimeout(() => {
           stateVariables.player.health -= this.damage;
           this.damageTimeout = null;
-        }, 500);
+        }, 400);
       }
+      
     } else {
       clearTimeout(this.damageTimeout!);
+      
     }
+
   }
 
-
+useAbility(){
+  const projectile = new FireProjectile(
+    new Point(
+      this.startPoint.x + this.w/2,
+      this.startPoint.y + 50
+    ),
+    this.direction,
+    new Point(stateVariables.player.startPoint.x, stateVariables.player.startPoint.y),
+    "boss"
+  );
+  stateVariables.fireProjectileArray.push(projectile);
+}
 
 
 }

@@ -40,7 +40,6 @@ function draw() {
     checkHitToEnemy();
     stateVariables.player.show();
     handleEnemies();
-console.log(stateVariables.enemiesArray.length)
     handleBoss();
     checkHitToBoss();
     stateVariables.lantern.showLuminosity();

@@ -28,6 +28,7 @@ export class Character {
   isWalking: boolean;
   isRunning: boolean;
   abilityMode: boolean;
+  r: number;
   constructor() {
     this.id = "";
     this.startPoint = new Point(0, 0);
@@ -42,7 +43,7 @@ export class Character {
     this.images_front = [] as HTMLImageElement[];
     this.images_left = [] as HTMLImageElement[];
     this.images_right = [] as HTMLImageElement[];
-    this.health = 10000;
+    this.health = 100;
     this.stamina = 100;
     this.score = 0;
     this.time = 0;
@@ -55,6 +56,7 @@ export class Character {
     this.isWalking = false;
     this.isRunning = false;
     this.abilityMode = false;
+    this.r = 50;
   }
 
   initialiseImages(path: string, no_of_frames: number) {
@@ -241,7 +243,7 @@ export class Character {
         ),
         stateVariables.player.direction,
         new Point(stateVariables.mouseCoords.x, stateVariables.mouseCoords.y),
-        true
+        "player"
       );
       stateVariables.fireProjectileArray.push(projectile);
       const abilityCooldown = setTimeout(() => {
