@@ -119,6 +119,7 @@ export function handleControls() {
     stateVariables.player.frameToShow = 0;
     stateVariables.player.dirX = 0;
     stateVariables.player.dirY = 0;
+    stateVariables.player.isWalking = false;
   }
 
   if (stateVariables.keyState[76]) {
@@ -134,9 +135,13 @@ export function handleControls() {
   if (stateVariables.keyState[16]) {
     stateVariables.player.frameTime = 2;
     stateVariables.player.increaseSpeed();
+    stateVariables.player.isRunning = true;
+
   } else {
     stateVariables.player.movement_speed = stateVariables.player.default_speed;
     stateVariables.player.frameTime = 4;
+    stateVariables.player.isRunning = false;
+
   }
 
   if (stateVariables.keyState[81]) {

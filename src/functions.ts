@@ -38,6 +38,7 @@ export function preload() {
   stateVariables.player.startPoint.x = stateVariables.windowWidth / 2;
   stateVariables.player.startPoint.y = stateVariables.windowHeight / 2;
   stateVariables.lantern = new Lantern();
+  stateVariables.lantern.img.src = "assets/lantern/lantern.png";
   stateVariables.bgImage = new Maps("main-map.jpg");
   stateVariables.mainMenu = new MenuScreen();
   stateVariables.mainMenu.initialiseImages();

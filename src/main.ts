@@ -37,7 +37,7 @@ function draw() {
     handlePickupItems();
     checkHitToEnemy();
     stateVariables.player.show();
-    handleEnemies();
+    // handleEnemies();
     stateVariables.lantern.showLuminosity();
     stateVariables.lantern.changeLuminosity();
     handleProjectiles();

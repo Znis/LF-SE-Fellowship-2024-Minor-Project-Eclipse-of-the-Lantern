@@ -6,8 +6,8 @@ export class Character {
   startPoint: Point;
   movement_speed: number;
   default_speed: number;
-  dirX:number;
-  dirY:number;
+  dirX: number;
+  dirY: number;
   direction: string;
   imgSrc: string;
   images_back: HTMLImageElement[];
@@ -23,8 +23,10 @@ export class Character {
   isUsingMedkit: boolean;
   frameTime: number;
   currWeapon: string;
-isAttacking: boolean;
-ultiAvailable: boolean;
+  isAttacking: boolean;
+  ultiAvailable: boolean;
+  isWalking: boolean;
+  isRunning: boolean;
   constructor() {
     this.id = "";
     this.startPoint = new Point(0, 0);
@@ -50,7 +52,8 @@ ultiAvailable: boolean;
     this.currWeapon = "axe";
     this.isAttacking = false;
     this.ultiAvailable = true;
-
+    this.isWalking = false;
+    this.isRunning = false;
   }
 
   initialiseImages(path: string, no_of_frames: number) {
@@ -70,26 +73,28 @@ ultiAvailable: boolean;
     this.images_right = loadImagesForDirection("right");
   }
 
-increaseSpeed(){
-  if(this.stamina > 0){
-    this.movement_speed = 2 * this.default_speed;
-    this.drainStamina();
-  }else{
-    this.movement_speed = this.default_speed;
-  }
-}
+  increaseSpeed() {
+    if (this.stamina > 0) {
+      this.movement_speed = 2 * this.default_speed;
+      this.isRunning = true;
+      this.drainStamina();
+    } else {
+      this.movement_speed = this.default_speed;
+      this.isRunning = false;
 
 
-  drainStamina(){
-  if(this.stamina > 0){
-    this.stamina -= 1;
-  }else{
-    this.stamina = 0;
+    }
   }
+
+  drainStamina() {
+    if (this.stamina > 0) {
+      this.stamina -= 1;
+    } else {
+      this.stamina = 0;
+    }
   }
 
   change_frames() {
-    
     if (this.time > this.frameTime) {
       this.frameToShow += 1;
 
@@ -114,8 +119,6 @@ increaseSpeed(){
       img = this.images_front[this.frameToShow];
     }
 
-
-
     if (this.health > 0) {
       ctx.fillStyle = "rgba(20, 20, 20,0.55)";
       ctx.beginPath();
@@ -131,90 +134,98 @@ increaseSpeed(){
       ctx.fill();
       ctx.closePath();
 
-      if(this.direction == "d") ctx.drawImage(img, this.startPoint.x, this.startPoint.y);
+      if (this.direction == "d") 
+        ctx.drawImage(img, this.startPoint.x, this.startPoint.y);
       
+      if(this.direction == "u")
+        stateVariables.lantern.show();
 
+      if (this.currWeapon == "axe")
+        stateVariables.axe.show(stateVariables.ctx, this.isAttacking);
 
-      if(this.currWeapon == "axe") stateVariables.axe.show(stateVariables.ctx,this.isAttacking);
+      if (this.currWeapon == "gun")
+        stateVariables.gun.show(stateVariables.ctx, this.isAttacking);
 
-      if(this.currWeapon == "gun") stateVariables.gun.show(stateVariables.ctx,this.isAttacking);
-
-      if(this.direction != "d") ctx.drawImage(img, this.startPoint.x, this.startPoint.y);
-  
-
+      if (this.direction != "d") {
+        ctx.drawImage(img, this.startPoint.x, this.startPoint.y);
+      }
+      if(this.direction != "u")
+      stateVariables.lantern.show();
 
     }
   }
 
-
-
   move() {
-
-    if(!this.isBlowingLantern && !this.isUsingMedkit){
-    if (this.health > 0 && (this.dirX != 0 || this.dirY != 0)) {
-      if (
-        !stateVariables.bgImage.checkCollision(
-          stateVariables.bgImage.startPoint.x + this.movement_speed * this.dirX,
-          stateVariables.bgImage.startPoint.y + this.movement_speed * this.dirY
-        ) &&
-        stateVariables.bgImage.startPoint.x +
-          stateVariables.adjustDeviceColliderX -
-          stateVariables.windowWidth / 2 <
-          0
-          &&
-        stateVariables.bgImage.startPoint.y +
-          stateVariables.adjustDeviceColliderY -
-          stateVariables.windowHeight / 2 >
-          -stateVariables.bgImage.h &&
+    if (!this.isBlowingLantern && !this.isUsingMedkit) {
+      if (this.health > 0 && (this.dirX != 0 || this.dirY != 0)) {
+        if (
+          !stateVariables.bgImage.checkCollision(
+            stateVariables.bgImage.startPoint.x +
+              this.movement_speed * this.dirX,
+            stateVariables.bgImage.startPoint.y +
+              this.movement_speed * this.dirY
+          ) &&
+          stateVariables.bgImage.startPoint.x +
+            stateVariables.adjustDeviceColliderX -
+            stateVariables.windowWidth / 2 <
+            0 &&
           stateVariables.bgImage.startPoint.y +
-          stateVariables.adjustDeviceColliderY -
-          stateVariables.windowHeight / 2 <
-          0 &&
+            stateVariables.adjustDeviceColliderY -
+            stateVariables.windowHeight / 2 >
+            -stateVariables.bgImage.h &&
+          stateVariables.bgImage.startPoint.y +
+            stateVariables.adjustDeviceColliderY -
+            stateVariables.windowHeight / 2 <
+            0 &&
           stateVariables.bgImage.startPoint.x +
             stateVariables.adjustDeviceColliderX -
             stateVariables.windowWidth / 2 >
             -stateVariables.bgImage.w
-      ) {
-        stateVariables.enemiesArray.forEach((enemy) => {
-          enemy.startPoint.x += this.movement_speed * this.dirX;
-          enemy.startPoint.y += this.movement_speed * this.dirY;
-        });
-        stateVariables.bgImage.startPoint.x += this.movement_speed * this.dirX;
-        stateVariables.bgImage.startPoint.y += this.movement_speed * this.dirY;
-        this.change_frames();
+        ) {
+          stateVariables.enemiesArray.forEach((enemy) => {
+            enemy.startPoint.x += this.movement_speed * this.dirX;
+            enemy.startPoint.y += this.movement_speed * this.dirY;
+          });
+          stateVariables.bgImage.startPoint.x +=
+            this.movement_speed * this.dirX;
+          stateVariables.bgImage.startPoint.y +=
+            this.movement_speed * this.dirY;
+          this.isWalking = true;
+          this.change_frames();
+        }
       }
 
-      
+
     }
   }
-  }
 
-increaseHealth(){
-
+  increaseHealth() {
     stateVariables.player.health += 20;
     if (stateVariables.player.health > 100) {
       stateVariables.player.health = 100;
     }
     inventory.medKit--;
+  }
 
-}
-
-useUltimate(){
-  if(this.ultiAvailable){
-  stateVariables.lantern.setLuminosity();
-  this.ultiAvailable = false;
-  stateVariables.inventory.resetUltimate();
-  const reset = setTimeout(() => {
-    stateVariables.lantern.resetLuminosity();
-    const ultimateCooldown = setTimeout(() => {
-      this.ultiAvailable = true;
-      clearTimeout(ultimateCooldown);
-    }, stateVariables.inventory.abilities["light"].maxCooldown * 1000 - 5000);
-    clearTimeout(reset);
-  }, 5000);
-}else{
- stateVariables.inventory.displayMessage(stateVariables.ctx, "", "Ability on Cooldown!");
-}
-  
-}
+  useUltimate() {
+    if (this.ultiAvailable) {
+      stateVariables.lantern.setLuminosity();
+      this.ultiAvailable = false;
+      stateVariables.inventory.resetUltimate();
+      const reset = setTimeout(() => {
+        stateVariables.lantern.resetLuminosity();
+        const ultimateCooldown = setTimeout(() => {
+          this.ultiAvailable = true;
+          clearTimeout(ultimateCooldown);
+        }, stateVariables.inventory.abilities["light"].maxCooldown * 1000 - 5000);
+        clearTimeout(reset);
+      }, 5000);
+    } else {
+      stateVariables.inventory.displayMessage(
+        stateVariables.ctx,
+        "",
+        "Ability on Cooldown!"
+      );
+    }
+  }
 }
