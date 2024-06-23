@@ -26,8 +26,11 @@ import { getRandomInt } from "./utils/util";
 
 export function preload() {
   stateVariables.player = new Character();
-  stateVariables.player.initialiseImages(`assets/character/images/characters/${gameOptions.character}`, 4);
-  console.log(gameOptions.character)
+  stateVariables.player.initialiseImages(
+    `assets/character/images/characters/${gameOptions.character}`,
+    4
+  );
+  console.log(gameOptions.character);
   stateVariables.player.direction = "r";
   stateVariables.player.startPoint.x = stateVariables.windowWidth / 2;
   stateVariables.player.startPoint.y = stateVariables.windowHeight / 2;
@@ -50,6 +53,17 @@ export function preload() {
   stateVariables.animateEnemyArray.push(animateEnemy);
   stateVariables.mainMenu.initialiseImages();
   loadFonts();
+  stateVariables.flameImages = loadImages("assets/flame", 30);
+}
+
+export function loadImages(path: string, num: number) {
+  const imagesArray = [];
+  for (let i = 0; i < num; i++) {
+    const img = new Image();
+    img.src = `${path}/${i}.png`;
+    imagesArray.push(img);
+  }
+  return imagesArray;
 }
 
 export function adjustCanvasSize() {
@@ -70,13 +84,14 @@ export function startJourney() {
   generateEnemy(100);
   generateRandomPickupItems(100);
 
-  
-  stateVariables.player.initialiseImages(`assets/character/images/characters/${gameOptions.character}`, 4);
-  console.log(gameOptions.character)
+  stateVariables.player.initialiseImages(
+    `assets/character/images/characters/${gameOptions.character}`,
+    4
+  );
+  console.log(gameOptions.character);
   stateVariables.player.direction = "r";
   stateVariables.player.startPoint.x = stateVariables.windowWidth / 2;
   stateVariables.player.startPoint.y = stateVariables.windowHeight / 2;
-
 
   stateVariables.enemiesArray.forEach((enemy) => {
     enemy.MAX_HEALTH =
@@ -90,18 +105,52 @@ export function startJourney() {
   });
 }
 
-export function displayCursorImage(){
-  if (stateVariables.player.currWeapon == "gun"){
+export function displayCursorImage(
+  ctx: CanvasRenderingContext2D = stateVariables.ctx
+) {
+  ctx.save();
+  if (stateVariables.player.abilityMode) {
+    stateVariables.cursorImage.src = "./assets/direction.png";
+    ctx.translate(stateVariables.mouseCoords.x, stateVariables.mouseCoords.y ); 
+    ctx.rotate(
+      Math.atan2(
+        stateVariables.mouseCoords.y - stateVariables.player.startPoint.y + 50,
+        stateVariables.mouseCoords.x - stateVariables.player.startPoint.x + 30 
+      )
+    );
+    ctx.drawImage(
+      stateVariables.cursorImage,
+      0,
+      0,
+      50,
+      50
+    );
+    ctx.restore();
+  } else if (stateVariables.player.currWeapon == "gun") {
     stateVariables.cursorImage.src = "./assets/crosshair.png";
-  }else{
+    ctx.drawImage(
+      stateVariables.cursorImage,
+      stateVariables.mouseCoords.x,
+      stateVariables.mouseCoords.y,
+      30,
+      30
+    );
+  } else {
     stateVariables.cursorImage.src = "./assets/attack.png";
+    ctx.drawImage(
+      stateVariables.cursorImage,
+      stateVariables.mouseCoords.x,
+      stateVariables.mouseCoords.y,
+      30,
+      30
+    );
   }
-  stateVariables.ctx.drawImage(stateVariables.cursorImage, stateVariables.mouseCoords.x , stateVariables.mouseCoords.y, 30,30);
+
 
 }
 
 export function generateRandomPickupItems(num: number) {
- while(num != 0){
+  while (num != 0) {
     const itemType =
       Math.random() < 0.3
         ? Math.random() < 0.5
@@ -110,18 +159,15 @@ export function generateRandomPickupItems(num: number) {
         : pickupItemsTypes.fuel;
     let posX = Math.random() * stateVariables.bgImage.w;
     let posY = Math.random() * stateVariables.bgImage.h;
-    if(!stateVariables.bgImage.checkCollision(posX, posY)){
-    const pickupItem = new PickupItems(
-      posX, posY,
-      itemType
-    );
-    pickupItem.initialiseImages();
+    if (!stateVariables.bgImage.checkCollision(posX, posY)) {
+      const pickupItem = new PickupItems(posX, posY, itemType);
+      pickupItem.initialiseImages();
 
-    stateVariables.pickupItemsArray.push(pickupItem);
-    const animatePickupItem = new AnimateEntity(pickupItem.images, 12);
-    stateVariables.animatePickupItemsArray.push(animatePickupItem);
-    num--;
-  }
+      stateVariables.pickupItemsArray.push(pickupItem);
+      const animatePickupItem = new AnimateEntity(pickupItem.images, 12);
+      stateVariables.animatePickupItemsArray.push(animatePickupItem);
+      num--;
+    }
   }
 }
 
@@ -137,8 +183,7 @@ export function handlePickupItems() {
     stateVariables.pickupItemsArray[i].collect();
     if (stateVariables.pickupItemsArray[i].isUsed) {
       stateVariables.pickupItemsArray.splice(i, 1);
-      stateVariables.animatePickupItemsArray.splice(i,1);
-
+      stateVariables.animatePickupItemsArray.splice(i, 1);
     }
   }
 }
@@ -188,12 +233,11 @@ export function handleEnemies() {
 }
 
 export function handleBoss() {
-    stateVariables.boss.show();
-    stateVariables.boss.move();
-    stateVariables.boss.determineDirection();
-    stateVariables.boss.updateAttributes();
-    stateVariables.boss.spawnEnemy();
-    
+  stateVariables.boss.show();
+  stateVariables.boss.move();
+  stateVariables.boss.determineDirection();
+  stateVariables.boss.updateAttributes();
+  stateVariables.boss.spawnEnemy();
 }
 
 export function getMouseCoords(event: MouseEvent) {
@@ -210,6 +254,14 @@ export function handleProjectiles() {
   });
   stateVariables.bulletProjectileArray =
     stateVariables.bulletProjectileArray.filter(
+      (projectile) => !projectile.toDelete
+    );
+  stateVariables.fireProjectileArray.forEach((projectile) => {
+    projectile.show();
+    projectile.move();
+  });
+  stateVariables.fireProjectileArray =
+    stateVariables.fireProjectileArray.filter(
       (projectile) => !projectile.toDelete
     );
 }
@@ -257,16 +309,19 @@ export function drawChannelledAnimation() {
     stateVariables.windowWidth / 2,
     barY - 10
   );
- 
 }
 
-
-
 export function generateEnemy(num: number) {
-  while(num != 0){
-    let posX = getRandomInt(stateVariables.bgImage.startPoint.x, stateVariables.bgImage.startPoint.x+stateVariables.bgImage.w);
-    let posY = getRandomInt(stateVariables.bgImage.startPoint.y, stateVariables.bgImage.startPoint.y+stateVariables.bgImage.h);
-    if(!stateVariables.bgImage.checkCollision(posX, posY)){
+  while (num != 0) {
+    let posX = getRandomInt(
+      stateVariables.bgImage.startPoint.x,
+      stateVariables.bgImage.startPoint.x + stateVariables.bgImage.w
+    );
+    let posY = getRandomInt(
+      stateVariables.bgImage.startPoint.y,
+      stateVariables.bgImage.startPoint.y + stateVariables.bgImage.h
+    );
+    if (!stateVariables.bgImage.checkCollision(posX, posY)) {
       let enemy = new Enemy(posX, posY);
       enemy.initialiseGolblinImages("assets/enemy/goblin", 6);
       let animateEnemy = new AnimateEntity(enemy.images_front, 2);
@@ -274,11 +329,16 @@ export function generateEnemy(num: number) {
       stateVariables.animateEnemyArray.push(animateEnemy);
       num--;
     }
-    
   }
 }
 
-export function drawEllipse(ctx:CanvasRenderingContext2D , x:number, y:number, width:number, height:number) {
+export function drawEllipse(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+) {
   ctx.beginPath();
   ctx.ellipse(x, y, width / 2, height / 2, 0, 0, Math.PI * 2);
   ctx.fill();
@@ -286,97 +346,126 @@ export function drawEllipse(ctx:CanvasRenderingContext2D , x:number, y:number, w
 }
 
 export function checkHitToEnemy() {
-  if(stateVariables.player.currWeapon == "gun"){
-    
-  stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
-    for(let i=0; i<stateVariables.enemiesArray.length; i++){
-      if (bulletProjectile.hits(stateVariables.enemiesArray[i])) {
-        stateVariables.enemiesArray[i].health -= 1;
-        bulletProjectile.evaporate();
+  if (stateVariables.player.currWeapon == "gun") {
+    stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
+      for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
+        if (bulletProjectile.hits(stateVariables.enemiesArray[i])) {
+          stateVariables.enemiesArray[i].health -= 1;
+          bulletProjectile.evaporate();
 
-        const bloodParticle = new BloodParticle(
-          stateVariables.enemiesArray[i].startPoint.x - stateVariables.bgImage.startPoint.x,
-          stateVariables.enemiesArray[i].startPoint.y - stateVariables.bgImage.startPoint.y
-        );
-        bloodParticle.initialiseImages("assets/blood", 7);
-        stateVariables.bloodParticleArray.push(bloodParticle);
-        if (!stateVariables.enemiesArray[i].isAlive) {
-          stateVariables.player.score++;
-          stateVariables.enemiesArray.splice(i,1);
-          stateVariables.animateEnemyArray.splice(i,1);
-
+          const bloodParticle = new BloodParticle(
+            stateVariables.enemiesArray[i].startPoint.x -
+              stateVariables.bgImage.startPoint.x,
+            stateVariables.enemiesArray[i].startPoint.y -
+              stateVariables.bgImage.startPoint.y
+          );
+          bloodParticle.initialiseImages("assets/blood", 7);
+          stateVariables.bloodParticleArray.push(bloodParticle);
+          if (!stateVariables.enemiesArray[i].isAlive) {
+            stateVariables.player.score++;
+            stateVariables.enemiesArray.splice(i, 1);
+            stateVariables.animateEnemyArray.splice(i, 1);
+          }
         }
       }
-    }
-  });
-  }else if(stateVariables.player.currWeapon == "axe" && stateVariables.player.isAttacking){
-    for(let i=0; i<stateVariables.enemiesArray.length; i++){
+    });
+  } else if (
+    stateVariables.player.currWeapon == "axe" &&
+    stateVariables.player.isAttacking
+  ) {
+    for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
       if (stateVariables.axe.hits(stateVariables.enemiesArray[i])) {
         stateVariables.enemiesArray[i].health -= 0.1;
         const bloodParticle = new BloodParticle(
-          stateVariables.enemiesArray[i].startPoint.x - stateVariables.bgImage.startPoint.x,
-          stateVariables.enemiesArray[i].startPoint.y - stateVariables.bgImage.startPoint.y
+          stateVariables.enemiesArray[i].startPoint.x -
+            stateVariables.bgImage.startPoint.x,
+          stateVariables.enemiesArray[i].startPoint.y -
+            stateVariables.bgImage.startPoint.y
         );
         bloodParticle.initialiseImages("assets/blood", 7);
         stateVariables.bloodParticleArray.push(bloodParticle);
         if (!stateVariables.enemiesArray[i].isAlive) {
           stateVariables.player.score++;
-          stateVariables.enemiesArray.splice(i,1);
-          stateVariables.animateEnemyArray.splice(i,1);
+          stateVariables.enemiesArray.splice(i, 1);
+          stateVariables.animateEnemyArray.splice(i, 1);
         }
       }
     }
   }
+  stateVariables.fireProjectileArray.forEach((fireProjectile) => {
+    for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
+      if (fireProjectile.hits(stateVariables.enemiesArray[i])) {
+        stateVariables.enemiesArray[i].health -= 5;
+
+        const bloodParticle = new BloodParticle(
+          stateVariables.enemiesArray[i].startPoint.x -
+            stateVariables.bgImage.startPoint.x,
+          stateVariables.enemiesArray[i].startPoint.y -
+            stateVariables.bgImage.startPoint.y
+        );
+        bloodParticle.initialiseImages("assets/blood", 7);
+        stateVariables.bloodParticleArray.push(bloodParticle);
+        if (!stateVariables.enemiesArray[i].isAlive) {
+          stateVariables.player.score++;
+          stateVariables.enemiesArray.splice(i, 1);
+          stateVariables.animateEnemyArray.splice(i, 1);
+        }
+      }
+    }
+  });
   for (let i = stateVariables.bloodParticleArray.length - 1; i >= 0; i--) {
     stateVariables.bloodParticleArray[i].showAnimation();
     if (!stateVariables.bloodParticleArray[i].show) {
       stateVariables.bloodParticleArray.splice(i, 1);
     }
   }
-
-  for (let i = stateVariables.bulletProjectileArray.length - 1; i >= 0; i--) {
-    if (stateVariables.bulletProjectileArray[i].toDelete) {
-      stateVariables.bulletProjectileArray.splice(i, 1);
-    }
-  }
 }
 
 export function checkHitToBoss() {
-  if(stateVariables.boss.hasWakeUp){
-  if(stateVariables.player.currWeapon == "gun"){
-    
-  stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
+  if (stateVariables.boss.hasWakeUp) {
+    if (stateVariables.player.currWeapon == "gun") {
+      stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
+        if (bulletProjectile.hits(stateVariables.boss)) {
+          stateVariables.boss.health -= 1;
+          bulletProjectile.evaporate();
 
-      if (bulletProjectile.hits(stateVariables.boss)) {
-        stateVariables.boss.health -= 1;
-        bulletProjectile.evaporate();
-
-        const bloodParticle = new BloodParticle(
-          stateVariables.boss.startPoint.x - stateVariables.bgImage.startPoint.x,
-          stateVariables.boss.startPoint.y - stateVariables.bgImage.startPoint.y
-        );
-        bloodParticle.initialiseImages("assets/blood", 7);
-        stateVariables.bloodParticleArray.push(bloodParticle);
-        
-      }
-    
-  });
-  }else if(stateVariables.player.currWeapon == "axe" && stateVariables.player.isAttacking){
-
+          const bloodParticle = new BloodParticle(
+            stateVariables.boss.startPoint.x -
+              stateVariables.bgImage.startPoint.x,
+            stateVariables.boss.startPoint.y -
+              stateVariables.bgImage.startPoint.y
+          );
+          bloodParticle.initialiseImages("assets/blood", 7);
+          stateVariables.bloodParticleArray.push(bloodParticle);
+        }
+      });
+    } else if (
+      stateVariables.player.currWeapon == "axe" &&
+      stateVariables.player.isAttacking
+    ) {
       if (stateVariables.axe.hits(stateVariables.boss)) {
         stateVariables.boss.health -= 0.1;
         const bloodParticle = new BloodParticle(
-          stateVariables.boss.startPoint.x - stateVariables.bgImage.startPoint.x,
+          stateVariables.boss.startPoint.x -
+            stateVariables.bgImage.startPoint.x,
           stateVariables.boss.startPoint.y - stateVariables.bgImage.startPoint.y
         );
         bloodParticle.initialiseImages("assets/blood", 7);
         stateVariables.bloodParticleArray.push(bloodParticle);
-
       }
-    
+    }
+    stateVariables.fireProjectileArray.forEach((fireProjectile) => {
+      if (fireProjectile.hits(stateVariables.boss)) {
+        stateVariables.boss.health -= 5;
+
+        const bloodParticle = new BloodParticle(
+          stateVariables.boss.startPoint.x -
+            stateVariables.bgImage.startPoint.x,
+          stateVariables.boss.startPoint.y - stateVariables.bgImage.startPoint.y
+        );
+        bloodParticle.initialiseImages("assets/blood", 7);
+        stateVariables.bloodParticleArray.push(bloodParticle);
+      }
+    });
   }
-
-
-
-}
 }

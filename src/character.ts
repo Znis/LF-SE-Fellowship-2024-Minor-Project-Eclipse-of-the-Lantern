@@ -1,5 +1,6 @@
 import { inventory, stateVariables } from "./stateVariables";
 import { Point } from "./shapes/point";
+import { FireProjectile } from "./weapons/fireProjectile";
 
 export class Character {
   id: string;
@@ -24,9 +25,9 @@ export class Character {
   frameTime: number;
   currWeapon: string;
   isAttacking: boolean;
-  ultiAvailable: boolean;
   isWalking: boolean;
   isRunning: boolean;
+  abilityMode: boolean;
   constructor() {
     this.id = "";
     this.startPoint = new Point(0, 0);
@@ -51,9 +52,9 @@ export class Character {
     this.frameTime = 4;
     this.currWeapon = "axe";
     this.isAttacking = false;
-    this.ultiAvailable = true;
     this.isWalking = false;
     this.isRunning = false;
+    this.abilityMode = false;
   }
 
   initialiseImages(path: string, no_of_frames: number) {
@@ -210,17 +211,16 @@ export class Character {
     inventory.medKit--;
   }
 
-  useUltimate() {
-    if (this.ultiAvailable) {
+  useAbility(ability: string) {
+    if(ability == "light"){
+      if (stateVariables.inventory.abilities[0].cooldown == 0) {
       stateVariables.lantern.setLuminosity();
-      this.ultiAvailable = false;
-      stateVariables.inventory.resetUltimate();
+      stateVariables.inventory.resetAbility(ability);
       const reset = setTimeout(() => {
         stateVariables.lantern.resetLuminosity();
-        const ultimateCooldown = setTimeout(() => {
-          this.ultiAvailable = true;
-          clearTimeout(ultimateCooldown);
-        }, stateVariables.inventory.abilities["light"].maxCooldown * 1000 - 5000);
+        const abilityCooldown = setTimeout(() => {
+          clearTimeout(abilityCooldown);
+        }, stateVariables.inventory.abilities[0].maxCooldown * 1000 - 5000);
         clearTimeout(reset);
       }, 5000);
     } else {
@@ -230,5 +230,25 @@ export class Character {
         "Ability on Cooldown!"
       );
     }
+  }else if(ability == "flame"){
+    if (stateVariables.inventory.abilities[1].cooldown == 0) {
+  
+      stateVariables.inventory.resetAbility(ability);
+      const projectile = new FireProjectile(
+        new Point(
+          stateVariables.player.startPoint.x + 60,
+          stateVariables.player.startPoint.y + 20
+        ),
+        stateVariables.player.direction,
+        new Point(stateVariables.mouseCoords.x, stateVariables.mouseCoords.y),
+        true
+      );
+      stateVariables.fireProjectileArray.push(projectile);
+      const abilityCooldown = setTimeout(() => {
+        clearTimeout(abilityCooldown);
+      }, stateVariables.inventory.abilities[1].maxCooldown * 1000);
+    
+  }
+}
   }
 }

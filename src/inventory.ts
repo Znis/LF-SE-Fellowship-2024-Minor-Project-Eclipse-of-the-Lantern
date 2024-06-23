@@ -1,20 +1,28 @@
 import { canvas } from "./main";
 import { inventory, stateVariables } from "./stateVariables";
 
+interface Ability {
+  name: string;
+  src: string,
+  maxCooldown: number;
+  cooldown: number;
+  cooldownInterval: number;
+}
 export class Inventory {
   fuelImg: HTMLImageElement;
   medKitImg: HTMLImageElement;
   ammoImg: HTMLImageElement;
-  abilities: { [key: string]: {[key: string]: number} };
+  abilities: Ability[];
   showMessage: boolean;
   constructor() {
     this.fuelImg = {} as HTMLImageElement;
     this.medKitImg = {} as HTMLImageElement;
     this.ammoImg = {} as HTMLImageElement;
-    this.abilities = {
-      "light": {  maxCooldown: 20, cooldown: 0, cooldownInterval: 0 },
+    this.abilities = [
+      { name: "Light of Blessings", src: "assets/abilities/light.png", maxCooldown: 40, cooldown: 0, cooldownInterval: 0 },
+      { name: "Breath of Dragon", src: "assets/abilities/flame.png", maxCooldown: 40, cooldown: 0, cooldownInterval: 0 },
 
-  };
+    ];
   this.showMessage = false;
   }
   initialiseImages() {
@@ -123,30 +131,34 @@ displayWeapons(ctx: CanvasRenderingContext2D = stateVariables.ctx){
       const boxSize = 40;
       const borderColor = "#333";
       const x = stateVariables.windowWidth - 215;
-      const y = 150;
-      const cooldownTime = this.abilities["light"].cooldown;
-      const maxCooldown = this.abilities["light"].maxCooldown;
-
       ctx.font = "18px Outfit";
       ctx.textAlign = "left";
       ctx.fillStyle = "white";
       ctx.fillText("Abilities", x, 120);
+      
+      for(let [index, ability] of this.abilities.entries()){
+        
+      
+      const cooldownTime = ability.cooldown;
+      const maxCooldown = ability.maxCooldown;
+
+      let y = 150 + (index) * 70;
 
 
 
       ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 2;
       ctx.strokeRect(x, y, boxSize, boxSize);
 
       const img = new Image();
-      img.src = "assets/abilities/light.png";
+      img.src = ability.src;
 
       ctx.drawImage(img, x, y, boxSize, boxSize);
 
       ctx.font = "14px Outfit";
       ctx.textAlign = "right";
       ctx.fillStyle = "white";
-      ctx.fillText("Light of Blessings", stateVariables.windowWidth-40, 170);
+      ctx.fillText(ability.name, stateVariables.windowWidth-40, y+25);
 
       if(cooldownTime > 0){
 
@@ -166,19 +178,21 @@ displayWeapons(ctx: CanvasRenderingContext2D = stateVariables.ctx){
 
 
 
-      if(!this.abilities["light"].cooldownInterval){
-      this.abilities["light"].cooldownInterval = setInterval(() => {
+      if(!ability.cooldownInterval){
+      ability.cooldownInterval = setInterval(() => {
          
-        if(this.abilities["light"].cooldown > 0) this.abilities["light"].cooldown--;
+        if(ability.cooldown > 0) ability.cooldown--;
 
       }, 1000);
     }
-
+  }
     }
 
   }
 
-  resetUltimate(){
-    this.abilities["light"].cooldown = this.abilities["light"].maxCooldown;
+  resetAbility(ability: string){
+    if(ability == "light") this.abilities[0].cooldown = this.abilities[0].maxCooldown;
+    if(ability == "flame") this.abilities[1].cooldown = this.abilities[1].maxCooldown;
+    
   }
 }

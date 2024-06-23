@@ -12,6 +12,7 @@ import { Inventory } from './inventory.ts';
 import { Axe } from './weapons/axe.ts';
 import { Gun } from './weapons/gun.ts';
 import { Boss } from './boss.ts';
+import { FireProjectile } from './weapons/fireProjectile.ts';
 
 type stateVariables = {
     refuelStart: number | null;
@@ -26,6 +27,7 @@ type stateVariables = {
     adjustDeviceColliderX: number;
     adjustDeviceColliderY: number;
     bulletProjectileArray: BulletProjectile[];
+    fireProjectileArray: FireProjectile[];
     lantern: Lantern;
     isHoldingRefuelKey: boolean;
     refuelDuration: number;
@@ -47,6 +49,7 @@ type stateVariables = {
     axe: Axe,
     gun: Gun,
     boss: Boss,
+    flameImages: HTMLImageElement[]
 }
 
 export enum GameState {
@@ -140,6 +143,7 @@ export const stateVariables: stateVariables = {
     adjustDeviceColliderX: (window.innerWidth-1536)/2,
     adjustDeviceColliderY: (window.innerHeight-753)/2,
     bulletProjectileArray: [] as BulletProjectile[],
+    fireProjectileArray: [] as FireProjectile[],
     lantern: {} as Lantern,
     refuelStart: 0,
     isHoldingRefuelKey: false,
@@ -163,5 +167,6 @@ export const stateVariables: stateVariables = {
     axe: {} as Axe,
     gun: {} as Gun,
     boss: {} as Boss,
+    flameImages: [] as HTMLImageElement[],
 
 }

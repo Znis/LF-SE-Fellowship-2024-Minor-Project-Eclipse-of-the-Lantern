@@ -2,6 +2,7 @@ import { GameState, inventory, stateVariables } from "./stateVariables";
 import { getMouseCoords } from "./functions";
 import { calculateAngle } from "./utils/util";
 import { Point } from "./shapes/point";
+import { FireProjectile } from "./weapons/fireProjectile";
 
 window.addEventListener(
   "keydown",
@@ -57,8 +58,10 @@ export const mousepress = window.addEventListener("click", () => {
     } else {
       stateVariables.player.direction = "l";
     }
-
-    if (stateVariables.player.currWeapon == "gun") {
+    if(stateVariables.player.abilityMode){
+      stateVariables.player.useAbility("flame");
+    }
+    else if (stateVariables.player.currWeapon == "gun") {
       if (inventory.ammo > 0) {
         stateVariables.player.isAttacking = true;
         stateVariables.gun.fire();
@@ -129,9 +132,21 @@ export function handleControls() {
   }
 
   if (stateVariables.keyState[69]) {
-    stateVariables.player.useUltimate();
+    stateVariables.player.useAbility("light");
   }
-
+  if (stateVariables.keyState[82]) {
+    if (stateVariables.inventory.abilities[1].cooldown == 0) {
+    stateVariables.player.abilityMode = true;
+    } else {
+      stateVariables.inventory.displayMessage(
+        stateVariables.ctx,
+        "",
+        "Ability on Cooldown!"
+      );
+    }
+  }else{
+    stateVariables.player.abilityMode = false;
+  }
   if (stateVariables.keyState[16]) {
     stateVariables.player.frameTime = 2;
     stateVariables.player.increaseSpeed();
