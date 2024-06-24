@@ -2,6 +2,8 @@ import { resumeGame, startJourney } from "./functions";
 import { Point } from "./shapes/point";
 import { GameState, gameOptions, stateVariables } from "./stateVariables";
 import "./controls.ts";
+import { playSound } from "./soundPlayingFunction.ts";
+import { voice } from "./sounds.ts";
 export class MenuScreen {
   startPoint: Point;
   hoveredOption: number;
@@ -234,7 +236,7 @@ export class MenuScreen {
         mouseY > menuItem.y - menuItem.fontSize
       ) {
         isHovered = true;
-
+        playSound(voice.optionhover, 1);
         this.hoveredOption = index;
         noHover = false;
       }
@@ -280,7 +282,7 @@ export class MenuScreen {
         mouseY > charItem.y - 50
       ) {
         ctx.fillStyle = "red";
-
+        playSound(voice.optionhover, 1);
         noHover = false;
         this.hoveredChar = index;
       }
@@ -317,10 +319,13 @@ export class MenuScreen {
   handleSelect() {
     if(stateVariables.gameState == GameState.menuScreen){
 
-    if (this.hoveredChar == 1 || this.hoveredChar == 2)
+    if (this.hoveredChar == 1 || this.hoveredChar == 2){
+      playSound(voice.optionclick, 1);
       this.selectedChar = this.selectedChar == 0 ? 1 : 0;
+    }
 
     if (this.hoveredOption == 2) {
+      playSound(voice.optionclick, 1);
       if (this.difficultyLevel < this.difficulties.length - 1) {
         this.difficultyLevel++;
       } else {
@@ -329,11 +334,13 @@ export class MenuScreen {
     }
   }else{
     if (this.hoveredOption == 2) {
+      playSound(voice.optionclick, 1);
       stateVariables.gameState = GameState.menuScreen;
     }
   }
   if(stateVariables.gameState != GameState.gameFinish){
     if (this.hoveredOption == 1) {
+      playSound(voice.optionclick, 1);
       gameOptions.difficultyLevel = this.difficultyLevel;
       gameOptions.character = this.charInfo[this.selectedChar].name;
       if(stateVariables.gameState == GameState.paused){

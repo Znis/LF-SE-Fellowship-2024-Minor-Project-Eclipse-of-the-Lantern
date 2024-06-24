@@ -2,9 +2,9 @@ import { stateVariables } from "./stateVariables";
 export const mapData = {
   "main-map.jpg": {
     colliders: [
-      { x: 745, y: -440, w: -525, h: -925, color: "green" },
+      { x: 745, y: -440, w: -525, h: -925, color: "blue" },
       { h: -925, w: -2045, x: -830, y: -445, color: "blue" },
-      { x: -1530, y: 450, w: -2045, h: -465, color: "red" },
+      { x: -1530, y: 450, w: -2045, h: -465, color: "blue" },
       { x: -495, y: -695, w: -650, h: -745, color: "blue" },
       { x: -515, y: -700, w: -670, h: -750, color: "blue" },
       { x: -690, y: -700, w: -855, h: -750, color: "blue" },

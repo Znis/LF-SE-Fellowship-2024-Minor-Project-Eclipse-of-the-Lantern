@@ -5,10 +5,10 @@ import {
   stateVariables,
 } from "./stateVariables";
 import { getMouseCoords } from "./functions";
-import { calculateAngle } from "./utils/util";
-import { Point } from "./shapes/point";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
+import { calculateAngle } from "./utils/util";
+import { Point } from "./shapes/point";
 
 window.addEventListener(
   "keydown",
@@ -43,7 +43,7 @@ window.addEventListener(
   true
 );
 
-export const mousepress = window.addEventListener("click", () => {
+export const mousepress =   window.addEventListener("click", () => {
   if (
     stateVariables.gameState == GameState.running &&
     !stateVariables.player.isBlowingLantern &&
@@ -83,9 +83,10 @@ export const mousepress = window.addEventListener("click", () => {
   }
 });
 
+
 let refuelTimeout: number | null = null;
 let healTimeout: number | null = null;
-export function handleControls() {
+export function handleMovementControls() {
   if (stateVariables.keyState[87] && stateVariables.keyState[68]) {
     stateVariables.player.direction = "u";
     stateVariables.player.dirX = -0.72;
@@ -132,6 +133,12 @@ export function handleControls() {
     stateVariables.player.dirY = 0;
     stateVariables.player.isWalking = false;
   }
+}
+export function handleOtherControls(){
+
+
+
+
 
   if (stateVariables.keyState[76]) {
     stateVariables.debugCollider = true;
@@ -165,7 +172,7 @@ export function handleControls() {
       );
       setTimeout(() => {
       playSound(voice.notready, 1);
-      }, 800);
+      }, 1000);
       keyDown.R = true;
 
     }
@@ -213,6 +220,7 @@ export function handleControls() {
           stateVariables.player.isUsingMedkit = true;
           healTimeout = setTimeout(() => {
             stateVariables.player.increaseHealth();
+            playSound(voice.itfeelsgood, 1);
             healTimeout = null;
             stateVariables.player.isUsingMedkit = false;
             stateVariables.isHoldingHealKey = false;
@@ -246,6 +254,7 @@ export function handleControls() {
           stateVariables.isHoldingRefuelKey = true;
           stateVariables.player.isBlowingLantern = true;
           refuelTimeout = setTimeout(() => {
+            playSound(voice.refuelingdone, 1);
             stateVariables.lantern.resetLuminosity();
             inventory.fuel--;
             refuelTimeout = null;

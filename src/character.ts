@@ -184,24 +184,28 @@ if(!(stateVariables.bgImage.startPoint.x +
             stateVariables.windowWidth / 2 <
             0)){
               if(this.dirX > 0) this.dirX = 0;
+              playSound(voice.cantgobeyondthis, 0.01);
             }
           if(!(stateVariables.bgImage.startPoint.y +
             stateVariables.adjustDeviceColliderY -
             stateVariables.windowHeight / 2 >
             -stateVariables.bgImage.h)){
               if(this.dirY < 0) this.dirY = 0;
+              playSound(voice.cantgobeyondthis, 0.01);
             }
           if(!(stateVariables.bgImage.startPoint.y +
             stateVariables.adjustDeviceColliderY -
             stateVariables.windowHeight / 2 <
             0)){
               if(this.dirY > 0) this.dirY = 0;
+              playSound(voice.cantgobeyondthis, 0.01);
             } 
           if(!(stateVariables.bgImage.startPoint.x +
             stateVariables.adjustDeviceColliderX -
             stateVariables.windowWidth / 2 >
             -stateVariables.bgImage.w)){
               if(this.dirX < 0) this.dirX = 0;
+              playSound(voice.cantgobeyondthis, 0.01);
             }
 
 
@@ -215,6 +219,12 @@ if(!(stateVariables.bgImage.startPoint.x +
             pickupItem.startPoint.x += this.movement_speed * this.dirX;
             pickupItem.startPoint.y += this.movement_speed * this.dirY;
           });
+          stateVariables.fireProjectileArray.forEach((fireProjectile) => {
+            if(fireProjectile.owner == "boss"){
+              fireProjectile.startPoint.x += this.movement_speed * this.dirX;
+              fireProjectile.startPoint.y += this.movement_speed * this.dirY;;
+            } 
+          });
           stateVariables.boss.startPoint.x +=
             this.movement_speed * this.dirX;
           stateVariables.boss.startPoint.y +=
@@ -225,6 +235,8 @@ if(!(stateVariables.bgImage.startPoint.x +
             this.movement_speed * this.dirY;
           this.isWalking = true;
           this.change_frames();
+        }else{
+          playSound(voice.collidedontosomething, 0.01);
         }
       }
 
@@ -270,6 +282,7 @@ if(!(stateVariables.bgImage.startPoint.x +
     if(ability == "light"){
       if (stateVariables.inventory.abilities[0].cooldown == 0) {
       playSound(voice.lightofblessings, 1);
+      playSound(voice.lightsound, 1);
       stateVariables.lantern.setLuminosity();
       stateVariables.inventory.resetAbility(ability);
       const reset = setTimeout(() => {
@@ -289,6 +302,7 @@ if(!(stateVariables.bgImage.startPoint.x +
   }else if(ability == "flame"){
     if (stateVariables.inventory.abilities[1].cooldown == 0) {
       playSound(voice.breathofdragon, 1);
+      playSound(voice.flamesound, 1);
       stateVariables.inventory.resetAbility(ability);
       const projectile = new FireProjectile(
         new Point(

@@ -1,4 +1,6 @@
 import { Point } from "./shapes/point";
+import { playSound } from "./soundPlayingFunction";
+import { voice } from "./sounds";
 import fuel from "./sprites/fuel";
 import { inventory, stateVariables } from "./stateVariables";
 import { distance } from "./utils/util";
@@ -85,10 +87,22 @@ export class PickupItems {
   collect() {
     if (distance(this.startPoint, stateVariables.player.startPoint) < 50) {
       if (this.type.itemName == "health_pack") {
+        playSound(voice.medkitpickup, 1);
+        setTimeout(() => {
+        playSound(voice.foundmedkits, 1);
+        }, 500);
         inventory.medKit++;
       } else if (this.type.itemName == "fuel") {
+        playSound(voice.fuelpickup, 1);
+        setTimeout(() => {
+          playSound(voice.foundfuel, 1);
+          }, 500);
         inventory.fuel++;
       } else if (this.type.itemName == "ammo") {
+        playSound(voice.ammopickup, 1);
+        setTimeout(() => {
+          playSound(voice.moreammo, 1);
+          }, 500);
         inventory.ammo += 50;
       }
       this.isUsed = true;

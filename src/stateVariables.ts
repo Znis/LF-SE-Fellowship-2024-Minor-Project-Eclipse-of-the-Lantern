@@ -83,21 +83,21 @@ export const difficultySetting: difficultySetting = {
         enemySpeed: 2,
         enemyMinHealth: 1,
         enemyMaxHealth: 3,
-        enemyAttackDamage: 1,
+        enemyAttackDamage: 0.5,
 
     },
     1: {
-        enemySpeed: 3,
+        enemySpeed: 2.5,
         enemyMinHealth: 2,
-        enemyMaxHealth: 6,
-        enemyAttackDamage: 1.5,
+        enemyMaxHealth: 5,
+        enemyAttackDamage: 1,
 
     },
     2: {
-        enemySpeed: 5,
-        enemyMinHealth: 4,
-        enemyMaxHealth: 10,
-        enemyAttackDamage: 2,
+        enemySpeed: 3,
+        enemyMinHealth: 3,
+        enemyMaxHealth: 6,
+        enemyAttackDamage: 1.5,
 
     }
 

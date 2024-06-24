@@ -5,7 +5,7 @@ import { Point } from "../shapes/point";
 import { playSound } from "../soundPlayingFunction";
 import { voice } from "../sounds";
 import { stateVariables } from "../stateVariables";
-import { distance } from "../utils/util"; 
+import {distance } from "../utils/util"; 
 export class FireProjectile{ 
     startPoint: Point;
     initialX: number;
@@ -18,6 +18,11 @@ export class FireProjectile{
     images: HTMLImageElement[];
     spritePos: number;
     owner: string;
+    dirX: number;
+    dirY:number;
+    dist: number;
+    angle: number;
+
     constructor(startPoint: Point,dir:string,endPoint: Point, owner: string){
         this.startPoint= new Point(startPoint.x-30, startPoint.y+30);
   
@@ -28,6 +33,7 @@ export class FireProjectile{
         this.r = 5;
     
         this.endPoint = new Point(endPoint.x * 1.05, endPoint.y * 1.05);
+
     
         this.movement_speed = 10;
         this.toDelete = false;
@@ -35,10 +41,16 @@ export class FireProjectile{
         this.spritePos = 0;
         this.initialiseImages();
         this.owner = owner;
+        this.dirX = 0;
+        this.dirY = 0;
+        this.dist = 0;
+        this.angle = 0;
+        this.calculateTrajectory();
+
+
     }
 
 initialiseImages(){
-  
       this.images = stateVariables.flameImages;
       
 }
@@ -49,7 +61,7 @@ initialiseImages(){
             ctx.save();
 
         ctx.translate(this.startPoint.x, this.startPoint.y);
-        ctx.rotate(Math.atan2(this.endPoint.y-this.startPoint.y  , this.endPoint.x-this.startPoint.x));
+        ctx.rotate(this.angle);
             ctx.drawImage(
               this.images[position],
               -100,
@@ -81,30 +93,34 @@ initialiseImages(){
 
     }
 
+    calculateTrajectory(){
+
+            let dx = this.endPoint.x - this.startPoint.x;
+            let dy = this.endPoint.y - this.startPoint.y;
+            
+            this.angle = Math.atan2(dy,dx);
+            this.dirX = Math.cos(this.angle);
+            this.dirY = Math.sin(this.angle);
+
+    }
     move(){
         
-  
-            let dx = this.endPoint.x - this.startPoint.x
-            let dy = this.endPoint.y - this.startPoint.y
-                let dist = distance(this.endPoint, this.startPoint);
-                if (dist > this.movement_speed)
-                {
-                    let ratio = this.movement_speed / dist
-                    let x_move = ratio * dx 
-                    let y_move = ratio * dy 
-                    this.startPoint.x = x_move + this.startPoint.x 
-                    this.startPoint.y = y_move + this.startPoint.y
-                }
-                else
-                {   
-                    this.startPoint.x = this.endPoint.x
-                    this.startPoint.y = this.endPoint.y
+            
                     
-                    this.evaporate();
-                }
+                    this.startPoint.x = this.movement_speed * this.dirX + this.startPoint.x;
+                    this.startPoint.y = this.movement_speed * this.dirY + this.startPoint.y;
+
+                
+                   if(this.startPoint.x < 0 || this.startPoint.x > stateVariables.windowWidth ||
+                    this.startPoint.y < 0 || this.startPoint.y > stateVariables.windowHeight ){
+                        this.evaporate();
+                    }
+                    
+                
 
                 
         
         
     }
+
 }

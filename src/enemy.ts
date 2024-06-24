@@ -277,7 +277,7 @@ export class Enemy {
     if(this.health > 0){
     let distanceToPlayer = distance(stateVariables.player.startPoint, this.startPoint);
 
-    if (distanceToPlayer < 1000) {
+    if (distanceToPlayer < 1000 || stateVariables.boss.hasRoar) {
         let dx = this.finalX - this.startPoint.x;
         let dy = this.finalY - this.startPoint.y;
         let distanceToTarget = distance(new Point(this.finalX, this.finalY), this.startPoint);

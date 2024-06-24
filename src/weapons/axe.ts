@@ -140,7 +140,6 @@ export class Axe {
         enemy.startPoint.y + enemy.h / 2
       )
     );
-    playSound(voice.howsharp, 0.05);
 
     if (dist < this.r) {
       return true;

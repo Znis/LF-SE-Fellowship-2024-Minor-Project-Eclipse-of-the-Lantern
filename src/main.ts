@@ -1,4 +1,4 @@
-import { GameState, stateVariables } from "./stateVariables";
+import { GameState, inventory, stateVariables } from "./stateVariables";
 import "./style.css";
 import "./controls";
 import {
@@ -18,7 +18,7 @@ import {
   renderMainMenu,
   renderUi,
 } from "./functions";
-import { handleControls } from "./controls";
+import {handleMovementControls, handleOtherControls } from "./controls";
 import { playSound, playSoundandVoice } from "./soundPlayingFunction";
 import { voice } from "./sounds";
 
@@ -36,10 +36,11 @@ function draw() {
   adjustCanvasSize();
   stateVariables.bgImage.show();
 
-
+console.log(stateVariables.bgImage.startPoint.x - stateVariables.player.startPoint.x/2 +stateVariables.adjustDeviceColliderX)
 playSoundandVoice();
 
   if (stateVariables.gameState == GameState.running) {
+    if(stateVariables.bgImage.name != "house.png"){
     if (stateVariables.rain) stateVariables.ui.renderRainParticles();
     handlePickupItems();
     checkHitToEnemy();
@@ -51,9 +52,23 @@ playSoundandVoice();
     stateVariables.lantern.showLuminosity();
     stateVariables.lantern.changeLuminosity();
     handleProjectiles();
+    handleOtherControls();
+    }else{
+      stateVariables.player.show();
+      stateVariables.bgImage.showDepth();
+      stateVariables.lantern.maxRadiusInnerCircle = 250;
+      stateVariables.player.health = 100;
+      stateVariables.player.stamina = 100;
+      if(inventory.ammo < 100) inventory.ammo = 100;
+      if(inventory.fuel < 5) inventory.fuel = 5;
+      if(inventory.medKit < 5) inventory.medKit = 5;
+      playSound(voice.homesweethome, 1);
+    }
     renderUi();
     renderInventory();
-    handleControls();
+    handleMovementControls();
+    
+
 
     if (
       stateVariables.enemiesArray.length == 0 &&

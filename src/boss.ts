@@ -34,6 +34,7 @@ export class Boss {
   isAlive: boolean;
   hasWakeUp: boolean;
   spawnEnemyInterval: number | null;
+  hasRoar: boolean;
 
   constructor() {
     let posX;
@@ -76,7 +77,7 @@ export class Boss {
     this.damageTimeout = null;
     this.abilityTimeout = null;
 
-    this.default_health = 100;
+    this.default_health = 80;
     this.health = this.default_health;
 
     this.default_movement_speed = 2;
@@ -91,6 +92,7 @@ export class Boss {
     this.isAlive = true;
     this.hasWakeUp = false;
     this.spawnEnemyInterval = null;
+    this.hasRoar = false;
 
     this.initialiseGolblinImages("assets/boss/", 6);
   }
@@ -139,7 +141,10 @@ export class Boss {
   }
 
   show(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
-    if (Math.floor(this.health) > 0) {
+    if (
+      Math.floor(this.health) > 0 &&
+      stateVariables.bgImage.name != "house.png"
+    ) {
       if (this.isAttacking) {
         const staggerFrame = 5;
         let position = Math.floor(this.spritePos / staggerFrame) % 8;
@@ -297,7 +302,23 @@ export class Boss {
         stateVariables.player.startPoint,
         this.startPoint
       );
-      if (distanceToPlayer < 400) this.hasWakeUp = true;
+      if (distanceToPlayer < 400 && !this.hasWakeUp) {
+        this.hasWakeUp = true;
+        playSound(voice.bosswakeup, 1);
+
+        setTimeout(() => {
+          playSound(voice.bosshaswakenup, 1);
+        }, 3000);
+        setTimeout(() => {
+          this.hasRoar = true;
+          playSound(voice.bossroar, 1);
+
+          setTimeout(() => {
+            playSound(voice.bosscallingallgoblins, 1);
+          }, 3000);
+        }, getRandomInt(4, 8));
+      }
+
       if (this.hasWakeUp) {
         let dx = this.finalX - this.startPoint.x;
         let dy = this.finalY - this.startPoint.y;
@@ -382,10 +403,7 @@ export class Boss {
     const projectile = new FireProjectile(
       new Point(this.startPoint.x + this.w / 2, this.startPoint.y + 50),
       this.direction,
-      new Point(
-        stateVariables.player.startPoint.x,
-        stateVariables.player.startPoint.y
-      ),
+      stateVariables.player.startPoint,
       "boss"
     );
     stateVariables.fireProjectileArray.push(projectile);

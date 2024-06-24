@@ -25,7 +25,7 @@ import { Boss } from "./boss";
 import { getRandomInt } from "./utils/util";
 import { mapData } from "./mapData";
 import { voice } from "./sounds";
-import { playSound } from "./soundPlayingFunction";
+import { playSound, resetSound } from "./soundPlayingFunction";
 
 export function preload() {
   stateVariables.player = new Character();
@@ -57,7 +57,31 @@ export function preload() {
   loadFonts();
   stateVariables.flameImages = loadImages("assets/flame", 30);
 }
+export function isPointInCollider(x: number, y: number): boolean {
+  mapData[
+    stateVariables.bgImage.name as keyof typeof mapData
+  ].colliders.forEach((collider: any) => {
+  const colliderX1 = 20 +
+  (stateVariables.windowWidth / 2 +
+    stateVariables.bgImage.startPoint.x -
+    (collider.x + stateVariables.adjustDeviceColliderX));
+  const colliderY1 = 50 +
+  (stateVariables.windowHeight / 2 +
+    stateVariables.bgImage.startPoint.y -
+    (collider.y + stateVariables.adjustDeviceColliderY));
+  const colliderX2 = colliderX1 + Math.abs(collider.x - collider.w);
+  const colliderY2 = colliderY1 + Math.abs(collider.y - collider.h);
 
+  const minX = Math.min(colliderX1, colliderX2);
+  const maxX = Math.max(colliderX1, colliderX2);
+  const minY = Math.min(colliderY1, colliderY2);
+  const maxY = Math.max(colliderY1, colliderY2);
+
+  if( x >= minX && x <= maxX && y >= minY && y <= maxY) return true;
+  
+  });
+  return false;
+}
 export function debugColliderMode() {
   mapData[
     stateVariables.bgImage.name as keyof typeof mapData
@@ -100,9 +124,11 @@ export function checkPlayerHealthAndLanternLuminosity() {
     stateVariables.lantern.maxRadiusInnerCircle <= 0
   )
     stateVariables.gameState = GameState.retryScreen;
+    // playSound(voice.wefailed, 1);
 }
 export function startJourney() {
   resetStateVariables();
+  resetSound();
   stateVariables.gameState = GameState.running;
   generateEnemy(50);
   generateRandomPickupItems(100);
@@ -184,7 +210,7 @@ export function generateRandomPickupItems(num: number) {
       stateVariables.bgImage.startPoint.y,
       stateVariables.bgImage.startPoint.y + stateVariables.bgImage.h
     );
-    if (!stateVariables.bgImage.checkCollision(posX, posY)) {
+    if (!isPointInCollider(posX, posY)) {
       const pickupItem = new PickupItems(posX, posY, itemType);
       pickupItem.initialiseImages();
 
@@ -305,9 +331,11 @@ export function drawChannelledAnimation() {
   if (stateVariables.isHoldingRefuelKey) {
     holdDuration = stateVariables.refuelDuration;
     text = " Refueling Lantern";
+    playSound(voice.refueling, 1);
   } else if (stateVariables.isHoldingHealKey) {
     holdDuration = stateVariables.healDuration;
     text = " Using Med Kit";
+    playSound(voice.usingmedkit, 1);
   }
   const currentTime = new Date().getTime();
   let elapsedTime = 0;
@@ -354,7 +382,7 @@ export function generateEnemy(num: number) {
       stateVariables.bgImage.startPoint.y,
       stateVariables.bgImage.startPoint.y + stateVariables.bgImage.h
     );
-    if (!stateVariables.bgImage.checkCollision(posX, posY)) {
+    if (!isPointInCollider(posX, posY)) {
       let enemy = new Enemy(posX, posY);
       enemy.initialiseGolblinImages("assets/enemy/goblin", 6);
       let animateEnemy = new AnimateEntity(enemy.images_front, 2);
@@ -445,6 +473,7 @@ export function checkHitToEnemy() {
     } else if (fireProjectile.owner == "boss") {
       if (fireProjectile.hits(stateVariables.player)) {
         stateVariables.player.health -= 10;
+        fireProjectile.evaporate();
         playSound(voice.ithurts, 1);
       }
     }
@@ -509,7 +538,7 @@ export function checkHitToBoss() {
         if (fireProjectile.owner == "player") {
           if (fireProjectile.hits(stateVariables.boss)) {
             stateVariables.boss.health -= 10;
-
+            fireProjectile.evaporate();
             playSound(voice.diegoblins, 1);
 
 
