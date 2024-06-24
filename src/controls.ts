@@ -1,4 +1,9 @@
-import { GameState, inventory, stateVariables } from "./stateVariables";
+import {
+  GameState,
+  inventory,
+  keyDown,
+  stateVariables,
+} from "./stateVariables";
 import { getMouseCoords } from "./functions";
 import { calculateAngle } from "./utils/util";
 import { Point } from "./shapes/point";
@@ -57,10 +62,9 @@ export const mousepress = window.addEventListener("click", () => {
     } else {
       stateVariables.player.direction = "l";
     }
-    if(stateVariables.player.abilityMode){
+    if (stateVariables.player.abilityMode) {
       stateVariables.player.useAbility("flame");
-    }
-    else if (stateVariables.player.currWeapon == "gun") {
+    } else if (stateVariables.player.currWeapon == "gun") {
       if (inventory.ammo > 0) {
         stateVariables.player.isAttacking = true;
         stateVariables.gun.fire();
@@ -131,14 +135,18 @@ export function handleControls() {
   }
 
   if (stateVariables.keyState[69]) {
-    stateVariables.player.useAbility("light");
-  }
+      stateVariables.player.useAbility("light");
+  } 
+    
+  
+
   if (stateVariables.keyState[80]) {
     stateVariables.gameState = GameState.paused;
   }
+
   if (stateVariables.keyState[82]) {
     if (stateVariables.inventory.abilities[1].cooldown == 0) {
-    stateVariables.player.abilityMode = true;
+      stateVariables.player.abilityMode = true;
     } else {
       stateVariables.inventory.displayMessage(
         stateVariables.ctx,
@@ -146,45 +154,53 @@ export function handleControls() {
         "Ability on Cooldown!"
       );
     }
-  }else{
+  } else {
     stateVariables.player.abilityMode = false;
   }
-  if (stateVariables.keyState[16]) {
+
+  if (stateVariables.keyState[16] &&
+     !stateVariables.player.isBlowingLantern && !stateVariables.player.isUsingMedkit) {
     stateVariables.player.frameTime = 2;
     stateVariables.player.increaseSpeed();
     stateVariables.player.isRunning = true;
-
   } else {
     stateVariables.player.movement_speed = stateVariables.player.default_speed;
     stateVariables.player.frameTime = 4;
     stateVariables.player.isRunning = false;
-
   }
 
   if (stateVariables.keyState[81]) {
-    stateVariables.player.currWeapon =
-      stateVariables.player.currWeapon == "axe" ? "gun" : "axe";
+    if (!keyDown.Q) {
+      stateVariables.player.currWeapon =
+        stateVariables.player.currWeapon == "axe" ? "gun" : "axe";
+      keyDown.Q = true;
+    }
+  } else {
+    keyDown.Q = false;
   }
 
   if (stateVariables.keyState[32]) {
-    if (!healTimeout && stateVariables.player.health > 0) {
-      if (inventory.medKit > 0) {
-        stateVariables.healStart = new Date().getTime();
-        stateVariables.isHoldingHealKey = true;
-        stateVariables.player.isUsingMedkit = true;
-        healTimeout = setTimeout(() => {
-          stateVariables.player.increaseHealth();
-          healTimeout = null;
-          stateVariables.player.isUsingMedkit = false;
-          stateVariables.isHoldingHealKey = false;
-          stateVariables.healStart = null;
-        }, stateVariables.healDuration);
-      } else {
-        stateVariables.inventory.displayMessage(
-          stateVariables.ctx,
-          "health_pack"
-        );
+    if (!keyDown.SPACE) {
+      if (!healTimeout && stateVariables.player.health > 0) {
+        if (inventory.medKit > 0) {
+          stateVariables.healStart = new Date().getTime();
+          stateVariables.isHoldingHealKey = true;
+          stateVariables.player.isUsingMedkit = true;
+          healTimeout = setTimeout(() => {
+            stateVariables.player.increaseHealth();
+            healTimeout = null;
+            stateVariables.player.isUsingMedkit = false;
+            stateVariables.isHoldingHealKey = false;
+            stateVariables.healStart = null;
+          }, stateVariables.healDuration);
+        } else {
+          stateVariables.inventory.displayMessage(
+            stateVariables.ctx,
+            "health_pack"
+          );
+        }
       }
+      keyDown.SPACE = true;
     }
   } else {
     if (healTimeout && stateVariables.player.health > 0) {
@@ -194,25 +210,31 @@ export function handleControls() {
       stateVariables.player.isUsingMedkit = false;
       stateVariables.healStart = null;
     }
+    keyDown.SPACE = false;
   }
+    
+
 
   if (stateVariables.keyState[70]) {
-    if (!refuelTimeout && stateVariables.player.health > 0) {
-      if (inventory.fuel > 0) {
-        stateVariables.refuelStart = new Date().getTime();
-        stateVariables.isHoldingRefuelKey = true;
-        stateVariables.player.isBlowingLantern = true;
-        refuelTimeout = setTimeout(() => {
-          stateVariables.lantern.resetLuminosity();
-          inventory.fuel--;
-          refuelTimeout = null;
-          stateVariables.player.isBlowingLantern = false;
-          stateVariables.isHoldingRefuelKey = false;
-          stateVariables.refuelStart = null;
-        }, stateVariables.refuelDuration);
-      } else {
-        stateVariables.inventory.displayMessage(stateVariables.ctx, "fuel");
+    if (!keyDown.F) {
+      if (!refuelTimeout && stateVariables.player.health > 0) {
+        if (inventory.fuel > 0) {
+          stateVariables.refuelStart = new Date().getTime();
+          stateVariables.isHoldingRefuelKey = true;
+          stateVariables.player.isBlowingLantern = true;
+          refuelTimeout = setTimeout(() => {
+            stateVariables.lantern.resetLuminosity();
+            inventory.fuel--;
+            refuelTimeout = null;
+            stateVariables.player.isBlowingLantern = false;
+            stateVariables.isHoldingRefuelKey = false;
+            stateVariables.refuelStart = null;
+          }, stateVariables.refuelDuration);
+        } else {
+          stateVariables.inventory.displayMessage(stateVariables.ctx, "fuel");
+        }
       }
+      keyDown.F = true;
     }
   } else {
     if (refuelTimeout && stateVariables.player.health > 0) {
@@ -222,5 +244,8 @@ export function handleControls() {
       stateVariables.player.isBlowingLantern = false;
       stateVariables.refuelStart = null;
     }
+    keyDown.F = false;
   }
+ 
+
 }

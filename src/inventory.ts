@@ -22,14 +22,14 @@ export class Inventory {
       {
         name: "Light of Blessings",
         src: "assets/abilities/light.png",
-        maxCooldown: 40,
+        maxCooldown: 30,
         cooldown: 0,
         cooldownInterval: 0,
       },
       {
         name: "Breath of Dragon",
         src: "assets/abilities/flame.png",
-        maxCooldown: 40,
+        maxCooldown: 20,
         cooldown: 0,
         cooldownInterval: 0,
       },

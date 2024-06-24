@@ -167,23 +167,39 @@ export class Character {
               this.movement_speed * this.dirX,
             stateVariables.bgImage.startPoint.y +
               this.movement_speed * this.dirY)
-          // stateVariables.bgImage.startPoint.x +
-          //   stateVariables.adjustDeviceColliderX -
-          //   stateVariables.windowWidth / 2 <
-          //   0 &&
-          // stateVariables.bgImage.startPoint.y +
-          //   stateVariables.adjustDeviceColliderY -
-          //   stateVariables.windowHeight / 2 >
-          //   -stateVariables.bgImage.h &&
-          // stateVariables.bgImage.startPoint.y +
-          //   stateVariables.adjustDeviceColliderY -
-          //   stateVariables.windowHeight / 2 <
-          //   0 &&
-          // stateVariables.bgImage.startPoint.x +
-          //   stateVariables.adjustDeviceColliderX -
-          //   stateVariables.windowWidth / 2 >
-          //   -stateVariables.bgImage.w
+          
         ) {
+
+
+
+if(!(stateVariables.bgImage.startPoint.x +
+            stateVariables.adjustDeviceColliderX -
+            stateVariables.windowWidth / 2 <
+            0)){
+              if(this.dirX > 0) this.dirX = 0;
+            }
+          if(!(stateVariables.bgImage.startPoint.y +
+            stateVariables.adjustDeviceColliderY -
+            stateVariables.windowHeight / 2 >
+            -stateVariables.bgImage.h)){
+              if(this.dirY < 0) this.dirY = 0;
+            }
+          if(!(stateVariables.bgImage.startPoint.y +
+            stateVariables.adjustDeviceColliderY -
+            stateVariables.windowHeight / 2 <
+            0)){
+              if(this.dirY > 0) this.dirY = 0;
+            } 
+          if(!(stateVariables.bgImage.startPoint.x +
+            stateVariables.adjustDeviceColliderX -
+            stateVariables.windowWidth / 2 >
+            -stateVariables.bgImage.w)){
+              if(this.dirX < 0) this.dirX = 0;
+            }
+
+
+
+
           stateVariables.enemiesArray.forEach((enemy) => {
             enemy.startPoint.x += this.movement_speed * this.dirX;
             enemy.startPoint.y += this.movement_speed * this.dirY;
@@ -208,6 +224,32 @@ export class Character {
 
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   increaseHealth() {
     stateVariables.player.health += 20;

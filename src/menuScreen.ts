@@ -175,6 +175,31 @@ export class MenuScreen {
         },
       ];
       this.charItems = [];
+    }else if (stateVariables.gameState == GameState.gameFinish){
+      this.menuItems = [
+        {
+          text: "Eclipse of the Lantern",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 15) * 0,
+          type: 1,
+        },
+        {
+          text: "CONGRATULATIONS! You conquered the enemies.",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 2,
+          type: 0,
+        },
+        {
+          text: "QUIT",
+          fontSize: stateVariables.windowWidth / 20,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          type: 0,
+        },
+      ];
+      this.charItems = [];
     }
   }
 
@@ -290,7 +315,7 @@ export class MenuScreen {
   }
 
   handleSelect() {
-    if(stateVariables.gameState != GameState.paused){
+    if(stateVariables.gameState == GameState.menuScreen){
 
     if (this.hoveredChar == 1 || this.hoveredChar == 2)
       this.selectedChar = this.selectedChar == 0 ? 1 : 0;
@@ -307,6 +332,7 @@ export class MenuScreen {
       stateVariables.gameState = GameState.menuScreen;
     }
   }
+  if(stateVariables.gameState != GameState.gameFinish){
     if (this.hoveredOption == 1) {
       gameOptions.difficultyLevel = this.difficultyLevel;
       gameOptions.character = this.charInfo[this.selectedChar].name;
@@ -317,5 +343,6 @@ export class MenuScreen {
       }
       
     }
+  }
   }
 }

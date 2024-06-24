@@ -23,6 +23,7 @@ import { Axe } from "./weapons/axe";
 import { Gun } from "./weapons/gun";
 import { Boss } from "./boss";
 import { getRandomInt } from "./utils/util";
+import { mapData } from "./mapData";
 
 
 
@@ -59,6 +60,27 @@ export function preload() {
 
 }
 
+export function debugColliderMode(){
+  mapData[
+    stateVariables.bgImage.name as keyof typeof mapData
+  ].colliders.forEach((collider: any) => {
+    stateVariables.ctx.fillStyle = collider.color || "#ffffff";
+    stateVariables.ctx.beginPath();
+    stateVariables.ctx.fillRect(
+      20 +
+        (stateVariables.windowWidth / 2 +
+          stateVariables.bgImage.startPoint.x -
+          (collider.x + stateVariables.adjustDeviceColliderX)),
+      50 +
+        (stateVariables.windowHeight / 2 +
+          stateVariables.bgImage.startPoint.y -
+          (collider.y + stateVariables.adjustDeviceColliderY)),
+      Math.abs(collider.x - collider.w),
+      Math.abs(collider.y - collider.h)
+    );
+  });
+}
+
 export function loadImages(path: string, num: number) {
   const imagesArray = [];
   for (let i = 0; i < num; i++) {
@@ -84,7 +106,7 @@ export function checkPlayerHealthAndLanternLuminosity() {
 export function startJourney() {
   resetStateVariables();
   stateVariables.gameState = GameState.running;
-  generateEnemy(100);
+  generateEnemy(50);
   generateRandomPickupItems(100);
 
   stateVariables.player.initialiseImages(
@@ -155,11 +177,12 @@ export function displayCursorImage(
 export function generateRandomPickupItems(num: number) {
   while (num != 0) {
     const itemType =
-      Math.random() < 0.3
+      Math.random() < 0.8
         ? Math.random() < 0.5
           ? pickupItemsTypes.ammo
           : pickupItemsTypes.health_pack
         : pickupItemsTypes.fuel;
+
         let posX = getRandomInt(
           stateVariables.bgImage.startPoint.x,
           stateVariables.bgImage.startPoint.x + stateVariables.bgImage.w
@@ -448,6 +471,7 @@ export function checkHitToEnemy() {
 
 
 export function checkHitToBoss() {
+  if(stateVariables.boss.health > 0){
   if (stateVariables.boss.hasWakeUp) {
     if (stateVariables.player.currWeapon == "gun") {
       stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
@@ -496,4 +520,7 @@ export function checkHitToBoss() {
     }
     });
   }
+}else{
+  stateVariables.boss.isAlive = false;
+}
 }

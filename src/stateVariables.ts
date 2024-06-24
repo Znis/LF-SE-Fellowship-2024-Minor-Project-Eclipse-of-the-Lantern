@@ -53,6 +53,13 @@ type stateVariables = {
 
 }
 
+
+export const keyDown = {
+    "Q": false,
+    "F": false,
+    "SPACE": false
+}
+
 export enum GameState {
     menuScreen = "welcomeScreen",
     running = "running",
@@ -60,6 +67,7 @@ export enum GameState {
     resume = "resume",
     retryScreen = "retryScreen",
     restart = "restart",
+    gameFinish = "gameFinish",
   }
 
 type difficultySetting = {

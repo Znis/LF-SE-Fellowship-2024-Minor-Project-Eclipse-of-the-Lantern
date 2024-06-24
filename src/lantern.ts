@@ -11,12 +11,16 @@ export class Lantern {
   maxRadiusInnerCircle: number;
   maxRadiusOuterCircle: number;
   decreaseLuminosity: number | null;
+  setLuminosityInterval: number | null;
+  resetLuminosityInterval: number | null;
   brightnessDecreaseRate: number;
   spritePos: number;
   r: number;
   blowingLantern: number | null;
   constructor() {
     this.decreaseLuminosity = null;
+    this.setLuminosityInterval = null;
+    this.resetLuminosityInterval = null;
     this.x = stateVariables.player.startPoint.x + 15;
     this.y = stateVariables.player.startPoint.y + 45;
     this.img = new Image();
@@ -146,9 +150,10 @@ export class Lantern {
   }
   resetLuminosity() {
     this.brightnessDecreaseRate = LANTERN_BRIGHTNESS_DECREASE_RATE;
-    const resetLuminosity = setInterval(() => {
+    this.resetLuminosityInterval = setInterval(() => {
       if (this.maxRadiusInnerCircle == 250) {
-        clearInterval(resetLuminosity);
+        clearInterval(this.resetLuminosityInterval!);
+        this.resetLuminosityInterval = null;
       } else if (this.maxRadiusInnerCircle > 250) {
         this.maxRadiusInnerCircle -= 1;
       } else if (this.maxRadiusInnerCircle < 250) {
@@ -159,7 +164,7 @@ export class Lantern {
 
   setLuminosity() {
     this.brightnessDecreaseRate = 0;
-    const setLuminosity = setInterval(() => {
+    this.setLuminosityInterval = setInterval(() => {
       if (
         this.maxRadiusInnerCircle >=
         Math.max(canvas.width / 2, canvas.height / 2)
@@ -168,7 +173,8 @@ export class Lantern {
           canvas.width / 2,
           canvas.height / 2
         );
-        clearInterval(setLuminosity);
+        clearInterval(this.setLuminosityInterval!);
+        this.setLuminosityInterval = null;
       } else {
         this.maxRadiusInnerCircle += 1;
       }
