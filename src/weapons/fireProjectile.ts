@@ -75,11 +75,8 @@ initialiseImages(){
     }
 
     hits(enemy: Enemy | Boss | Character){
-        let dist = distance(new Point(this.startPoint.x -100, this.startPoint.y - 130), new Point(enemy.startPoint.x - 50, enemy.startPoint.y - 50));
-
-        playSound(voice.howsharp, 1);
-
-          
+        let dist = distance(new Point(this.startPoint.x -100, this.startPoint.y - 130), new Point(enemy.startPoint.x - 50, enemy.startPoint.y - 50));     
+        if(this.owner == "player") playSound(voice.howsharp, 1);
         if (dist < this.r +enemy.r)
         {
             return true;

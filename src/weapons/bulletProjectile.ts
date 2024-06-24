@@ -2,8 +2,6 @@ import { Boss } from "../boss";
 import { Enemy } from "../enemy";
 import { drawEllipse } from "../functions";
 import { Point } from "../shapes/point";
-import { playSound } from "../soundPlayingFunction";
-import { voice } from "../sounds";
 import { stateVariables } from "../stateVariables";
 import { distance } from "../utils/util"; 
 export class BulletProjectile{ 

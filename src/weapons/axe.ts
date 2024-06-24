@@ -4,8 +4,6 @@ import { stateVariables } from "../stateVariables";
 import { distance } from "../utils/util";
 import { axeBack, axeFront, axeLeft, axeRight } from "../sprites/axe";
 import { Boss } from "../boss";
-import { voice } from "../sounds";
-import { playSound } from "../soundPlayingFunction";
 
 export class Axe {
   startPoint: Point;

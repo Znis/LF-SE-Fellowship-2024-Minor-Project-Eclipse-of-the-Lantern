@@ -1,6 +1,4 @@
 import { RainParticle } from "./particles/rainParticle";
-import { playSound } from "./soundPlayingFunction";
-import { voice } from "./sounds";
 import { stateVariables } from "./stateVariables";
 
 export class Ui {

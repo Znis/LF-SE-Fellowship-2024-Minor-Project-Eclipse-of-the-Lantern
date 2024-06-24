@@ -316,7 +316,7 @@ export class Boss {
           setTimeout(() => {
             playSound(voice.bosscallingallgoblins, 1);
           }, 3000);
-        }, getRandomInt(4, 8));
+        }, getRandomInt(4, 8) * 1000);
       }
 
       if (this.hasWakeUp) {
