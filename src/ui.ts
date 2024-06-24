@@ -1,4 +1,6 @@
 import { RainParticle } from "./particles/rainParticle";
+import { playSound } from "./soundPlayingFunction";
+import { voice } from "./sounds";
 import { stateVariables } from "./stateVariables";
 
 export class Ui {
@@ -52,7 +54,7 @@ export class Ui {
   }
 
   renderHealth(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
-    if (stateVariables.player.health < 30 || stateVariables.lantern.maxRadiusInnerCircle < 80) {
+    if (stateVariables.player.health < 30) {
       this.renderBloodOverlay();
     }
 

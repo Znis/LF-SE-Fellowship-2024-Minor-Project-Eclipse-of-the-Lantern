@@ -1,4 +1,6 @@
 import { Point } from "./shapes/point";
+import { playSound } from "./soundPlayingFunction";
+import { voice } from "./sounds";
 import { enemyBack, enemyFront, enemyLeft, enemyRight } from "./sprites/enemy";
 import { stateVariables } from "./stateVariables";
 import { calculateAngle, distance, getRandomInt } from "./utils/util";
@@ -336,9 +338,11 @@ export class Enemy {
 
   attack() {
     if (stateVariables.player.health > 0) {
+      playSound(voice.zombiegrunt, 0.001);
       if (!this.damageTimeout) {
         this.damageTimeout = setTimeout(() => {
           stateVariables.player.health -= this.damage;
+          playSound(voice.ithurts, 0.01);
           this.damageTimeout = null;
         }, 500);
       }

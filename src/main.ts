@@ -19,7 +19,8 @@ import {
   renderUi,
 } from "./functions";
 import { handleControls } from "./controls";
-import { Boss } from "./boss";
+import { playSound, playSoundandVoice } from "./soundPlayingFunction";
+import { voice } from "./sounds";
 
 export const canvas = document.querySelector(
   "#gameCanvas"
@@ -34,6 +35,9 @@ preload();
 function draw() {
   adjustCanvasSize();
   stateVariables.bgImage.show();
+
+
+playSoundandVoice();
 
   if (stateVariables.gameState == GameState.running) {
     if (stateVariables.rain) stateVariables.ui.renderRainParticles();
@@ -55,6 +59,7 @@ function draw() {
       stateVariables.enemiesArray.length == 0 &&
       !stateVariables.boss.isAlive
     ) {
+      playSound(voice.wedidit, 1);
       stateVariables.gameState = GameState.gameFinish;
     }
 

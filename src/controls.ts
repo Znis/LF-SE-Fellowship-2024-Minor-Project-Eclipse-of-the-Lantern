@@ -7,6 +7,8 @@ import {
 import { getMouseCoords } from "./functions";
 import { calculateAngle } from "./utils/util";
 import { Point } from "./shapes/point";
+import { playSound } from "./soundPlayingFunction";
+import { voice } from "./sounds";
 
 window.addEventListener(
   "keydown",
@@ -68,12 +70,15 @@ export const mousepress = window.addEventListener("click", () => {
       if (inventory.ammo > 0) {
         stateVariables.player.isAttacking = true;
         stateVariables.gun.fire();
+      playSound(voice.gunfire, 0.5);
+
       } else {
         stateVariables.inventory.displayMessage(stateVariables.ctx, "ammo");
       }
     } else if (stateVariables.player.currWeapon == "axe") {
       stateVariables.player.isAttacking = true;
       stateVariables.axe.calculateShockPoint();
+      playSound(voice.axesound, 0.5);
     }
   }
 });
@@ -135,31 +140,46 @@ export function handleControls() {
   }
 
   if (stateVariables.keyState[69]) {
-      stateVariables.player.useAbility("light");
-  } 
-    
-  
+    if(!keyDown.E){
+    stateVariables.player.useAbility("light");
+    keyDown.E = true;
+    }
+  }else{
+    keyDown.E = false;
+  }
 
   if (stateVariables.keyState[80]) {
     stateVariables.gameState = GameState.paused;
   }
 
   if (stateVariables.keyState[82]) {
+    if(!keyDown.R){
     if (stateVariables.inventory.abilities[1].cooldown == 0) {
       stateVariables.player.abilityMode = true;
+
     } else {
       stateVariables.inventory.displayMessage(
         stateVariables.ctx,
         "",
         "Ability on Cooldown!"
       );
+      setTimeout(() => {
+      playSound(voice.notready, 1);
+      }, 800);
+      keyDown.R = true;
+
     }
+  }
   } else {
     stateVariables.player.abilityMode = false;
+    keyDown.R = false;
   }
 
-  if (stateVariables.keyState[16] &&
-     !stateVariables.player.isBlowingLantern && !stateVariables.player.isUsingMedkit) {
+  if (
+    stateVariables.keyState[16] &&
+    !stateVariables.player.isBlowingLantern &&
+    !stateVariables.player.isUsingMedkit
+  ) {
     stateVariables.player.frameTime = 2;
     stateVariables.player.increaseSpeed();
     stateVariables.player.isRunning = true;
@@ -171,8 +191,13 @@ export function handleControls() {
 
   if (stateVariables.keyState[81]) {
     if (!keyDown.Q) {
-      stateVariables.player.currWeapon =
-        stateVariables.player.currWeapon == "axe" ? "gun" : "axe";
+      if (stateVariables.player.currWeapon == "axe") {
+        stateVariables.player.currWeapon = "gun";
+        playSound(voice.yaygun, 1);
+      } else {
+        stateVariables.player.currWeapon = "axe";
+        playSound(voice.hmmaxe, 1);
+      }
       keyDown.Q = true;
     }
   } else {
@@ -212,8 +237,6 @@ export function handleControls() {
     }
     keyDown.SPACE = false;
   }
-    
-
 
   if (stateVariables.keyState[70]) {
     if (!keyDown.F) {
@@ -246,6 +269,4 @@ export function handleControls() {
     }
     keyDown.F = false;
   }
- 
-
 }

@@ -1,5 +1,7 @@
 import { generateEnemy, generateRandomPickupItems } from "./functions";
 import { Point } from "./shapes/point";
+import { playSound } from "./soundPlayingFunction";
+import { voice } from "./sounds";
 import { enemyBack, enemyFront, enemyLeft, enemyRight } from "./sprites/boss";
 import { GameState, stateVariables } from "./stateVariables";
 import { calculateAngle, distance, getRandomInt } from "./utils/util";
@@ -367,6 +369,7 @@ export class Boss {
       if (!this.damageTimeout) {
         this.damageTimeout = setTimeout(() => {
           stateVariables.player.health -= this.damage;
+          playSound(voice.ithurts, 0.01);
           this.damageTimeout = null;
         }, 400);
       }

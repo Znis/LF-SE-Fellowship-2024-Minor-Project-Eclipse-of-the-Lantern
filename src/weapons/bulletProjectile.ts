@@ -2,6 +2,8 @@ import { Boss } from "../boss";
 import { Enemy } from "../enemy";
 import { drawEllipse } from "../functions";
 import { Point } from "../shapes/point";
+import { playSound } from "../soundPlayingFunction";
+import { voice } from "../sounds";
 import { stateVariables } from "../stateVariables";
 import { distance } from "../utils/util"; 
 export class BulletProjectile{ 
@@ -55,6 +57,8 @@ export class BulletProjectile{
 
     hits(enemy: Enemy | Boss){
         let dist = distance(new Point(this.startPoint.x -100, this.startPoint.y - 130), new Point(enemy.startPoint.x - 50, enemy.startPoint.y - 50));
+        playSound(voice.howsharp, 0.05);
+
         if (dist < this.r +enemy.r)
         {
             return true;

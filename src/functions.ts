@@ -24,11 +24,10 @@ import { Gun } from "./weapons/gun";
 import { Boss } from "./boss";
 import { getRandomInt } from "./utils/util";
 import { mapData } from "./mapData";
-
-
+import { voice } from "./sounds";
+import { playSound } from "./soundPlayingFunction";
 
 export function preload() {
-
   stateVariables.player = new Character();
   stateVariables.player.initialiseImages(
     `assets/character/images/characters/${gameOptions.character}`,
@@ -57,10 +56,9 @@ export function preload() {
   stateVariables.mainMenu.initialiseImages();
   loadFonts();
   stateVariables.flameImages = loadImages("assets/flame", 30);
-
 }
 
-export function debugColliderMode(){
+export function debugColliderMode() {
   mapData[
     stateVariables.bgImage.name as keyof typeof mapData
   ].colliders.forEach((collider: any) => {
@@ -128,6 +126,9 @@ export function startJourney() {
     enemy.default_movement_speed =
       difficultySetting[gameOptions.difficultyLevel].enemySpeed;
   });
+  setTimeout(() => {
+    playSound(voice.letsstartkilling, 1);
+  }, 500);
 }
 
 export function displayCursorImage(
@@ -136,20 +137,14 @@ export function displayCursorImage(
   ctx.save();
   if (stateVariables.player.abilityMode) {
     stateVariables.cursorImage.src = "./assets/direction.png";
-    ctx.translate(stateVariables.mouseCoords.x, stateVariables.mouseCoords.y ); 
+    ctx.translate(stateVariables.mouseCoords.x, stateVariables.mouseCoords.y);
     ctx.rotate(
       Math.atan2(
         stateVariables.mouseCoords.y - stateVariables.player.startPoint.y + 50,
-        stateVariables.mouseCoords.x - stateVariables.player.startPoint.x + 30 
+        stateVariables.mouseCoords.x - stateVariables.player.startPoint.x + 30
       )
     );
-    ctx.drawImage(
-      stateVariables.cursorImage,
-      0,
-      0,
-      50,
-      50
-    );
+    ctx.drawImage(stateVariables.cursorImage, 0, 0, 50, 50);
     ctx.restore();
   } else if (stateVariables.player.currWeapon == "gun") {
     stateVariables.cursorImage.src = "./assets/crosshair.png";
@@ -170,8 +165,6 @@ export function displayCursorImage(
       30
     );
   }
-
-
 }
 
 export function generateRandomPickupItems(num: number) {
@@ -183,14 +176,14 @@ export function generateRandomPickupItems(num: number) {
           : pickupItemsTypes.health_pack
         : pickupItemsTypes.fuel;
 
-        let posX = getRandomInt(
-          stateVariables.bgImage.startPoint.x,
-          stateVariables.bgImage.startPoint.x + stateVariables.bgImage.w
-        );
-        let posY = getRandomInt(
-          stateVariables.bgImage.startPoint.y,
-          stateVariables.bgImage.startPoint.y + stateVariables.bgImage.h
-        );
+    let posX = getRandomInt(
+      stateVariables.bgImage.startPoint.x,
+      stateVariables.bgImage.startPoint.x + stateVariables.bgImage.w
+    );
+    let posY = getRandomInt(
+      stateVariables.bgImage.startPoint.y,
+      stateVariables.bgImage.startPoint.y + stateVariables.bgImage.h
+    );
     if (!stateVariables.bgImage.checkCollision(posX, posY)) {
       const pickupItem = new PickupItems(posX, posY, itemType);
       pickupItem.initialiseImages();
@@ -220,8 +213,8 @@ export function handlePickupItems() {
   }
 }
 
-export function resumeGame(){
- stateVariables.gameState = GameState.running;
+export function resumeGame() {
+  stateVariables.gameState = GameState.running;
 }
 
 export function resetStateVariables() {
@@ -385,6 +378,7 @@ export function drawEllipse(
   ctx.closePath();
 }
 
+
 export function checkHitToEnemy() {
   if (stateVariables.player.currWeapon == "gun") {
     stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
@@ -392,7 +386,7 @@ export function checkHitToEnemy() {
         if (bulletProjectile.hits(stateVariables.enemiesArray[i])) {
           stateVariables.enemiesArray[i].health -= 1;
           bulletProjectile.evaporate();
-
+          playSound(voice.diegoblins, 0.01);
           const bloodParticle = new BloodParticle(
             stateVariables.enemiesArray[i].startPoint.x -
               stateVariables.bgImage.startPoint.x,
@@ -401,7 +395,6 @@ export function checkHitToEnemy() {
           );
           bloodParticle.initialiseImages("assets/blood", 7);
           stateVariables.bloodParticleArray.push(bloodParticle);
-       
         }
       }
     });
@@ -412,23 +405,7 @@ export function checkHitToEnemy() {
     for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
       if (stateVariables.axe.hits(stateVariables.enemiesArray[i])) {
         stateVariables.enemiesArray[i].health -= 0.1;
-        const bloodParticle = new BloodParticle(
-          stateVariables.enemiesArray[i].startPoint.x -
-            stateVariables.bgImage.startPoint.x,
-          stateVariables.enemiesArray[i].startPoint.y -
-            stateVariables.bgImage.startPoint.y
-        );
-        bloodParticle.initialiseImages("assets/blood", 7);
-        stateVariables.bloodParticleArray.push(bloodParticle);
-       
-      }
-    }
-  }
-  stateVariables.fireProjectileArray.forEach((fireProjectile) => {
-    if(fireProjectile.owner == "player"){
-    for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
-      if (fireProjectile.hits(stateVariables.enemiesArray[i])) {
-        stateVariables.enemiesArray[i].health -= 5;
+        playSound(voice.diegoblins, 0.01);
 
         const bloodParticle = new BloodParticle(
           stateVariables.enemiesArray[i].startPoint.x -
@@ -438,27 +415,47 @@ export function checkHitToEnemy() {
         );
         bloodParticle.initialiseImages("assets/blood", 7);
         stateVariables.bloodParticleArray.push(bloodParticle);
-        if (!stateVariables.enemiesArray[i].isAlive) {
-          stateVariables.player.score++;
-          stateVariables.enemiesArray.splice(i, 1);
-          stateVariables.animateEnemyArray.splice(i, 1);
-        }
       }
     }
-  }else if(fireProjectile.owner == "boss"){
-    if (fireProjectile.hits(stateVariables.player)) {
-      stateVariables.player.health -= 10;
   }
-}
+  stateVariables.fireProjectileArray.forEach((fireProjectile) => {
+    if (fireProjectile.owner == "player") {
+      for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
+        if (fireProjectile.hits(stateVariables.enemiesArray[i])) {
+          stateVariables.enemiesArray[i].health -= 5;
+
+          playSound(voice.diegoblins, 1);
+
+
+          const bloodParticle = new BloodParticle(
+            stateVariables.enemiesArray[i].startPoint.x -
+              stateVariables.bgImage.startPoint.x,
+            stateVariables.enemiesArray[i].startPoint.y -
+              stateVariables.bgImage.startPoint.y
+          );
+          bloodParticle.initialiseImages("assets/blood", 7);
+          stateVariables.bloodParticleArray.push(bloodParticle);
+          if (!stateVariables.enemiesArray[i].isAlive) {
+            stateVariables.player.score++;
+            stateVariables.enemiesArray.splice(i, 1);
+            stateVariables.animateEnemyArray.splice(i, 1);
+          }
+        }
+      }
+    } else if (fireProjectile.owner == "boss") {
+      if (fireProjectile.hits(stateVariables.player)) {
+        stateVariables.player.health -= 10;
+        playSound(voice.ithurts, 1);
+      }
+    }
   });
-  
-    
-  for(let i=0; i< stateVariables.enemiesArray.length; i++){
-  if (!stateVariables.enemiesArray[i].isAlive) {
-    stateVariables.player.score++;
-    stateVariables.enemiesArray.splice(i, 1);
-    stateVariables.animateEnemyArray.splice(i, 1);
-  }
+
+  for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
+    if (!stateVariables.enemiesArray[i].isAlive) {
+      stateVariables.player.score++;
+      stateVariables.enemiesArray.splice(i, 1);
+      stateVariables.animateEnemyArray.splice(i, 1);
+    }
   }
 
   for (let i = stateVariables.bloodParticleArray.length - 1; i >= 0; i--) {
@@ -469,15 +466,34 @@ export function checkHitToEnemy() {
   }
 }
 
-
 export function checkHitToBoss() {
-  if(stateVariables.boss.health > 0){
-  if (stateVariables.boss.hasWakeUp) {
-    if (stateVariables.player.currWeapon == "gun") {
-      stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
-        if (bulletProjectile.hits(stateVariables.boss)) {
-          stateVariables.boss.health -= 1;
-          bulletProjectile.evaporate();
+  if (stateVariables.boss.health > 0) {
+    if (stateVariables.boss.hasWakeUp) {
+      if (stateVariables.player.currWeapon == "gun") {
+        stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
+          if (bulletProjectile.hits(stateVariables.boss)) {
+            stateVariables.boss.health -= 1;
+            bulletProjectile.evaporate();
+            playSound(voice.diegoblins, 0.01);
+
+            const bloodParticle = new BloodParticle(
+              stateVariables.boss.startPoint.x -
+                stateVariables.bgImage.startPoint.x,
+              stateVariables.boss.startPoint.y -
+                stateVariables.bgImage.startPoint.y
+            );
+            bloodParticle.initialiseImages("assets/blood", 7);
+            stateVariables.bloodParticleArray.push(bloodParticle);
+          }
+        });
+      } else if (
+        stateVariables.player.currWeapon == "axe" &&
+        stateVariables.player.isAttacking
+      ) {
+        if (stateVariables.axe.hits(stateVariables.boss)) {
+          stateVariables.boss.health -= 0.1;
+          playSound(voice.diegoblins, 0.01);
+
 
           const bloodParticle = new BloodParticle(
             stateVariables.boss.startPoint.x -
@@ -488,39 +504,28 @@ export function checkHitToBoss() {
           bloodParticle.initialiseImages("assets/blood", 7);
           stateVariables.bloodParticleArray.push(bloodParticle);
         }
-      });
-    } else if (
-      stateVariables.player.currWeapon == "axe" &&
-      stateVariables.player.isAttacking
-    ) {
-      if (stateVariables.axe.hits(stateVariables.boss)) {
-        stateVariables.boss.health -= 0.1;
-        const bloodParticle = new BloodParticle(
-          stateVariables.boss.startPoint.x -
-            stateVariables.bgImage.startPoint.x,
-          stateVariables.boss.startPoint.y - stateVariables.bgImage.startPoint.y
-        );
-        bloodParticle.initialiseImages("assets/blood", 7);
-        stateVariables.bloodParticleArray.push(bloodParticle);
       }
-    }
-    stateVariables.fireProjectileArray.forEach((fireProjectile) => {
-      if(fireProjectile.owner == "player"){
-      if (fireProjectile.hits(stateVariables.boss)) {
-        stateVariables.boss.health -= 10;
+      stateVariables.fireProjectileArray.forEach((fireProjectile) => {
+        if (fireProjectile.owner == "player") {
+          if (fireProjectile.hits(stateVariables.boss)) {
+            stateVariables.boss.health -= 10;
 
-        const bloodParticle = new BloodParticle(
-          stateVariables.boss.startPoint.x -
-            stateVariables.bgImage.startPoint.x,
-          stateVariables.boss.startPoint.y - stateVariables.bgImage.startPoint.y
-        );
-        bloodParticle.initialiseImages("assets/blood", 7);
-        stateVariables.bloodParticleArray.push(bloodParticle);
-      }
+            playSound(voice.diegoblins, 1);
+
+
+            const bloodParticle = new BloodParticle(
+              stateVariables.boss.startPoint.x -
+                stateVariables.bgImage.startPoint.x,
+              stateVariables.boss.startPoint.y -
+                stateVariables.bgImage.startPoint.y
+            );
+            bloodParticle.initialiseImages("assets/blood", 7);
+            stateVariables.bloodParticleArray.push(bloodParticle);
+          }
+        }
+      });
     }
-    });
+  } else {
+    stateVariables.boss.isAlive = false;
   }
-}else{
-  stateVariables.boss.isAlive = false;
-}
 }

@@ -1,6 +1,8 @@
 import { inventory, stateVariables } from "./stateVariables";
 import { Point } from "./shapes/point";
 import { FireProjectile } from "./weapons/fireProjectile";
+import { playSound } from "./soundPlayingFunction";
+import { voice } from "./sounds";
 
 export class Character {
   id: string;
@@ -77,13 +79,17 @@ export class Character {
   }
 
   increaseSpeed() {
-    if (this.stamina > 0) {
+    if (this.stamina > 1) {
       this.movement_speed = 2 * this.default_speed;
       this.isRunning = true;
+        voice.run.audio.playbackRate = 2;
+        playSound(voice.run, 1);
+      
       this.drainStamina();
     } else {
       this.movement_speed = this.default_speed;
       this.isRunning = false;
+      playSound(voice.iamtired, 1);
 
 
     }
@@ -161,6 +167,7 @@ export class Character {
   move() {
     if (!this.isBlowingLantern && !this.isUsingMedkit) {
       if (this.health > 0 && (this.dirX != 0 || this.dirY != 0)) {
+        if(!this.isRunning) playSound(voice.walk, 1);
         if (
           !stateVariables.bgImage.checkCollision(
             stateVariables.bgImage.startPoint.x +
@@ -262,6 +269,7 @@ if(!(stateVariables.bgImage.startPoint.x +
   useAbility(ability: string) {
     if(ability == "light"){
       if (stateVariables.inventory.abilities[0].cooldown == 0) {
+      playSound(voice.lightofblessings, 1);
       stateVariables.lantern.setLuminosity();
       stateVariables.inventory.resetAbility(ability);
       const reset = setTimeout(() => {
@@ -275,10 +283,12 @@ if(!(stateVariables.bgImage.startPoint.x +
         "",
         "Ability on Cooldown!"
       );
+      playSound(voice.notready, 1);
+
     }
   }else if(ability == "flame"){
     if (stateVariables.inventory.abilities[1].cooldown == 0) {
-  
+      playSound(voice.breathofdragon, 1);
       stateVariables.inventory.resetAbility(ability);
       const projectile = new FireProjectile(
         new Point(

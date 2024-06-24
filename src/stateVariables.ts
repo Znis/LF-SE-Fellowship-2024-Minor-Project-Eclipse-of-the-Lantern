@@ -57,6 +57,8 @@ type stateVariables = {
 export const keyDown = {
     "Q": false,
     "F": false,
+    "E": false,
+    "R": false,
     "SPACE": false
 }
 

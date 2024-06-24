@@ -1,4 +1,6 @@
 import { canvas } from "./main";
+import { playSound } from "./soundPlayingFunction";
+import { voice } from "./sounds";
 import { GameState, inventory, stateVariables } from "./stateVariables";
 
 interface Ability {
@@ -14,6 +16,8 @@ export class Inventory {
   ammoImg: HTMLImageElement;
   abilities: Ability[];
   showMessage: boolean;
+  message: string;
+  item: string;
   constructor() {
     this.fuelImg = {} as HTMLImageElement;
     this.medKitImg = {} as HTMLImageElement;
@@ -35,6 +39,8 @@ export class Inventory {
       },
     ];
     this.showMessage = false;
+    this.message = "";
+    this.item = "";
   }
   initialiseImages() {
     const loadImage = (fullPath: string) => {
@@ -68,6 +74,7 @@ export class Inventory {
 
     this.displayWeapons();
     this.displayAbilities();
+    this.displayMessage(ctx);
   }
 
   displayMessage(
@@ -75,23 +82,43 @@ export class Inventory {
     item: string | void,
     message: string | void
   ) {
-    ctx.textAlign = "center";
-    ctx.fillStyle = "white";
-    ctx.font = "24px Outfit";
 
-    if (item == "health_pack")
-      ctx.fillText(
-        `Out of Med Kit!`,
-        canvas.width / 2,
-        canvas.height - 50,
-        400
-      );
-    if (item == "fuel")
-      ctx.fillText(`Out of Fuel!`, canvas.width / 2, canvas.height - 50, 400);
-    if (item == "ammo")
-      ctx.fillText(`Out of Ammo!`, canvas.width / 2, canvas.height - 50, 400);
-    if (message)
-      ctx.fillText(message, canvas.width / 2, canvas.height - 50, 400);
+    if (item || message || this.showMessage) {
+
+      this.showMessage = true;
+      if(message) this.message = message;
+      if(item) this.item = item;
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "white";
+      ctx.font = "24px Outfit";
+
+      if (this.item == "health_pack") {
+        ctx.fillText(
+          `Out of Med Kit!`,
+          canvas.width / 2,
+          canvas.height - 50,
+          400
+        );
+        playSound(voice.outofmedkit, 1);
+      }
+      if (this.item == "fuel") {
+        ctx.fillText(`Out of Fuel!`, canvas.width / 2, canvas.height - 50, 400);
+        playSound(voice.outoffuel, 1);
+      }
+      if (this.item == "ammo") {
+        ctx.fillText(`Out of Ammo!`, canvas.width / 2, canvas.height - 50, 400);
+        playSound(voice.outofammo, 1);
+      }
+      if (this.message) {
+        ctx.fillText(this.message, canvas.width / 2, canvas.height - 50, 400);
+      }
+      setTimeout(() => {
+        this.showMessage = false;
+        this.message = "";
+        this.item = "";
+      }, 1000);
+    }
   }
 
   displayWeapons(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
