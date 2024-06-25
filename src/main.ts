@@ -39,7 +39,6 @@ function draw() {
   adjustCanvasSize();
 
   stateVariables.bgImage.show();
-  console.log(stateVariables.assetsLoadCount);
   if (stateVariables.gameState == GameState.loadingScreen) {
     stateVariables.loadingScreen.show();
   }

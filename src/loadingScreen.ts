@@ -50,7 +50,7 @@ export class LoadingScreen {
     ctx.fillStyle = "#000000";
     ctx.font = "20px Outfit";
 
-    this.loadProgress = stateVariables.assetsLoadCount / 181;
+    this.loadProgress = stateVariables.assetsLoadCount / 180;
 
     ctx.fillStyle = "#00FF00";
     ctx.fillRect(
@@ -59,7 +59,7 @@ export class LoadingScreen {
       this.loadProgress * loadingBarWidth,
       loadingBarHeight
     );
-    if (stateVariables.assetsLoadCount >= 181) {
+    if (stateVariables.assetsLoadCount >= 180) {
       this.showCompletionMessage(
         ctx,
         rectX,
