@@ -4,6 +4,7 @@ import { stateVariables } from "../stateVariables";
 import { distance } from "../utils/util";
 import { axeBack, axeFront, axeLeft, axeRight } from "../sprites/axe";
 import { Boss } from "../boss";
+import { WEAPON_HEIGHT_AND_WIDTH } from "../constants";
 
 export class Axe {
   startPoint: Point;
@@ -13,7 +14,7 @@ export class Axe {
 
   constructor() {
     this.startPoint = stateVariables.player.startPoint;
-    this.r = 50;
+    this.r = 50; //impact radius
     this.spritePos = 0;
     this.shockPoint = new Point(0, 0);
   }
@@ -22,9 +23,9 @@ export class Axe {
     isAttacking: boolean
   ) {
     if (stateVariables.player.direction == "r") {
-      const staggerFrame = 5;
+      const staggerFrame = 5; //number of frames to show the particular frame of the sprite
       let position = isAttacking
-        ? Math.floor(this.spritePos / staggerFrame) % 8
+        ? Math.floor(this.spritePos / staggerFrame) % 8 //this sprite has 8 frames
         : 0;
       ctx.drawImage(
         axeRight.sprite,
@@ -34,8 +35,8 @@ export class Axe {
         axeRight.height,
         stateVariables.player.startPoint.x + axeRight.offset[position].x,
         stateVariables.player.startPoint.y + axeRight.offset[position].y,
-        50,
-        50
+        WEAPON_HEIGHT_AND_WIDTH,
+        WEAPON_HEIGHT_AND_WIDTH
       );
       if (isAttacking) {
         this.spritePos++;
@@ -54,8 +55,8 @@ export class Axe {
         axeLeft.height,
         stateVariables.player.startPoint.x + axeLeft.offset[position].x,
         stateVariables.player.startPoint.y + axeLeft.offset[position].y,
-        50,
-        50
+        WEAPON_HEIGHT_AND_WIDTH,
+        WEAPON_HEIGHT_AND_WIDTH
       );
       if (isAttacking) {
         this.spritePos++;
@@ -75,7 +76,7 @@ export class Axe {
         stateVariables.player.startPoint.x + axeBack.offset[position].x,
         stateVariables.player.startPoint.y + axeBack.offset[position].y,
         8,
-        50
+        WEAPON_HEIGHT_AND_WIDTH
       );
       if (isAttacking) {
         this.spritePos++;
@@ -95,7 +96,7 @@ export class Axe {
         stateVariables.player.startPoint.x + axeFront.offset[position].x,
         stateVariables.player.startPoint.y + axeFront.offset[position].y,
         8,
-        50
+        WEAPON_HEIGHT_AND_WIDTH
       );
       if (isAttacking) {
         this.spritePos++;

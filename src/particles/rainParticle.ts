@@ -1,6 +1,7 @@
 import { Point } from "../shapes/point";
 import { stateVariables } from "../stateVariables";
 
+//rain particles are basically the lines of random length moving from top left to bottom right
 export class RainParticle {
   slope: number;
   startPoint: Point;

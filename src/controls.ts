@@ -33,25 +33,22 @@ window.addEventListener(
   true
 );
 
-
-
-
 window.addEventListener(
   "click",
   function () {
-    if (stateVariables.gameState != GameState.running &&
+    if (
+      stateVariables.gameState != GameState.running &&
       stateVariables.gameState != GameState.controlsScreen &&
       stateVariables.gameState != GameState.aboutScreen &&
       stateVariables.gameState != GameState.loadingScreen
     ) {
       stateVariables.mainMenu.handleSelect();
     }
-
   },
   true
 );
 
-export const mousepress =   window.addEventListener("click", () => {
+export const mousepress = window.addEventListener("click", () => {
   if (
     stateVariables.gameState == GameState.running &&
     !stateVariables.player.isBlowingLantern &&
@@ -78,8 +75,7 @@ export const mousepress =   window.addEventListener("click", () => {
       if (inventory.ammo > 0) {
         stateVariables.player.isAttacking = true;
         stateVariables.gun.fire();
-      playSound(voice.gunfire, 0.5);
-
+        playSound(voice.gunfire, 0.5);
       } else {
         stateVariables.inventory.displayMessage(stateVariables.ctx, "ammo");
       }
@@ -90,7 +86,6 @@ export const mousepress =   window.addEventListener("click", () => {
     }
   }
 });
-
 
 let refuelTimeout: number | null = null;
 let healTimeout: number | null = null;
@@ -142,12 +137,7 @@ export function handleMovementControls() {
     stateVariables.player.isWalking = false;
   }
 }
-export function handleOtherControls(){
-
-
-
-
-
+export function handleOtherControls() {
   if (stateVariables.keyState[76]) {
     stateVariables.debugCollider = true;
   } else {
@@ -155,11 +145,11 @@ export function handleOtherControls(){
   }
 
   if (stateVariables.keyState[69]) {
-    if(!keyDown.E){
-    stateVariables.player.useAbility("light");
-    keyDown.E = true;
+    if (!keyDown.E) {
+      stateVariables.player.useAbility("light");
+      keyDown.E = true;
     }
-  }else{
+  } else {
     keyDown.E = false;
   }
 
@@ -168,23 +158,21 @@ export function handleOtherControls(){
   }
 
   if (stateVariables.keyState[82]) {
-    if(!keyDown.R){
-    if (stateVariables.inventory.abilities[1].cooldown == 0) {
-      stateVariables.player.abilityMode = true;
-
-    } else {
-      stateVariables.inventory.displayMessage(
-        stateVariables.ctx,
-        "",
-        "Ability on Cooldown!"
-      );
-      setTimeout(() => {
-      playSound(voice.notready, 1);
-      }, 1000);
-      keyDown.R = true;
-
+    if (!keyDown.R) {
+      if (stateVariables.inventory.abilities[1].cooldown == 0) {
+        stateVariables.player.abilityMode = true;
+      } else {
+        stateVariables.inventory.displayMessage(
+          stateVariables.ctx,
+          "",
+          "Ability on Cooldown!"
+        );
+        setTimeout(() => {
+          playSound(voice.notready, 1);
+        }, 1000);
+        keyDown.R = true;
+      }
     }
-  }
   } else {
     stateVariables.player.abilityMode = false;
     keyDown.R = false;

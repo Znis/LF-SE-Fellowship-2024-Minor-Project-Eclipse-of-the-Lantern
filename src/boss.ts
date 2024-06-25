@@ -1,4 +1,5 @@
-import { generateEnemy, generateRandomPickupItems} from "./functions";
+import { BOSS_ATTACK_DAMAGE, BOSS_DEFAULT_HEALTH, BOSS_HEIGHT_AND_WIDTH, BOSS_MOVEMENT_SPEED, GOBLIN_SPAWN_TIME } from "./constants";
+import { generateEnemy, generateRandomPickupItems } from "./functions";
 import { Point } from "./shapes/point";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
@@ -39,7 +40,7 @@ export class Boss {
   constructor() {
     let posX;
     let posY;
-    if (Math.random() < 0.5) {
+    if (Math.random() < 0.5) { //spawn randomly at edges of the map
       posX = getRandomInt(
         stateVariables.bgImage.startPoint.x,
         stateVariables.bgImage.startPoint.x + 100
@@ -59,12 +60,13 @@ export class Boss {
       );
     }
     this.startPoint = new Point(posX, posY);
+
     this.direction = "d";
-    this.h = 150;
+    this.h = BOSS_HEIGHT_AND_WIDTH;
     this.w = this.h;
     this.r = 80;
 
-    this.default_damage = 2;
+    this.default_damage = BOSS_ATTACK_DAMAGE;
     this.damage = this.default_damage;
 
     this.images_back = freqLoadingAssets.bossImages.back;
@@ -77,10 +79,10 @@ export class Boss {
     this.damageTimeout = null;
     this.abilityTimeout = null;
 
-    this.default_health = 80;
+    this.default_health = BOSS_DEFAULT_HEALTH;
     this.health = this.default_health;
 
-    this.default_movement_speed = 2;
+    this.default_movement_speed = BOSS_MOVEMENT_SPEED;
     this.movement_speed = this.default_movement_speed;
 
     this.finalX = stateVariables.player.startPoint.x;
@@ -93,11 +95,9 @@ export class Boss {
     this.hasWakeUp = false;
     this.spawnEnemyInterval = null;
     this.hasRoar = false;
-
-
   }
 
-
+  //method to increase boss attributes outside the lantern light
   updateAttributes() {
     const dist = distance(this.startPoint, stateVariables.player.startPoint);
     if (dist > stateVariables.lantern.maxRadiusInnerCircle * 2) {
@@ -286,21 +286,22 @@ export class Boss {
         stateVariables.player.startPoint,
         this.startPoint
       );
-      if (distanceToPlayer < 400 && !this.hasWakeUp) {
+
+      if (this.health < 20) { //boss roar if health is less than 20
+        this.hasRoar = true;
+        playSound(voice.bossroar, 1);
+        setTimeout(() => {
+          playSound(voice.bosscallingallgoblins, 1);
+        }, 3000);
+      }
+
+      if (distanceToPlayer < 400 && !this.hasWakeUp) { //boss wakes up if player goes near it 
         this.hasWakeUp = true;
         playSound(voice.bosswakeup, 1);
 
         setTimeout(() => {
           playSound(voice.bosshaswakenup, 1);
         }, 3000);
-        setTimeout(() => {
-          this.hasRoar = true;
-          playSound(voice.bossroar, 1);
-
-          setTimeout(() => {
-            playSound(voice.bosscallingallgoblins, 1);
-          }, 3000);
-        }, getRandomInt(4, 8) * 1000);
       }
 
       if (this.hasWakeUp) {
@@ -340,7 +341,7 @@ export class Boss {
               this.abilityTimeout = setTimeout(() => {
                 this.useAbility();
                 this.abilityTimeout = null;
-              }, getRandomInt(2, 4) * 1000);
+              }, getRandomInt(2, 4) * 1000); //boss fires flames at random interval between 2 and 4 seconds
             }
           } else {
             clearTimeout(this.abilityTimeout!);
@@ -361,7 +362,7 @@ export class Boss {
             generateEnemy(1);
             generateRandomPickupItems(1);
           }
-        }, 1000);
+        }, GOBLIN_SPAWN_TIME); //spawns goblin and an item
       }
     } else {
       clearInterval(this.spawnEnemyInterval!);

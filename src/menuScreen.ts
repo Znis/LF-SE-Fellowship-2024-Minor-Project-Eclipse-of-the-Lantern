@@ -34,7 +34,7 @@ export class MenuScreen {
         y: this.startPoint.y + (stateVariables.windowWidth / 15) * 0,
         type: 1,
       },
-      
+
       {
         text: "START JOURNEY",
         fontSize: stateVariables.windowWidth / 25,
@@ -69,7 +69,7 @@ export class MenuScreen {
       {
         text: "SELECT CHARACTER",
         x: stateVariables.windowWidth / 1.5 + 100,
-        y: 280,
+        y: 380,
       },
       {
         text: "<",
@@ -145,7 +145,7 @@ export class MenuScreen {
         {
           text: "SELECT CHARACTER",
           x: stateVariables.windowWidth / 1.5 + 100,
-          y: 280,
+          y: 380,
         },
         {
           text: "<",
@@ -197,7 +197,7 @@ export class MenuScreen {
         },
       ];
       this.charItems = [];
-    } else if (stateVariables.gameState == GameState.retryScreen){
+    } else if (stateVariables.gameState == GameState.retryScreen) {
       this.menuItems = [
         {
           text: "Eclipse of the Lantern",
@@ -236,7 +236,7 @@ export class MenuScreen {
         },
       ];
       this.charItems = [];
-    }else if (stateVariables.gameState == GameState.gameFinish){
+    } else if (stateVariables.gameState == GameState.gameFinish) {
       this.menuItems = [
         {
           text: "Eclipse of the Lantern",
@@ -272,7 +272,6 @@ export class MenuScreen {
   }
 
   show(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
-
     this.updateMenuItems();
 
     ctx.fillStyle = "rgba(0, 0, 0, 0.74)";
@@ -302,7 +301,8 @@ export class MenuScreen {
         mouseY > menuItem.y - menuItem.fontSize
       ) {
         isHovered = true;
-        if(!(this.tempHoverOption == this.hoveredOption)) playSound(voice.optionhover, 1);
+        if (!(this.tempHoverOption == this.hoveredOption))
+          playSound(voice.optionhover, 1);
         this.tempHoverOption = this.hoveredOption;
         this.hoveredOption = index;
         noHover = false;
@@ -319,48 +319,48 @@ export class MenuScreen {
         ctx.fillStyle = "rgb(255, 255, 255)";
       }
 
-      if(stateVariables.gameState == GameState.menuScreen){
-      if (index == 4) {
-        ctx.fillText(
-          menuItem.text + this.difficulties[this.difficultyLevel],
-          menuItem.x,
-          menuItem.y
-        );
+      if (stateVariables.gameState == GameState.menuScreen) {
+        if (index == 4) {
+          ctx.fillText(
+            menuItem.text + this.difficulties[this.difficultyLevel],
+            menuItem.x,
+            menuItem.y
+          );
+        } else {
+          ctx.fillText(menuItem.text, menuItem.x, menuItem.y);
+        }
       } else {
         ctx.fillText(menuItem.text, menuItem.x, menuItem.y);
       }
-    }else{
-      ctx.fillText(menuItem.text, menuItem.x, menuItem.y);
-    }
       index++;
     });
-    if(stateVariables.gameState == GameState.menuScreen){
-    if (noHover) {
-      this.hoveredOption = -1;
-    }
-    noHover = true;
-    index = 0;
-    this.charItems.forEach((charItem: any) => {
-      ctx.fillStyle = "rgb(255, 255, 255)";
-      if (
-        mouseX >= charItem.x &&
-        mouseX < charItem.x + 50 &&
-        mouseY <= charItem.y &&
-        mouseY > charItem.y - 50
-      ) {
-        ctx.fillStyle = "red";
-        playSound(voice.optionhover, 1);
-        noHover = false;
-        this.hoveredChar = index;
+    if (stateVariables.gameState == GameState.menuScreen) {
+      if (noHover) {
+        this.hoveredOption = -1;
       }
-      ctx.fillText(charItem.text, charItem.x, charItem.y);
+      noHover = true;
+      index = 0;
+      this.charItems.forEach((charItem: any) => {
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        if (
+          mouseX >= charItem.x &&
+          mouseX < charItem.x + 50 &&
+          mouseY <= charItem.y &&
+          mouseY > charItem.y - 50
+        ) {
+          ctx.fillStyle = "red";
+          playSound(voice.optionhover, 1);
+          noHover = false;
+          this.hoveredChar = index;
+        }
+        ctx.fillText(charItem.text, charItem.x, charItem.y);
 
-      index++;
-    });
-    
-    if (noHover) {
-      this.hoveredChar = -1;
-    }
+        index++;
+      });
+
+      if (noHover) {
+        this.hoveredChar = -1;
+      }
       ctx.drawImage(
         this.characterImages[this.selectedChar],
         stateVariables.windowWidth / 1.5 + 140,
@@ -384,55 +384,51 @@ export class MenuScreen {
   }
 
   handleSelect() {
+    if (stateVariables.gameState == GameState.menuScreen) {
+      if (this.hoveredChar == 1 || this.hoveredChar == 2) {
+        //character selection
+        playSound(voice.optionclick, 1);
+        this.selectedChar = this.selectedChar == 0 ? 1 : 0;
+      }
 
-    if(stateVariables.gameState == GameState.menuScreen){
-
-    if (this.hoveredChar == 1 || this.hoveredChar == 2){ //character selection
-      playSound(voice.optionclick, 1);
-      this.selectedChar = this.selectedChar == 0 ? 1 : 0;
-    }
-
-    
-    if (this.hoveredOption == 4) { //difficulty option
-      playSound(voice.optionclick, 1);
-      if (this.difficultyLevel < this.difficulties.length - 1) {
-        this.difficultyLevel++;
-      } else {
-        this.difficultyLevel = 0;
+      if (this.hoveredOption == 4) {
+        //difficulty option
+        playSound(voice.optionclick, 1);
+        if (this.difficultyLevel < this.difficulties.length - 1) {
+          this.difficultyLevel++;
+        } else {
+          this.difficultyLevel = 0;
+        }
+      }
+    } else {
+      if (this.hoveredOption == 4) {
+        //quit button
+        playSound(voice.optionclick, 1);
+        stateVariables.gameState = GameState.menuScreen;
       }
     }
-  }else{
-    if (this.hoveredOption == 4) { //quit button
-      playSound(voice.optionclick, 1);
-      stateVariables.gameState = GameState.menuScreen;
-    }
-  }
-  if(stateVariables.gameState != GameState.gameFinish){
-    if (this.hoveredOption == 1) { //start game
-      playSound(voice.optionclick, 1);
-      gameOptions.difficultyLevel = this.difficultyLevel;
-      gameOptions.character = this.charInfo[this.selectedChar].name;
-      if(stateVariables.gameState == GameState.paused){
-        resumeGame();
-      } else{
-        startJourney();
+    if (stateVariables.gameState != GameState.gameFinish) {
+      if (this.hoveredOption == 1) {
+        //start game
+        playSound(voice.optionclick, 1);
+        gameOptions.difficultyLevel = this.difficultyLevel;
+        gameOptions.character = this.charInfo[this.selectedChar].name;
+        if (stateVariables.gameState == GameState.paused) {
+          resumeGame();
+        } else {
+          startJourney();
+        }
       }
-      
+
+      if (this.hoveredOption == 2) {
+        stateVariables.tempGameState = stateVariables.gameState;
+        stateVariables.gameState = GameState.controlsScreen;
+      }
+
+      if (this.hoveredOption == 3) {
+        stateVariables.tempGameState = stateVariables.gameState;
+        stateVariables.gameState = GameState.aboutScreen;
+      }
     }
-
-    if(this.hoveredOption == 2){
-      stateVariables.tempGameState = stateVariables.gameState;
-      stateVariables.gameState = GameState.controlsScreen;
-    } 
-
-    if(this.hoveredOption == 3){
-      stateVariables.tempGameState  = stateVariables.gameState;
-      stateVariables.gameState = GameState.aboutScreen;
-    } 
-
-  }
-  
-
-
   }
 }

@@ -2,7 +2,12 @@ import { Point } from "./shapes/point";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
 import fuel from "./sprites/fuel";
-import { freqLoadingAssets, inventory, pickupItems, stateVariables } from "./stateVariables";
+import {
+  freqLoadingAssets,
+  inventory,
+  pickupItems,
+  stateVariables,
+} from "./stateVariables";
 import { distance } from "./utils/util";
 
 export class PickupItems {
@@ -18,8 +23,6 @@ export class PickupItems {
     this.type = pickupItemType;
     this.spritePos = 0;
   }
-
-
 
   show(
     img: HTMLImageElement,
@@ -80,20 +83,20 @@ export class PickupItems {
       if (this.type.itemName == "health_pack") {
         playSound(voice.medkitpickup, 1);
         setTimeout(() => {
-        playSound(voice.foundmedkits, 1);
+          playSound(voice.foundmedkits, 0.5);
         }, 500);
         inventory.medKit++;
       } else if (this.type.itemName == "fuel") {
         playSound(voice.fuelpickup, 1);
         setTimeout(() => {
-          playSound(voice.foundfuel, 1);
-          }, 500);
+          playSound(voice.foundfuel, 0.5);
+        }, 500);
         inventory.fuel++;
       } else if (this.type.itemName == "ammo") {
         playSound(voice.ammopickup, 1);
         setTimeout(() => {
-          playSound(voice.moreammo, 1);
-          }, 500);
+          playSound(voice.moreammo, 0.5);
+        }, 500);
         inventory.ammo += 50;
       }
       this.isUsed = true;

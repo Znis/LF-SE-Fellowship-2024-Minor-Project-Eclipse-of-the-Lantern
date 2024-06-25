@@ -1,4 +1,4 @@
-import { LANTERN_BRIGHTNESS_DECREASE_RATE } from "./constants";
+import { LANTERN_BRIGHTNESS_DECREASE_RATE, LANTERN_BRIGHTNESS_RADIUS } from "./constants";
 import { drawEllipse } from "./functions";
 import { canvas } from "./main";
 import lantern from "./sprites/lantern";
@@ -24,7 +24,7 @@ export class Lantern {
     this.x = stateVariables.player.startPoint.x + 15;
     this.y = stateVariables.player.startPoint.y + 45;
     this.img = new Image();
-    this.maxRadiusInnerCircle = 250;
+    this.maxRadiusInnerCircle = LANTERN_BRIGHTNESS_RADIUS;
     this.maxRadiusOuterCircle =
       Math.max(stateVariables.windowWidth, stateVariables.windowHeight) / 2;
     this.brightnessDecreaseRate = LANTERN_BRIGHTNESS_DECREASE_RATE;
@@ -35,17 +35,16 @@ export class Lantern {
 
   show(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
     if (stateVariables.player.isBlowingLantern) {
-      if(!this.blowingLantern){
+      if (!this.blowingLantern) {
         this.blowingLantern = setInterval(() => {
-        if (this.r < 28) {
-          this.r += 1;
-        } else {
-          clearInterval(this.blowingLantern!);
-          this.blowingLantern = null;
-          
-        }
-      }, 100);
-    }
+          if (this.r < 28) {
+            this.r += 1;
+          } else {
+            clearInterval(this.blowingLantern!);
+            this.blowingLantern = null;
+          }
+        }, 100);
+      }
     } else {
       this.r = 14;
     }
@@ -142,7 +141,7 @@ export class Lantern {
           this.maxRadiusInnerCircle = 0;
           clearInterval(this.decreaseLuminosity!);
           this.decreaseLuminosity = null;
-        } else if(stateVariables.gameState != GameState.paused){
+        } else if (stateVariables.gameState != GameState.paused) {
           this.maxRadiusInnerCircle -= this.brightnessDecreaseRate;
         }
       }, 200);
@@ -151,12 +150,12 @@ export class Lantern {
   resetLuminosity() {
     this.brightnessDecreaseRate = LANTERN_BRIGHTNESS_DECREASE_RATE;
     this.resetLuminosityInterval = setInterval(() => {
-      if (this.maxRadiusInnerCircle == 250) {
+      if (this.maxRadiusInnerCircle == LANTERN_BRIGHTNESS_RADIUS) {
         clearInterval(this.resetLuminosityInterval!);
         this.resetLuminosityInterval = null;
-      } else if (this.maxRadiusInnerCircle > 250) {
+      } else if (this.maxRadiusInnerCircle > LANTERN_BRIGHTNESS_RADIUS) {
         this.maxRadiusInnerCircle -= 1;
-      } else if (this.maxRadiusInnerCircle < 250) {
+      } else if (this.maxRadiusInnerCircle < LANTERN_BRIGHTNESS_RADIUS) {
         this.maxRadiusInnerCircle += 1;
       }
     }, 2);

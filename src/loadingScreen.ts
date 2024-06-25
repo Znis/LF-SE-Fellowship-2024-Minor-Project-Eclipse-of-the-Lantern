@@ -35,17 +35,14 @@ export class LoadingScreen {
 
     this.drawRoundedRect(ctx, rectX, rectY, this.w, this.h, this.borderRadius);
 
-    // Loading bar dimensions
     const loadingBarWidth = this.w * 0.6;
     const loadingBarHeight = 20;
     const loadingBarX = rectX + (this.w - loadingBarWidth) / 2;
     const loadingBarY = rectY + (this.h - loadingBarHeight) / 2;
 
-    // Draw the loading bar background
     ctx.fillStyle = "#CCCCCC";
     ctx.fillRect(loadingBarX, loadingBarY, loadingBarWidth, loadingBarHeight);
 
-    // Loading text
     const loadingText = "Loading...";
     const loadingTextX =
       rectX + (this.w - ctx.measureText(loadingText).width) / 2;
@@ -53,18 +50,16 @@ export class LoadingScreen {
     ctx.fillStyle = "#000000";
     ctx.font = "20px Outfit";
 
-    // Function to update the loading bar
+    this.loadProgress = stateVariables.assetsLoadCount / 181;
 
-    this.loadProgress = stateVariables.assetsLoadCount / 180;
-
-    ctx.fillStyle = "#00FF00"; // Green color for the loading progress
+    ctx.fillStyle = "#00FF00";
     ctx.fillRect(
       loadingBarX,
       loadingBarY,
       this.loadProgress * loadingBarWidth,
       loadingBarHeight
     );
-    if (stateVariables.assetsLoadCount >= 180) {
+    if (stateVariables.assetsLoadCount >= 181) {
       this.showCompletionMessage(
         ctx,
         rectX,

@@ -2,7 +2,13 @@ import { upCounter } from "./functions";
 import { canvas } from "./main";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
-import { GameState, abilities, inventory, stateVariables, weapons } from "./stateVariables";
+import {
+  GameState,
+  abilities,
+  inventory,
+  stateVariables,
+  weapons,
+} from "./stateVariables";
 
 interface Ability {
   name: string;
@@ -23,6 +29,7 @@ export class Inventory {
     this.fuelImg = {} as HTMLImageElement;
     this.medKitImg = {} as HTMLImageElement;
     this.ammoImg = {} as HTMLImageElement;
+
     this.abilities = [
       {
         name: "Light of Blessings",
@@ -38,7 +45,8 @@ export class Inventory {
         cooldown: 0,
         cooldownInterval: 0,
       },
-    ];
+    ];;
+
     this.showMessage = false;
     this.message = "";
     this.item = "";
@@ -84,12 +92,10 @@ export class Inventory {
     item: string | void,
     message: string | void
   ) {
-
     if (item || message || this.showMessage) {
-
       this.showMessage = true;
-      if(message) this.message = message;
-      if(item) this.item = item;
+      if (message) this.message = message;
+      if (item) this.item = item;
 
       ctx.textAlign = "center";
       ctx.fillStyle = "white";
@@ -144,7 +150,7 @@ export class Inventory {
       ctx.strokeRect(x - 2, y - 2, boxSize + 4, boxSize + 4);
     }
 
-    const imgGun = weapons.gun;
+    const imgGun = weapons.axe;
 
     ctx.drawImage(imgGun, x, y, boxSize, boxSize);
 
@@ -158,7 +164,7 @@ export class Inventory {
       ctx.strokeRect(x - 2, y - 2, boxSize + 4, boxSize + 4);
     }
 
-    const imgAxe = weapons.axe;
+    const imgAxe = weapons.gun;
 
     ctx.drawImage(imgAxe, x, y, boxSize, boxSize);
   }
@@ -182,7 +188,10 @@ export class Inventory {
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y, boxSize, boxSize);
 
-      const img = (ability.name == "Light of Blessings") ? abilities.light : abilities.flame;
+      const img =
+        ability.name == "Light of Blessings"
+          ? abilities.light
+          : abilities.flame;
 
       ctx.drawImage(img, x, y, boxSize, boxSize);
 

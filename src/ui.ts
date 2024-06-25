@@ -58,7 +58,6 @@ export class Ui {
       this.renderBloodOverlay();
     }
 
-
     ctx.font = "14px Outfit";
     ctx.textAlign = "left";
     ctx.fillStyle = "white";
@@ -66,12 +65,12 @@ export class Ui {
 
     let initial = 0;
     for (let i = 0; i < this.healthBars; i++) {
-      ctx.drawImage(this.healthImages[0],50+(i + 1) * 30 + 10, 10, 30, 30);
+      ctx.drawImage(this.healthImages[0], 50 + (i + 1) * 30 + 10, 10, 30, 30);
 
       if (stateVariables.player.health > initial) {
-        ctx.drawImage(this.healthImages[1], 50+(i + 1) * 30 + 10, 10, 30, 30);
+        ctx.drawImage(this.healthImages[1], 50 + (i + 1) * 30 + 10, 10, 30, 30);
       } else {
-        ctx.drawImage(this.healthImages[2], 50+(i + 1) * 30 + 10, 10, 30, 30);
+        ctx.drawImage(this.healthImages[2], 50 + (i + 1) * 30 + 10, 10, 30, 30);
       }
       initial += 100 / this.healthBars;
     }
@@ -84,23 +83,28 @@ export class Ui {
     ctx.fillText("Stamina", 300, 28);
     let initial = 0;
     for (let i = 0; i < this.staminaBars; i++) {
-      ctx.drawImage(this.healthImages[0], 330 +(i + 1) * 30 + 10, 10, 30, 30);
+      ctx.drawImage(this.healthImages[0], 330 + (i + 1) * 30 + 10, 10, 30, 30);
 
       if (stateVariables.player.stamina > initial) {
         ctx.drawImage(this.staminaImage, 330 + (i + 1) * 30 + 10, 10, 30, 30);
       } else {
-        ctx.drawImage(this.healthImages[2], 330 + (i + 1) * 30 + 10, 10, 30, 30);
+        ctx.drawImage(
+          this.healthImages[2],
+          330 + (i + 1) * 30 + 10,
+          10,
+          30,
+          30
+        );
       }
       initial += 100 / this.staminaBars;
     }
 
-    if(stateVariables.player.stamina < 100) stateVariables.player.stamina += 0.1;
-
+    if (stateVariables.player.stamina < 100)
+      stateVariables.player.stamina += 0.1;
   }
 
-
-  initialiseRainParticles(){
-    for(let i=0; i<200; i++) this.rainParticles[i] = new RainParticle();
+  initialiseRainParticles() {
+    for (let i = 0; i < 200; i++) this.rainParticles[i] = new RainParticle();
   }
 
   renderRainParticles() {

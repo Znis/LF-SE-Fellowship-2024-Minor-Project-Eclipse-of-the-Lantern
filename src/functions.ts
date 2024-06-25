@@ -34,6 +34,7 @@ import { playSound, resetSound } from "./soundPlayingFunction";
 import { ControlsScreen } from "./controlsScreen";
 import { AboutScreen } from "./aboutScreen";
 import { LoadingScreen } from "./loadingScreen";
+import { LANTERN_BRIGHTNESS_RADIUS } from "./constants";
 
 export function preload() {
   stateVariables.bgImage = new Maps("main-map.jpg");
@@ -45,7 +46,7 @@ export function preload() {
   stateVariables.ui = new Ui();
   cursorImages.axe.src = "./assets/attack.png";
   cursorImages.axe.onload = upCounter;
-  cursorImages.gun.src = "./assets/gun.png";
+  cursorImages.gun.src = "./assets/crosshair.png";
   cursorImages.gun.onload = upCounter;
   cursorImages.direction.src = "./assets/direction.png";
   cursorImages.direction.onload = upCounter;
@@ -78,28 +79,102 @@ export function preload() {
   abilities.flame.onload = upCounter;
   pickupItems.ammo.src = "./assets/inventory/ammo.png";
   pickupItems.ammo.onload = upCounter;
-  freqLoadingAssets.goblinImages.back = loadGoblinImages("back", 6,"assets/enemy/goblin");
-  freqLoadingAssets.goblinImages.front = loadGoblinImages("front",6,"assets/enemy/goblin");
-  freqLoadingAssets.goblinImages.left = loadGoblinImages("left",6,"assets/enemy/goblin");
-  freqLoadingAssets.goblinImages.right = loadGoblinImages("right",6, "assets/enemy/goblin");
-  freqLoadingAssets.bossImages.back = loadGoblinImages("back", 6,"assets/boss");
-  freqLoadingAssets.bossImages.front = loadGoblinImages("front",6,"assets/boss");
-  freqLoadingAssets.bossImages.left = loadGoblinImages("left",6,"assets/boss");
-  freqLoadingAssets.bossImages.right = loadGoblinImages("right",6, "assets/boss");
-  characters.Ophelia.back = loadCharacterImages("back", 4, "assets/character/images/characters/Ophelia");
-  characters.Ophelia.front = loadCharacterImages("front", 4, "assets/character/images/characters/Ophelia");
-  characters.Ophelia.left = loadCharacterImages("left", 4, "assets/character/images/characters/Ophelia");
-  characters.Ophelia.right = loadCharacterImages("right", 4, "assets/character/images/characters/Ophelia");
-  characters.Noah.back = loadCharacterImages("back", 4, "assets/character/images/characters/Noah");
-  characters.Noah.front = loadCharacterImages("front", 4, "assets/character/images/characters/Noah");
-  characters.Noah.left = loadCharacterImages("left", 4, "assets/character/images/characters/Noah");
-  characters.Noah.right = loadCharacterImages("right", 4, "assets/character/images/characters/Noah");
-  freqLoadingAssets.bloodParticleImages = loadBloodParticleImages(7, "assets/blood");
-  freqLoadingAssets.pickupItems.medkit = loadPickupItemImages(11, pickupItemsTypes.health_pack.itemName, "assets/pickups/health_pack");
-
-
+  freqLoadingAssets.goblinImages.back = loadGoblinImages(
+    "back",
+    6,
+    "assets/enemy/goblin"
+  );
+  freqLoadingAssets.goblinImages.front = loadGoblinImages(
+    "front",
+    6,
+    "assets/enemy/goblin"
+  );
+  freqLoadingAssets.goblinImages.left = loadGoblinImages(
+    "left",
+    6,
+    "assets/enemy/goblin"
+  );
+  freqLoadingAssets.goblinImages.right = loadGoblinImages(
+    "right",
+    6,
+    "assets/enemy/goblin"
+  );
+  freqLoadingAssets.bossImages.back = loadGoblinImages(
+    "back",
+    6,
+    "assets/boss"
+  );
+  freqLoadingAssets.bossImages.front = loadGoblinImages(
+    "front",
+    6,
+    "assets/boss"
+  );
+  freqLoadingAssets.bossImages.left = loadGoblinImages(
+    "left",
+    6,
+    "assets/boss"
+  );
+  freqLoadingAssets.bossImages.right = loadGoblinImages(
+    "right",
+    6,
+    "assets/boss"
+  );
+  characters.Ophelia.back = loadCharacterImages(
+    "back",
+    4,
+    "assets/character/images/characters/Ophelia"
+  );
+  characters.Ophelia.front = loadCharacterImages(
+    "front",
+    4,
+    "assets/character/images/characters/Ophelia"
+  );
+  characters.Ophelia.left = loadCharacterImages(
+    "left",
+    4,
+    "assets/character/images/characters/Ophelia"
+  );
+  characters.Ophelia.right = loadCharacterImages(
+    "right",
+    4,
+    "assets/character/images/characters/Ophelia"
+  );
+  characters.Noah.back = loadCharacterImages(
+    "back",
+    4,
+    "assets/character/images/characters/Noah"
+  );
+  characters.Noah.front = loadCharacterImages(
+    "front",
+    4,
+    "assets/character/images/characters/Noah"
+  );
+  characters.Noah.left = loadCharacterImages(
+    "left",
+    4,
+    "assets/character/images/characters/Noah"
+  );
+  characters.Noah.right = loadCharacterImages(
+    "right",
+    4,
+    "assets/character/images/characters/Noah"
+  );
+  freqLoadingAssets.bloodParticleImages = loadBloodParticleImages(
+    7,
+    "assets/blood"
+  );
+  freqLoadingAssets.pickupItems.medkit = loadPickupItemImages(
+    11,
+    pickupItemsTypes.health_pack.itemName,
+    "assets/pickups/health_pack"
+  );
 }
-export function loadCharacterImages(direction: string, no_of_frames:number, path:string){
+
+export function loadCharacterImages(
+  direction: string,
+  no_of_frames: number,
+  path: string
+) {
   const imagesArray = [];
   for (let i = 1; i <= no_of_frames; i++) {
     const img = new Image();
@@ -110,7 +185,11 @@ export function loadCharacterImages(direction: string, no_of_frames:number, path
   return imagesArray;
 }
 
-export function loadPickupItemImages(frame: number, type: string, path: string) {
+export function loadPickupItemImages(
+  frame: number,
+  type: string,
+  path: string
+) {
   let imgArray = [];
   for (let i = 1; i <= frame; i++) {
     const img = new Image();
@@ -121,7 +200,7 @@ export function loadPickupItemImages(frame: number, type: string, path: string) 
   return imgArray;
 }
 
-export function loadBloodParticleImages(frames: number, path:string){
+export function loadBloodParticleImages(frames: number, path: string) {
   const imagesArray = [];
   for (let i = 0; i <= frames; i++) {
     const img = new Image();
@@ -132,7 +211,11 @@ export function loadBloodParticleImages(frames: number, path:string){
   return imagesArray;
 }
 
-export function loadGoblinImages(direction: string, no_of_frames:number, path:string){
+export function loadGoblinImages(
+  direction: string,
+  no_of_frames: number,
+  path: string
+) {
   const imagesArray = [];
   for (let i = 1; i <= no_of_frames; i++) {
     const img = new Image();
@@ -142,58 +225,6 @@ export function loadGoblinImages(direction: string, no_of_frames:number, path:st
   }
   return imagesArray;
 }
-
-export function upCounter(){
-  stateVariables.assetsLoadCount++;
-}
-
-
-export function isPointInCollider(x: number, y: number): boolean {
-  mapData[
-    stateVariables.bgImage.name as keyof typeof mapData
-  ].colliders.forEach((collider: any) => {
-  const colliderX1 = 20 +
-  (stateVariables.windowWidth / 2 +
-    stateVariables.bgImage.startPoint.x -
-    (collider.x + stateVariables.adjustDeviceColliderX));
-  const colliderY1 = 50 +
-  (stateVariables.windowHeight / 2 +
-    stateVariables.bgImage.startPoint.y -
-    (collider.y + stateVariables.adjustDeviceColliderY));
-  const colliderX2 = colliderX1 + Math.abs(collider.x - collider.w);
-  const colliderY2 = colliderY1 + Math.abs(collider.y - collider.h);
-
-  const minX = Math.min(colliderX1, colliderX2);
-  const maxX = Math.max(colliderX1, colliderX2);
-  const minY = Math.min(colliderY1, colliderY2);
-  const maxY = Math.max(colliderY1, colliderY2);
-
-  if( x >= minX && x <= maxX && y >= minY && y <= maxY) return true;
-  
-  });
-  return false;
-}
-export function debugColliderMode() {
-  mapData[
-    stateVariables.bgImage.name as keyof typeof mapData
-  ].colliders.forEach((collider: any) => {
-    stateVariables.ctx.fillStyle = collider.color || "#ffffff";
-    stateVariables.ctx.beginPath();
-    stateVariables.ctx.fillRect(
-      20 +
-        (stateVariables.windowWidth / 2 +
-          stateVariables.bgImage.startPoint.x -
-          (collider.x + stateVariables.adjustDeviceColliderX)),
-      50 +
-        (stateVariables.windowHeight / 2 +
-          stateVariables.bgImage.startPoint.y -
-          (collider.y + stateVariables.adjustDeviceColliderY)),
-      Math.abs(collider.x - collider.w),
-      Math.abs(collider.y - collider.h)
-    );
-  });
-}
-
 export function loadImages(path: string, num: number) {
   const imagesArray = [];
   for (let i = 0; i < num; i++) {
@@ -209,15 +240,10 @@ export function adjustCanvasSize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
-
-export function checkPlayerHealthAndLanternLuminosity() {
-  if (
-    stateVariables.player.health <= 0 ||
-    stateVariables.lantern.maxRadiusInnerCircle <= 0
-  )
-    stateVariables.gameState = GameState.retryScreen;
-    // playSound(voice.wefailed, 1);
+export function upCounter() {
+  stateVariables.assetsLoadCount++;
 }
+
 export function startJourney() {
   resetStateVariables();
   resetSound();
@@ -244,6 +270,65 @@ export function startJourney() {
     playSound(voice.letsstartkilling, 1);
   }, 500);
 }
+
+export function isPointInCollider(x: number, y: number): boolean {
+  mapData[
+    stateVariables.bgImage.name as keyof typeof mapData
+  ].colliders.forEach((collider: any) => {
+    const colliderX1 =
+      20 +
+      (stateVariables.windowWidth / 2 +
+        stateVariables.bgImage.startPoint.x -
+        (collider.x + stateVariables.adjustDeviceColliderX));
+    const colliderY1 =
+      50 +
+      (stateVariables.windowHeight / 2 +
+        stateVariables.bgImage.startPoint.y -
+        (collider.y + stateVariables.adjustDeviceColliderY));
+    const colliderX2 = colliderX1 + Math.abs(collider.x - collider.w);
+    const colliderY2 = colliderY1 + Math.abs(collider.y - collider.h);
+
+    const minX = Math.min(colliderX1, colliderX2);
+    const maxX = Math.max(colliderX1, colliderX2);
+    const minY = Math.min(colliderY1, colliderY2);
+    const maxY = Math.max(colliderY1, colliderY2);
+
+    if (x >= minX && x <= maxX && y >= minY && y <= maxY) return true;
+  });
+  return false;
+}
+
+
+export function debugColliderMode() {
+  mapData[
+    stateVariables.bgImage.name as keyof typeof mapData
+  ].colliders.forEach((collider: any) => {
+    stateVariables.ctx.fillStyle = collider.color || "#ffffff";
+    stateVariables.ctx.beginPath();
+    stateVariables.ctx.fillRect(
+      20 +
+        (stateVariables.windowWidth / 2 +
+          stateVariables.bgImage.startPoint.x -
+          (collider.x + stateVariables.adjustDeviceColliderX)),
+      50 +
+        (stateVariables.windowHeight / 2 +
+          stateVariables.bgImage.startPoint.y -
+          (collider.y + stateVariables.adjustDeviceColliderY)),
+      Math.abs(collider.x - collider.w),
+      Math.abs(collider.y - collider.h)
+    );
+  });
+}
+
+
+export function checkPlayerHealthAndLanternLuminosity() {
+  if (
+    stateVariables.player.health <= 0 ||
+    stateVariables.lantern.maxRadiusInnerCircle <= 0
+  )
+    stateVariables.gameState = GameState.retryScreen;
+}
+
 
 export function displayCursorImage(
   ctx: CanvasRenderingContext2D = stateVariables.ctx
@@ -332,7 +417,7 @@ export function resumeGame() {
 export function resetStateVariables() {
   stateVariables.player.health = 100;
   stateVariables.player.score = 0;
-  stateVariables.lantern.maxRadiusInnerCircle = 250;
+  stateVariables.lantern.maxRadiusInnerCircle = LANTERN_BRIGHTNESS_RADIUS;
   stateVariables.bgImage.startPoint = new Point(
     -2220 + stateVariables.adjustDeviceColliderX,
     -2220 + stateVariables.adjustDeviceColliderY
@@ -491,7 +576,6 @@ export function drawEllipse(
   ctx.closePath();
 }
 
-
 export function checkHitToEnemy() {
   if (stateVariables.player.currWeapon == "gun") {
     stateVariables.bulletProjectileArray.forEach((bulletProjectile) => {
@@ -499,7 +583,7 @@ export function checkHitToEnemy() {
         if (bulletProjectile.hits(stateVariables.enemiesArray[i])) {
           stateVariables.enemiesArray[i].health -= 1;
           bulletProjectile.evaporate();
-          playSound(voice.diegoblins, 0.01);
+          playSound(voice.diegoblins, 0.001);
           const bloodParticle = new BloodParticle(
             stateVariables.enemiesArray[i].startPoint.x -
               stateVariables.bgImage.startPoint.x,
@@ -536,9 +620,6 @@ export function checkHitToEnemy() {
       for (let i = 0; i < stateVariables.enemiesArray.length; i++) {
         if (fireProjectile.hits(stateVariables.enemiesArray[i])) {
           stateVariables.enemiesArray[i].health -= 5;
-
-          playSound(voice.diegoblins, 1);
-
 
           const bloodParticle = new BloodParticle(
             stateVariables.enemiesArray[i].startPoint.x -
@@ -606,8 +687,7 @@ export function checkHitToBoss() {
       ) {
         if (stateVariables.axe.hits(stateVariables.boss)) {
           stateVariables.boss.health -= 0.1;
-          playSound(voice.diegoblins, 0.01);
-
+          playSound(voice.diegoblins, 0.001);
 
           const bloodParticle = new BloodParticle(
             stateVariables.boss.startPoint.x -
@@ -624,8 +704,6 @@ export function checkHitToBoss() {
           if (fireProjectile.hits(stateVariables.boss)) {
             stateVariables.boss.health -= 10;
             fireProjectile.evaporate();
-            playSound(voice.diegoblins, 1);
-
 
             const bloodParticle = new BloodParticle(
               stateVariables.boss.startPoint.x -
