@@ -1,11 +1,17 @@
 import { BloodParticle } from "./particles/bloodParticle";
 import {
   GameState,
+  abilities,
+  characters,
+  cursorImages,
   difficultySetting,
+  freqLoadingAssets,
   gameOptions,
   inventory,
+  pickupItems,
   pickupItemsTypes,
   stateVariables,
+  weapons,
 } from "./stateVariables";
 import { Character } from "./character";
 import { Maps } from "./maps";
@@ -14,7 +20,6 @@ import { Lantern } from "./lantern";
 import { Enemy } from "./enemy";
 import { AnimateEntity } from "./animation";
 import { Ui } from "./ui";
-import { loadFonts } from "./fonts";
 import { MenuScreen } from "./menuScreen";
 import { Point } from "./shapes/point";
 import { PickupItems } from "./pickupItems";
@@ -26,20 +31,25 @@ import { getRandomInt } from "./utils/util";
 import { mapData } from "./mapData";
 import { voice } from "./sounds";
 import { playSound, resetSound } from "./soundPlayingFunction";
+import { ControlsScreen } from "./controlsScreen";
+import { AboutScreen } from "./aboutScreen";
+import { LoadingScreen } from "./loadingScreen";
 
 export function preload() {
+  stateVariables.bgImage = new Maps("main-map.jpg");
+  stateVariables.bgImage.initialiseImages();
   stateVariables.player = new Character();
-  stateVariables.player.initialiseImages(
-    `assets/character/images/characters/${gameOptions.character}`,
-    4
-  );
-  console.log(gameOptions.character);
   stateVariables.player.direction = "r";
   stateVariables.player.startPoint.x = stateVariables.windowWidth / 2;
   stateVariables.player.startPoint.y = stateVariables.windowHeight / 2;
   stateVariables.ui = new Ui();
-  stateVariables.cursorImage = new Image();
-  stateVariables.cursorImage.src = "./assets/attack.png";
+  cursorImages.axe.src = "./assets/attack.png";
+  cursorImages.axe.onload = upCounter;
+  cursorImages.gun.src = "./assets/gun.png";
+  cursorImages.gun.onload = upCounter;
+  cursorImages.direction.src = "./assets/direction.png";
+  cursorImages.direction.onload = upCounter;
+  stateVariables.cursorImage = cursorImages.axe;
   stateVariables.inventory = new Inventory();
   stateVariables.axe = new Axe();
   stateVariables.gun = new Gun();
@@ -48,15 +58,96 @@ export function preload() {
   stateVariables.ui.initialiseRainParticles();
   stateVariables.lantern = new Lantern();
   stateVariables.lantern.img.src = "assets/lantern/lantern.png";
-  stateVariables.bgImage = new Maps("main-map.jpg");
+  stateVariables.lantern.img.onload = upCounter;
   stateVariables.mainMenu = new MenuScreen();
+  stateVariables.controlsScreen = new ControlsScreen();
+  stateVariables.aboutScreen = new AboutScreen();
+  stateVariables.loadingScreen = new LoadingScreen();
   stateVariables.boss = new Boss();
   let animateEnemy = new AnimateEntity(stateVariables.boss.images_front, 2);
   stateVariables.animateEnemyArray.push(animateEnemy);
   stateVariables.mainMenu.initialiseImages();
-  loadFonts();
   stateVariables.flameImages = loadImages("assets/flame", 30);
+  weapons.axe.src = "./assets/axe.png";
+  weapons.axe.onload = upCounter;
+  weapons.gun.src = "./assets/gun.png";
+  weapons.gun.onload = upCounter;
+  abilities.light.src = "./assets/abilities/light.png";
+  abilities.light.onload = upCounter;
+  abilities.flame.src = "./assets/abilities/flame.png";
+  abilities.flame.onload = upCounter;
+  pickupItems.ammo.src = "./assets/inventory/ammo.png";
+  pickupItems.ammo.onload = upCounter;
+  freqLoadingAssets.goblinImages.back = loadGoblinImages("back", 6,"assets/enemy/goblin");
+  freqLoadingAssets.goblinImages.front = loadGoblinImages("front",6,"assets/enemy/goblin");
+  freqLoadingAssets.goblinImages.left = loadGoblinImages("left",6,"assets/enemy/goblin");
+  freqLoadingAssets.goblinImages.right = loadGoblinImages("right",6, "assets/enemy/goblin");
+  freqLoadingAssets.bossImages.back = loadGoblinImages("back", 6,"assets/boss");
+  freqLoadingAssets.bossImages.front = loadGoblinImages("front",6,"assets/boss");
+  freqLoadingAssets.bossImages.left = loadGoblinImages("left",6,"assets/boss");
+  freqLoadingAssets.bossImages.right = loadGoblinImages("right",6, "assets/boss");
+  characters.Ophelia.back = loadCharacterImages("back", 4, "assets/character/images/characters/Ophelia");
+  characters.Ophelia.front = loadCharacterImages("front", 4, "assets/character/images/characters/Ophelia");
+  characters.Ophelia.left = loadCharacterImages("left", 4, "assets/character/images/characters/Ophelia");
+  characters.Ophelia.right = loadCharacterImages("right", 4, "assets/character/images/characters/Ophelia");
+  characters.Noah.back = loadCharacterImages("back", 4, "assets/character/images/characters/Noah");
+  characters.Noah.front = loadCharacterImages("front", 4, "assets/character/images/characters/Noah");
+  characters.Noah.left = loadCharacterImages("left", 4, "assets/character/images/characters/Noah");
+  characters.Noah.right = loadCharacterImages("right", 4, "assets/character/images/characters/Noah");
+  freqLoadingAssets.bloodParticleImages = loadBloodParticleImages(7, "assets/blood");
+  freqLoadingAssets.pickupItems.medkit = loadPickupItemImages(11, pickupItemsTypes.health_pack.itemName, "assets/pickups/health_pack");
+
+
 }
+export function loadCharacterImages(direction: string, no_of_frames:number, path:string){
+  const imagesArray = [];
+  for (let i = 1; i <= no_of_frames; i++) {
+    const img = new Image();
+    img.src = `${path}/${direction}/${direction} (${i}).png`;
+    img.onload = upCounter;
+    imagesArray.push(img);
+  }
+  return imagesArray;
+}
+
+export function loadPickupItemImages(frame: number, type: string, path: string) {
+  let imgArray = [];
+  for (let i = 1; i <= frame; i++) {
+    const img = new Image();
+    img.src = `${path}/${type} (${i}).png`;
+    img.onload = upCounter;
+    imgArray.push(img);
+  }
+  return imgArray;
+}
+
+export function loadBloodParticleImages(frames: number, path:string){
+  const imagesArray = [];
+  for (let i = 0; i <= frames; i++) {
+    const img = new Image();
+    img.src = `${path}/sprite_${i}.png`;
+    img.onload = upCounter;
+    imagesArray.push(img);
+  }
+  return imagesArray;
+}
+
+export function loadGoblinImages(direction: string, no_of_frames:number, path:string){
+  const imagesArray = [];
+  for (let i = 1; i <= no_of_frames; i++) {
+    const img = new Image();
+    img.src = `${path}/${direction}/${direction} (${i}).png`;
+    img.onload = upCounter;
+    imagesArray.push(img);
+  }
+  return imagesArray;
+}
+
+export function upCounter(){
+  stateVariables.assetsLoadCount++;
+}
+
+
 export function isPointInCollider(x: number, y: number): boolean {
   mapData[
     stateVariables.bgImage.name as keyof typeof mapData
@@ -108,6 +199,7 @@ export function loadImages(path: string, num: number) {
   for (let i = 0; i < num; i++) {
     const img = new Image();
     img.src = `${path}/${i}.png`;
+    img.onload = upCounter;
     imagesArray.push(img);
   }
   return imagesArray;
@@ -133,11 +225,7 @@ export function startJourney() {
   generateEnemy(50);
   generateRandomPickupItems(100);
 
-  stateVariables.player.initialiseImages(
-    `assets/character/images/characters/${gameOptions.character}`,
-    4
-  );
-  console.log(gameOptions.character);
+  stateVariables.player.changeCharacter(gameOptions.character);
   stateVariables.player.direction = "r";
   stateVariables.player.startPoint.x = stateVariables.windowWidth / 2;
   stateVariables.player.startPoint.y = stateVariables.windowHeight / 2;
@@ -162,7 +250,7 @@ export function displayCursorImage(
 ) {
   ctx.save();
   if (stateVariables.player.abilityMode) {
-    stateVariables.cursorImage.src = "./assets/direction.png";
+    stateVariables.cursorImage = cursorImages.direction;
     ctx.translate(stateVariables.mouseCoords.x, stateVariables.mouseCoords.y);
     ctx.rotate(
       Math.atan2(
@@ -173,7 +261,7 @@ export function displayCursorImage(
     ctx.drawImage(stateVariables.cursorImage, 0, 0, 50, 50);
     ctx.restore();
   } else if (stateVariables.player.currWeapon == "gun") {
-    stateVariables.cursorImage.src = "./assets/crosshair.png";
+    stateVariables.cursorImage = cursorImages.gun;
     ctx.drawImage(
       stateVariables.cursorImage,
       stateVariables.mouseCoords.x,
@@ -182,7 +270,7 @@ export function displayCursorImage(
       30
     );
   } else {
-    stateVariables.cursorImage.src = "./assets/attack.png";
+    stateVariables.cursorImage = cursorImages.axe;
     ctx.drawImage(
       stateVariables.cursorImage,
       stateVariables.mouseCoords.x,
@@ -212,8 +300,6 @@ export function generateRandomPickupItems(num: number) {
     );
     if (!isPointInCollider(posX, posY)) {
       const pickupItem = new PickupItems(posX, posY, itemType);
-      pickupItem.initialiseImages();
-
       stateVariables.pickupItemsArray.push(pickupItem);
       const animatePickupItem = new AnimateEntity(pickupItem.images, 12);
       stateVariables.animatePickupItemsArray.push(animatePickupItem);
@@ -384,7 +470,6 @@ export function generateEnemy(num: number) {
     );
     if (!isPointInCollider(posX, posY)) {
       let enemy = new Enemy(posX, posY);
-      enemy.initialiseGolblinImages("assets/enemy/goblin", 6);
       let animateEnemy = new AnimateEntity(enemy.images_front, 2);
       stateVariables.enemiesArray.push(enemy);
       stateVariables.animateEnemyArray.push(animateEnemy);
@@ -421,7 +506,7 @@ export function checkHitToEnemy() {
             stateVariables.enemiesArray[i].startPoint.y -
               stateVariables.bgImage.startPoint.y
           );
-          bloodParticle.initialiseImages("assets/blood", 7);
+          bloodParticle.updateState();
           stateVariables.bloodParticleArray.push(bloodParticle);
         }
       }
@@ -441,7 +526,7 @@ export function checkHitToEnemy() {
           stateVariables.enemiesArray[i].startPoint.y -
             stateVariables.bgImage.startPoint.y
         );
-        bloodParticle.initialiseImages("assets/blood", 7);
+        bloodParticle.updateState();
         stateVariables.bloodParticleArray.push(bloodParticle);
       }
     }
@@ -461,7 +546,7 @@ export function checkHitToEnemy() {
             stateVariables.enemiesArray[i].startPoint.y -
               stateVariables.bgImage.startPoint.y
           );
-          bloodParticle.initialiseImages("assets/blood", 7);
+          bloodParticle.updateState();
           stateVariables.bloodParticleArray.push(bloodParticle);
           if (!stateVariables.enemiesArray[i].isAlive) {
             stateVariables.player.score++;
@@ -511,7 +596,7 @@ export function checkHitToBoss() {
               stateVariables.boss.startPoint.y -
                 stateVariables.bgImage.startPoint.y
             );
-            bloodParticle.initialiseImages("assets/blood", 7);
+            bloodParticle.updateState();
             stateVariables.bloodParticleArray.push(bloodParticle);
           }
         });
@@ -530,7 +615,7 @@ export function checkHitToBoss() {
             stateVariables.boss.startPoint.y -
               stateVariables.bgImage.startPoint.y
           );
-          bloodParticle.initialiseImages("assets/blood", 7);
+          bloodParticle.updateState();
           stateVariables.bloodParticleArray.push(bloodParticle);
         }
       }
@@ -548,7 +633,7 @@ export function checkHitToBoss() {
               stateVariables.boss.startPoint.y -
                 stateVariables.bgImage.startPoint.y
             );
-            bloodParticle.initialiseImages("assets/blood", 7);
+            bloodParticle.updateState();
             stateVariables.bloodParticleArray.push(bloodParticle);
           }
         }

@@ -33,12 +33,20 @@ window.addEventListener(
   true
 );
 
+
+
+
 window.addEventListener(
   "click",
   function () {
-    if (stateVariables.gameState != GameState.running) {
+    if (stateVariables.gameState != GameState.running &&
+      stateVariables.gameState != GameState.controlsScreen &&
+      stateVariables.gameState != GameState.aboutScreen &&
+      stateVariables.gameState != GameState.loadingScreen
+    ) {
       stateVariables.mainMenu.handleSelect();
     }
+
   },
   true
 );

@@ -3,14 +3,20 @@ import axeSpriteRight from "/assets/weapons/axe-right/axe-right.png";
 import axeSpriteBack from "/assets/weapons/axe-back/back.png";
 import axeSpriteFront from "/assets/weapons/axe-front/front.png";
 import { Point } from "../shapes/point";
+import { upCounter } from "../functions";
 const SpriteLeft = new Image();
 SpriteLeft.src = axeSpriteLeft;
+SpriteLeft.onload = upCounter;
 const SpriteRight = new Image();
 SpriteRight.src = axeSpriteRight;
+SpriteRight.onload = upCounter;
 const SpriteBack = new Image();
 SpriteBack.src = axeSpriteBack;
+SpriteBack.onload = upCounter;
 const SpriteFront = new Image();
 SpriteFront.src = axeSpriteFront;
+SpriteFront.onload = upCounter;
+
 
 type sprite = {
     sprite: HTMLImageElement,

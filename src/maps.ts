@@ -1,6 +1,7 @@
 import { Point } from "./shapes/point";
 import { mapData } from "./mapData";
 import { stateVariables } from "./stateVariables";
+import { upCounter } from "./functions";
 export class Maps {
   startPoint: Point;
   w: number;
@@ -12,26 +13,39 @@ export class Maps {
   otherMaps: HTMLImageElement[];
   otherMapsDepth: HTMLImageElement[];
   constructor(imgName: string) {
-    this.startPoint = new Point(-2220 + stateVariables.adjustDeviceColliderX, -2220 + stateVariables.adjustDeviceColliderY);
+    this.startPoint = new Point(
+      -2220 + stateVariables.adjustDeviceColliderX,
+      -2220 + stateVariables.adjustDeviceColliderY
+    );
     this.w = 4800;
     this.h = 4080;
 
     this.name = imgName as string;
     this.img = new Image();
-    this.img.src = "./assets/maps/" + this.name;
-    this.otherMaps = [this.img];
-
     this.depthImg = new Image();
-    this.depthImg.src = "./assets/maps/" + this.getDepthImgName();
-  
+
+    this.otherMaps = [];
+    this.otherMapsDepth = [];
 
     this.mapData = mapData;
+  }
+
+  initialiseImages() {
+    this.img.src = "./assets/maps/" + this.name;
+    this.img.onload = upCounter;
+    this.otherMaps = [this.img];
+
+    this.depthImg.src = "./assets/maps/" + this.getDepthImgName();
+    this.depthImg.onload = upCounter;
 
     let temp = new Image();
     temp.src = `assets/maps/house.png`;
+    temp.onload = upCounter;
     this.otherMaps = [temp];
+
     temp = new Image();
     temp.src = `assets/maps/house-depth.png`;
+    temp.onload = upCounter;
     this.otherMapsDepth = [temp];
 
     this.otherMaps.push(this.img);
@@ -46,10 +60,13 @@ export class Maps {
     return depth_image_name;
   }
 
-
   show(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
-
-    ctx.clearRect(0, 0, stateVariables.windowWidth, stateVariables.windowHeight);
+    ctx.clearRect(
+      0,
+      0,
+      stateVariables.windowWidth,
+      stateVariables.windowHeight
+    );
     ctx.fillStyle = "#181425";
     ctx.fillRect(0, 0, stateVariables.windowWidth, stateVariables.windowHeight);
 
@@ -78,9 +95,7 @@ export class Maps {
   }
 
   showDepth(ctx: CanvasRenderingContext2D = stateVariables.ctx) {
-    if (
-      this.mapData[this.name].size == "native"
-    ) {
+    if (this.mapData[this.name].size == "native") {
       ctx.drawImage(this.depthImg, this.startPoint.x, this.startPoint.y);
     } else {
       ctx.drawImage(
@@ -93,26 +108,24 @@ export class Maps {
     }
   }
 
-  checkEvents(x:number = this.startPoint.x, y:number = this.startPoint.y) {
-    this.mapData[this.name].events["doors"].map((event:any) => {
-
+  checkEvents(x: number = this.startPoint.x, y: number = this.startPoint.y) {
+    this.mapData[this.name].events["doors"].map((event: any) => {
       if (
         x - stateVariables.adjustDeviceColliderX < event.x &&
         x - stateVariables.adjustDeviceColliderX > event.w &&
         y - stateVariables.adjustDeviceColliderY < event.y &&
         y - stateVariables.adjustDeviceColliderY > event.h
       ) {
-
         this.startPoint.x = event.next_cor.x;
         this.startPoint.y = event.next_cor.y;
         this.name = event.map;
         this.img = this.otherMaps[event.other_pos];
         this.depthImg = this.otherMapsDepth[event.other_pos];
-      } 
+      }
     });
   }
 
-  checkCollision(x:number, y:number) {
+  checkCollision(x: number, y: number) {
     let has_collided = false;
     let collidersLength = this.mapData[this.name].colliders.length;
     for (let i = 0; i < collidersLength; i++) {

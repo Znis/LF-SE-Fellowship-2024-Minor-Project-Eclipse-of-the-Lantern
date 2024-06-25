@@ -34,9 +34,25 @@ preload();
 
 function draw() {
   adjustCanvasSize();
-  stateVariables.bgImage.show();
 
-console.log(stateVariables.bgImage.startPoint.x - stateVariables.player.startPoint.x/2 +stateVariables.adjustDeviceColliderX)
+
+  stateVariables.bgImage.show();
+console.log(stateVariables.assetsLoadCount);
+if(stateVariables.gameState == GameState.loadingScreen){
+  stateVariables.loadingScreen.show();
+}
+
+if(stateVariables.gameState == GameState.aboutScreen){
+  stateVariables.aboutScreen.show();
+}
+if(stateVariables.gameState == GameState.controlsScreen){
+  stateVariables.controlsScreen.show();
+}
+
+
+
+ 
+
 playSoundandVoice();
 
   if (stateVariables.gameState == GameState.running) {

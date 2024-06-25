@@ -2,7 +2,7 @@ import { Point } from "./shapes/point";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
 import fuel from "./sprites/fuel";
-import { inventory, stateVariables } from "./stateVariables";
+import { freqLoadingAssets, inventory, pickupItems, stateVariables } from "./stateVariables";
 import { distance } from "./utils/util";
 
 export class PickupItems {
@@ -10,24 +10,16 @@ export class PickupItems {
   startPoint: Point;
   isUsed: boolean;
   type: { [key: string]: string };
-  frameCount: number;
   spritePos: number;
   constructor(x: number, y: number, pickupItemType: { [key: string]: string }) {
-    this.images = [];
+    this.images = freqLoadingAssets.pickupItems.medkit;
     this.startPoint = new Point(x, y);
     this.isUsed = false;
     this.type = pickupItemType;
-    this.frameCount = 11;
     this.spritePos = 0;
   }
 
-  initialiseImages() {
-    for (let i = 1; i <= this.frameCount; i++) {
-      const img = new Image();
-      img.src = `${this.type.images_path}${this.type.itemName} (${i}).png`;
-      this.images[i - 1] = img;
-    }
-  }
+
 
   show(
     img: HTMLImageElement,
@@ -64,8 +56,7 @@ export class PickupItems {
       ctx.drawImage(img, imgX, imgY, 60, 60);
     } else if (this.type.itemName == "ammo") {
       ellipseWidth = shadowFrame + 22;
-      const img = new Image();
-      img.src = "./assets/inventory/ammo.png";
+      const img = pickupItems.ammo;
       ctx.drawImage(img, imgX, imgY, 30, 30);
     }
 

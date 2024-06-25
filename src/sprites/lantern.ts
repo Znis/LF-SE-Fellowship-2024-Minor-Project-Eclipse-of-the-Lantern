@@ -1,7 +1,10 @@
 import lanternSprite from "/assets/lantern/lantern-right.png";
 import { Point } from "../shapes/point";
+import { upCounter } from "../functions";
 const Sprite = new Image();
 Sprite.src = lanternSprite;
+Sprite.onload = upCounter;
+
 type sprite = {
     sprite: HTMLImageElement,
     width: number,

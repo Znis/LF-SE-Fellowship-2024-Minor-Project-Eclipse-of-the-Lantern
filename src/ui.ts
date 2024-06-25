@@ -1,3 +1,4 @@
+import { upCounter } from "./functions";
 import { RainParticle } from "./particles/rainParticle";
 import { stateVariables } from "./stateVariables";
 
@@ -21,6 +22,7 @@ export class Ui {
     const loadImage = (fullPath: string) => {
       const img = new Image();
       img.src = fullPath;
+      img.onload = upCounter;
 
       return img;
     };

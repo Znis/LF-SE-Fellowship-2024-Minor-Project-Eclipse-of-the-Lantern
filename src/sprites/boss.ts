@@ -15,32 +15,45 @@ import EnemyDeadSpriteBack from "/assets/boss/back/Png/GoblinBeastUpDeath.png";
 
 
 import { Point } from "../shapes/point";
+import { upCounter } from "../functions";
 
 const SpriteLeftAttack1 = new Image();
 SpriteLeftAttack1.src = EnemyAttackSpriteLeft1;
+SpriteLeftAttack1.onload = upCounter;
+
 const SpriteEnemyDeadLeft = new Image();
 SpriteEnemyDeadLeft.src = EnemyDeadSpriteLeft;
+SpriteEnemyDeadLeft.onload = upCounter;
 
 
 
 const SpriteRightAttack1 = new Image();
 SpriteRightAttack1.src = EnemyAttackSpriteRight1;
+SpriteRightAttack1.onload = upCounter;
+
 const SpriteEnemyDeadRight = new Image();
 SpriteEnemyDeadRight.src = EnemyDeadSpriteRight;
+SpriteEnemyDeadRight.onload = upCounter;
 
 
 
 const SpriteFrontAttack1 = new Image();
 SpriteFrontAttack1.src = EnemyAttackSpriteFront1;
+SpriteFrontAttack1.onload = upCounter;
+
 const SpriteEnemyDeadFront = new Image();
 SpriteEnemyDeadFront.src = EnemyDeadSpriteFront;
+SpriteEnemyDeadFront.onload = upCounter;
 
 
 
 const SpriteBackAttack1 = new Image();
 SpriteBackAttack1.src = EnemyAttackSpriteBack1;
+SpriteBackAttack1.onload = upCounter;
+
 const SpriteEnemyDeadBack = new Image();
 SpriteEnemyDeadBack.src = EnemyDeadSpriteBack;
+SpriteEnemyDeadBack.onload = upCounter;
 
 
 type sprite = {[key:string]:{

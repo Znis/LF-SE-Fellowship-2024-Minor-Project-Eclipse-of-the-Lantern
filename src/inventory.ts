@@ -1,7 +1,8 @@
+import { upCounter } from "./functions";
 import { canvas } from "./main";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
-import { GameState, inventory, stateVariables } from "./stateVariables";
+import { GameState, abilities, inventory, stateVariables, weapons } from "./stateVariables";
 
 interface Ability {
   name: string;
@@ -46,6 +47,7 @@ export class Inventory {
     const loadImage = (fullPath: string) => {
       const img = new Image();
       img.src = fullPath;
+      img.onload = upCounter;
       return img;
     };
     this.fuelImg = loadImage("./assets/inventory/fuel.png");
@@ -142,8 +144,7 @@ export class Inventory {
       ctx.strokeRect(x - 2, y - 2, boxSize + 4, boxSize + 4);
     }
 
-    const imgGun = new Image();
-    imgGun.src = "assets/axe.png";
+    const imgGun = weapons.gun;
 
     ctx.drawImage(imgGun, x, y, boxSize, boxSize);
 
@@ -157,8 +158,7 @@ export class Inventory {
       ctx.strokeRect(x - 2, y - 2, boxSize + 4, boxSize + 4);
     }
 
-    const imgAxe = new Image();
-    imgAxe.src = "assets/gun.png";
+    const imgAxe = weapons.axe;
 
     ctx.drawImage(imgAxe, x, y, boxSize, boxSize);
   }
@@ -182,8 +182,7 @@ export class Inventory {
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y, boxSize, boxSize);
 
-      const img = new Image();
-      img.src = ability.src;
+      const img = (ability.name == "Light of Blessings") ? abilities.light : abilities.flame;
 
       ctx.drawImage(img, x, y, boxSize, boxSize);
 

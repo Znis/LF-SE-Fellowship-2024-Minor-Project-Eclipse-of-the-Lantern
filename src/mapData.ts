@@ -261,11 +261,7 @@ export const mapData = {
     depth: {
       path: `assets/maps/"main-map-depth.jpg"`,
     },
-    enemiesCount: 10,
     size: "native",
-    weather: true,
-    position: "native",
-    type: "hostile",
   },
   "house.png": {
     colliders: [
@@ -324,12 +320,9 @@ export const mapData = {
         },
       ],
     },
-    enemiesCount: 0,
     depth: {
       path: `assets/maps/"house-depth.png"`,
     },
     size: { width: 850, height: 850 },
-    weather: false,
-    type: "calm",
   },
 };

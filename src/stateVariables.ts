@@ -1,3 +1,4 @@
+import { ControlsScreen } from './controlsScreen';
 import { AnimateEntity } from './animation.ts';
 import { BloodParticle } from './particles/bloodParticle.ts';
 import { BulletProjectile } from './weapons/bulletProjectile.ts';
@@ -13,6 +14,8 @@ import { Axe } from './weapons/axe.ts';
 import { Gun } from './weapons/gun.ts';
 import { Boss } from './boss.ts';
 import { FireProjectile } from './weapons/fireProjectile.ts';
+import { AboutScreen } from './aboutScreen.ts';
+import { LoadingScreen } from './loadingScreen.ts';
 
 type stateVariables = {
     refuelStart: number | null;
@@ -41,8 +44,12 @@ type stateVariables = {
     reqAnimFrame: number,
     keyState:  {[key: number]: boolean},
     mainMenu: MenuScreen;
+    controlsScreen: ControlsScreen,
+    aboutScreen: AboutScreen,
+    loadingScreen: LoadingScreen,
     mouseCoords: {[key:string]: number},
     gameState: GameState,
+    tempGameState: GameState,
     pickupItemsArray: PickupItems[],
     animatePickupItemsArray: AnimateEntity[],
     cursorImage: HTMLImageElement,
@@ -50,9 +57,31 @@ type stateVariables = {
     gun: Gun,
     boss: Boss,
     flameImages: HTMLImageElement[],
+    assetsLoadCount: number,
 
 }
 
+export const weapons = {
+    axe: new Image(),
+    gun: new Image(),
+    }
+
+export const abilities = {
+    light: new Image(),
+    flame: new Image(),
+    }  
+
+export const pickupItems = {
+    medkit: new Image(),
+    fuel: new Image(),
+    ammo: new Image(),
+} 
+
+export const cursorImages = {
+axe: new Image(),
+gun: new Image(),
+direction: new Image(),
+}
 
 export const keyDown = {
     "Q": false,
@@ -62,6 +91,70 @@ export const keyDown = {
     "SPACE": false
 }
 
+type freqLoadingAssets = {
+    goblinImages: {
+        front:HTMLImageElement[],
+        back:HTMLImageElement[],
+        right:HTMLImageElement[],
+        left:HTMLImageElement[],
+    },
+    bossImages: {
+        front:HTMLImageElement[],
+        back:HTMLImageElement[],
+        right:HTMLImageElement[],
+        left:HTMLImageElement[],
+    },
+    bloodParticleImages: HTMLImageElement[],
+    pickupItems:{
+        medkit: HTMLImageElement[],
+    }
+}
+
+type characters = {
+    [key:string]: {
+        front:HTMLImageElement[],
+        back:HTMLImageElement[],
+        right:HTMLImageElement[],
+        left:HTMLImageElement[],
+    },
+   
+}
+export const characters: characters = {
+    Ophelia: {
+        front:[],
+        back:[],
+        right:[],
+        left:[],
+    },
+    Noah: {
+        front:[],
+        back:[],
+        right:[],
+        left:[],
+    },
+}
+
+export const freqLoadingAssets: freqLoadingAssets = {
+    goblinImages: {
+        front:[],
+        back:[],
+        right:[],
+        left:[],
+    },
+    bossImages: {
+        front:[],
+        back:[],
+        right:[],
+        left:[],
+    },
+    bloodParticleImages: [],
+    pickupItems:{
+        medkit: [],
+    }
+}
+
+
+
 export enum GameState {
     menuScreen = "welcomeScreen",
     running = "running",
@@ -70,6 +163,9 @@ export enum GameState {
     retryScreen = "retryScreen",
     restart = "restart",
     gameFinish = "gameFinish",
+    controlsScreen = "controlsScreen",
+    aboutScreen = "aboutScreen",
+    loadingScreen = "loadingScreen",
   }
 
 type difficultySetting = {
@@ -106,7 +202,6 @@ export const difficultySetting: difficultySetting = {
 export const pickupItemsTypes = {
     health_pack: { 
         itemName: "health_pack",
-        images_path: "assets/pickups/health_pack/",
      },
     fuel: {
         itemName: "fuel",
@@ -170,8 +265,12 @@ export const stateVariables: stateVariables = {
     reqAnimFrame: 0,
     keyState: {},
     mainMenu: {} as MenuScreen,
+    controlsScreen: {} as ControlsScreen,
+    aboutScreen: {} as AboutScreen,
+    loadingScreen: {} as LoadingScreen,
     mouseCoords: {x: 0, y:0},
-    gameState: GameState.menuScreen,
+    gameState: GameState.loadingScreen,
+    tempGameState: GameState.menuScreen,
     pickupItemsArray: [] as PickupItems[],
     animatePickupItemsArray: [] as AnimateEntity[],
     cursorImage: {} as HTMLImageElement,
@@ -179,5 +278,6 @@ export const stateVariables: stateVariables = {
     gun: {} as Gun,
     boss: {} as Boss,
     flameImages: [] as HTMLImageElement[],
+    assetsLoadCount: 0,
 
 }

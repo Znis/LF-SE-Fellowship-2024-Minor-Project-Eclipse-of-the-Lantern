@@ -1,5 +1,6 @@
-import { stateVariables } from "../stateVariables";
+import { freqLoadingAssets, stateVariables } from "../stateVariables";
 import { Point } from "../shapes/point";
+import { loadBloodParticleImages } from "../functions";
 
 export class BloodParticle {
   startPoint: Point;
@@ -10,22 +11,10 @@ export class BloodParticle {
     this.startPoint = new Point(x, y);
     this.state = 0;
     this.show = true;
-    this.blood_img = [];
+    this.blood_img = freqLoadingAssets.bloodParticleImages;
   }
 
-  initialiseImages(path: string, frames: number) {
-    const loadImages = () => {
-      const imagesArray = [];
-      for (let i = 0; i <= frames; i++) {
-        const img = new Image();
-        img.src = `${path}/sprite_${i}.png`;
-        imagesArray.push(img);
-      }
-      return imagesArray;
-    };
-
-    this.blood_img = loadImages();
-
+  updateState() {
     for (let i = 0; i < this.blood_img.length-1; i++) {
       setTimeout(() => {
         this.state++;

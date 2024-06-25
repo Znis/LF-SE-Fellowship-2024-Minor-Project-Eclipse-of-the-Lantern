@@ -3,14 +3,25 @@ import gunSpriteRight from "/assets/weapons/gun-right/gun-right.png";
 import gunSpriteBack from "/assets/weapons/gun-back/gun-back.png";
 import gunSpriteFront from "/assets/weapons/gun-front/gun-front.png";
 import { Point } from "../shapes/point";
+import { upCounter } from "../functions";
+
 const SpriteLeft = new Image();
 SpriteLeft.src = gunSpriteLeft;
+SpriteLeft.onload = upCounter;
+
 const SpriteRight = new Image();
 SpriteRight.src = gunSpriteRight;
+SpriteRight.onload = upCounter;
+
+
 const SpriteBack = new Image();
 SpriteBack.src = gunSpriteBack;
+SpriteBack.onload = upCounter;
+
 const SpriteFront = new Image();
 SpriteFront.src = gunSpriteFront;
+SpriteFront.onload = upCounter;
+
 
 type sprite = {
     sprite: HTMLImageElement,

@@ -1,18 +1,18 @@
-import { inventory, stateVariables } from "./stateVariables";
+import { characters, gameOptions, inventory, stateVariables } from "./stateVariables";
 import { Point } from "./shapes/point";
 import { FireProjectile } from "./weapons/fireProjectile";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
+import { upCounter } from "./functions";
 
 export class Character {
-  id: string;
+  charName: string;
   startPoint: Point;
   movement_speed: number;
   default_speed: number;
   dirX: number;
   dirY: number;
   direction: string;
-  imgSrc: string;
   images_back: HTMLImageElement[];
   images_front: HTMLImageElement[];
   images_right: HTMLImageElement[];
@@ -32,19 +32,18 @@ export class Character {
   abilityMode: boolean;
   r: number;
   constructor() {
-    this.id = "";
+    this.charName = gameOptions.character;
     this.startPoint = new Point(0, 0);
     this.movement_speed = 4;
     this.default_speed = this.movement_speed;
     this.dirX = 0;
     this.dirY = 0;
     this.direction = "r"; //'l' is left 'r' is right 'u' and 'd' is up and down
-    this.imgSrc = "";
 
-    this.images_back = [] as HTMLImageElement[];
-    this.images_front = [] as HTMLImageElement[];
-    this.images_left = [] as HTMLImageElement[];
-    this.images_right = [] as HTMLImageElement[];
+    this.images_back =[];
+    this.images_front = [];
+    this.images_left =[];
+    this.images_right = [];
     this.health = 100;
     this.stamina = 100;
     this.score = 0;
@@ -61,22 +60,13 @@ export class Character {
     this.r = 50;
   }
 
-  initialiseImages(path: string, no_of_frames: number) {
-    const loadImagesForDirection = (direction: string) => {
-      const imagesArray = [];
-      for (let i = 1; i <= no_of_frames; i++) {
-        const img = new Image();
-        img.src = `${path}/${direction}/${direction} (${i}).png`;
-        imagesArray.push(img);
-      }
-      return imagesArray;
-    };
-
-    this.images_back = loadImagesForDirection("back");
-    this.images_front = loadImagesForDirection("front");
-    this.images_left = loadImagesForDirection("left");
-    this.images_right = loadImagesForDirection("right");
-  }
+changeCharacter(charName: string){
+  this.charName = charName;
+  this.images_back = characters[charName].back;
+    this.images_front = characters[charName].front;
+    this.images_left = characters[charName].left;
+    this.images_right = characters[charName].right;
+}
 
   increaseSpeed() {
     if (this.stamina > 1) {

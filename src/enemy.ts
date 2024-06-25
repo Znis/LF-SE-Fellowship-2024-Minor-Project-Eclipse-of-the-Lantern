@@ -1,8 +1,9 @@
+import { loadGoblinImages, upCounter } from "./functions";
 import { Point } from "./shapes/point";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
 import { enemyBack, enemyFront, enemyLeft, enemyRight } from "./sprites/enemy";
-import { stateVariables } from "./stateVariables";
+import { freqLoadingAssets, stateVariables } from "./stateVariables";
 import { calculateAngle, distance, getRandomInt } from "./utils/util";
 
 export class Enemy {
@@ -43,11 +44,11 @@ export class Enemy {
     this.MIN_HEALTH = 2;
     this.default_damage = 1;
     this.damage = this.default_damage;
-
-    this.images_back = [];
-    this.images_front = [];
-    this.images_left = [];
-    this.images_right = [];
+    
+    this.images_back = freqLoadingAssets.goblinImages.back;
+    this.images_front = freqLoadingAssets.goblinImages.front;
+    this.images_left = freqLoadingAssets.goblinImages.left;
+    this.images_right = freqLoadingAssets.goblinImages.right;
 
     this.time = 0;
 
@@ -67,23 +68,6 @@ export class Enemy {
     this.spritePos = 0;
     this.attackType = `attackType1`;
     this.isAlive = true;
-  }
-
-  initialiseGolblinImages(path: string, no_of_frames: number) {
-    const loadImagesForDirection = (direction: string) => {
-      const imagesArray = [];
-      for (let i = 1; i <= no_of_frames; i++) {
-        const img = new Image();
-        img.src = `${path}/${direction}/${direction} (${i}).png`;
-        imagesArray.push(img);
-      }
-      return imagesArray;
-    };
-
-    this.images_back = loadImagesForDirection("back");
-    this.images_front = loadImagesForDirection("front");
-    this.images_left = loadImagesForDirection("left");
-    this.images_right = loadImagesForDirection("right");
   }
 
   updateAttributes() {

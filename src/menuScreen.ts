@@ -1,4 +1,4 @@
-import { resumeGame, startJourney } from "./functions";
+import { resumeGame, startJourney, upCounter } from "./functions";
 import { Point } from "./shapes/point";
 import { GameState, gameOptions, stateVariables } from "./stateVariables";
 import "./controls.ts";
@@ -15,6 +15,7 @@ export class MenuScreen {
   charItems: any;
   charInfo: any;
   characterImages: any;
+  tempHoverOption: number;
 
   constructor() {
     this.startPoint = new Point(stateVariables.windowWidth / 15, 150);
@@ -22,7 +23,7 @@ export class MenuScreen {
     this.hoveredChar = -1;
     this.difficultyLevel = 0;
     this.selectedChar = 0;
-
+    this.tempHoverOption = 0;
     this.difficulties = ["GENOCIDE", "HOMICIDE", "SUICIDE"];
 
     this.menuItems = [
@@ -33,6 +34,7 @@ export class MenuScreen {
         y: this.startPoint.y + (stateVariables.windowWidth / 15) * 0,
         type: 1,
       },
+      
       {
         text: "START JOURNEY",
         fontSize: stateVariables.windowWidth / 25,
@@ -41,10 +43,24 @@ export class MenuScreen {
         type: 0,
       },
       {
+        text: "CONTROLS",
+        fontSize: stateVariables.windowWidth / 25,
+        x: this.startPoint.x,
+        y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+        type: 0,
+      },
+      {
+        text: "ABOUT",
+        fontSize: stateVariables.windowWidth / 25,
+        x: this.startPoint.x,
+        y: this.startPoint.y + (stateVariables.windowWidth / 20) * 4,
+        type: 0,
+      },
+      {
         text: "DIFFICULTY: ",
         fontSize: stateVariables.windowWidth / 20,
         x: this.startPoint.x,
-        y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+        y: this.startPoint.y + (stateVariables.windowWidth / 20) * 5,
         type: 0,
       },
     ];
@@ -81,6 +97,7 @@ export class MenuScreen {
     this.charInfo.forEach((character: any) => {
       const img = new Image();
       img.src = `assets/character/images/characters/profile/${character.name}.png`;
+      img.onload = upCounter;
       this.characterImages.push(img);
     });
   }
@@ -103,10 +120,24 @@ export class MenuScreen {
           type: 0,
         },
         {
+          text: "CONTROLS",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          type: 0,
+        },
+        {
+          text: "ABOUT",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 4,
+          type: 0,
+        },
+        {
           text: "DIFFICULTY: ",
           fontSize: stateVariables.windowWidth / 20,
           x: this.startPoint.x,
-          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 5,
           type: 0,
         },
       ];
@@ -144,10 +175,24 @@ export class MenuScreen {
           type: 0,
         },
         {
+          text: "CONTROLS",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          type: 0,
+        },
+        {
+          text: "ABOUT",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 4,
+          type: 0,
+        },
+        {
           text: "QUIT",
           fontSize: stateVariables.windowWidth / 20,
           x: this.startPoint.x,
-          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 5,
           type: 0,
         },
       ];
@@ -169,10 +214,24 @@ export class MenuScreen {
           type: 0,
         },
         {
+          text: "CONTROLS",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          type: 0,
+        },
+        {
+          text: "ABOUT",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 4,
+          type: 0,
+        },
+        {
           text: "QUIT",
           fontSize: stateVariables.windowWidth / 20,
           x: this.startPoint.x,
-          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 5,
           type: 0,
         },
       ];
@@ -194,10 +253,17 @@ export class MenuScreen {
           type: 0,
         },
         {
+          text: "ABOUT",
+          fontSize: stateVariables.windowWidth / 25,
+          x: this.startPoint.x,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          type: 0,
+        },
+        {
           text: "QUIT",
           fontSize: stateVariables.windowWidth / 20,
           x: this.startPoint.x,
-          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 3,
+          y: this.startPoint.y + (stateVariables.windowWidth / 20) * 4,
           type: 0,
         },
       ];
@@ -236,7 +302,8 @@ export class MenuScreen {
         mouseY > menuItem.y - menuItem.fontSize
       ) {
         isHovered = true;
-        playSound(voice.optionhover, 1);
+        if(!(this.tempHoverOption == this.hoveredOption)) playSound(voice.optionhover, 1);
+        this.tempHoverOption = this.hoveredOption;
         this.hoveredOption = index;
         noHover = false;
       }
@@ -253,7 +320,7 @@ export class MenuScreen {
       }
 
       if(stateVariables.gameState == GameState.menuScreen){
-      if (index == 2) {
+      if (index == 4) {
         ctx.fillText(
           menuItem.text + this.difficulties[this.difficultyLevel],
           menuItem.x,
@@ -317,14 +384,16 @@ export class MenuScreen {
   }
 
   handleSelect() {
+
     if(stateVariables.gameState == GameState.menuScreen){
 
-    if (this.hoveredChar == 1 || this.hoveredChar == 2){
+    if (this.hoveredChar == 1 || this.hoveredChar == 2){ //character selection
       playSound(voice.optionclick, 1);
       this.selectedChar = this.selectedChar == 0 ? 1 : 0;
     }
 
-    if (this.hoveredOption == 2) {
+    
+    if (this.hoveredOption == 4) { //difficulty option
       playSound(voice.optionclick, 1);
       if (this.difficultyLevel < this.difficulties.length - 1) {
         this.difficultyLevel++;
@@ -333,13 +402,13 @@ export class MenuScreen {
       }
     }
   }else{
-    if (this.hoveredOption == 2) {
+    if (this.hoveredOption == 4) { //quit button
       playSound(voice.optionclick, 1);
       stateVariables.gameState = GameState.menuScreen;
     }
   }
   if(stateVariables.gameState != GameState.gameFinish){
-    if (this.hoveredOption == 1) {
+    if (this.hoveredOption == 1) { //start game
       playSound(voice.optionclick, 1);
       gameOptions.difficultyLevel = this.difficultyLevel;
       gameOptions.character = this.charInfo[this.selectedChar].name;
@@ -350,6 +419,20 @@ export class MenuScreen {
       }
       
     }
+
+    if(this.hoveredOption == 2){
+      stateVariables.tempGameState = stateVariables.gameState;
+      stateVariables.gameState = GameState.controlsScreen;
+    } 
+
+    if(this.hoveredOption == 3){
+      stateVariables.tempGameState  = stateVariables.gameState;
+      stateVariables.gameState = GameState.aboutScreen;
+    } 
+
   }
+  
+
+
   }
 }

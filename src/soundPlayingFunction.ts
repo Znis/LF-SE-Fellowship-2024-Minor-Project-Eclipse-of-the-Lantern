@@ -1,3 +1,4 @@
+import { upCounter } from "./functions";
 import { voice } from "./sounds";
 import { GameState, stateVariables } from "./stateVariables";
 import { distance } from "./utils/util";
@@ -56,6 +57,15 @@ export function resetSound(){
       if(voice[sound].hasPlayed && !voice[sound].canPlayAgain){
         voice[sound].hasPlayed = false;
       }
+    }
+  }
+}
+
+export function loadSounds(){
+  for (const sound in voice) {
+    if (voice.hasOwnProperty(sound)) {
+        voice[sound].audio.onload = upCounter;
+      
     }
   }
 }

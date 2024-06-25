@@ -1,9 +1,9 @@
-import { generateEnemy, generateRandomPickupItems } from "./functions";
+import { generateEnemy, generateRandomPickupItems, upCounter } from "./functions";
 import { Point } from "./shapes/point";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
 import { enemyBack, enemyFront, enemyLeft, enemyRight } from "./sprites/boss";
-import { GameState, stateVariables } from "./stateVariables";
+import { GameState, freqLoadingAssets, stateVariables } from "./stateVariables";
 import { calculateAngle, distance, getRandomInt } from "./utils/util";
 import { FireProjectile } from "./weapons/fireProjectile";
 
@@ -67,10 +67,10 @@ export class Boss {
     this.default_damage = 2;
     this.damage = this.default_damage;
 
-    this.images_back = [];
-    this.images_front = [];
-    this.images_left = [];
-    this.images_right = [];
+    this.images_back = freqLoadingAssets.bossImages.back;
+    this.images_front = freqLoadingAssets.bossImages.front;
+    this.images_left = freqLoadingAssets.bossImages.left;
+    this.images_right = freqLoadingAssets.bossImages.right;
 
     this.time = 0;
 
@@ -94,25 +94,9 @@ export class Boss {
     this.spawnEnemyInterval = null;
     this.hasRoar = false;
 
-    this.initialiseGolblinImages("assets/boss/", 6);
+
   }
 
-  initialiseGolblinImages(path: string, no_of_frames: number) {
-    const loadImagesForDirection = (direction: string) => {
-      const imagesArray = [];
-      for (let i = 1; i <= no_of_frames; i++) {
-        const img = new Image();
-        img.src = `${path}/${direction}/${direction} (${i}).png`;
-        imagesArray.push(img);
-      }
-      return imagesArray;
-    };
-
-    this.images_back = loadImagesForDirection("back");
-    this.images_front = loadImagesForDirection("front");
-    this.images_left = loadImagesForDirection("left");
-    this.images_right = loadImagesForDirection("right");
-  }
 
   updateAttributes() {
     const dist = distance(this.startPoint, stateVariables.player.startPoint);

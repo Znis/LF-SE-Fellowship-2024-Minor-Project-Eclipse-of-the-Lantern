@@ -1,7 +1,10 @@
 import fuelSprite from "/assets/pickups/fuel/fuel.png";
 import { Point } from "../shapes/point";
+import { upCounter } from "../functions";
 const Sprite = new Image();
 Sprite.src = fuelSprite;
+Sprite.onload = upCounter;
+
 type fuel = {
     sprite: HTMLImageElement,
     width: number,
