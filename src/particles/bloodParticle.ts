@@ -1,6 +1,5 @@
 import { freqLoadingAssets, stateVariables } from "../stateVariables";
 import { Point } from "../shapes/point";
-import { loadBloodParticleImages } from "../functions";
 
 export class BloodParticle {
   startPoint: Point;

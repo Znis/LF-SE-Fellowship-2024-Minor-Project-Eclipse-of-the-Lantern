@@ -90,7 +90,7 @@ this.isHoveringCloseButton = false;
 
             });
     
-            canvas.addEventListener('click', (e) => {
+            canvas.addEventListener('click', () => {
                 
     
                 if (this.isHoveringCloseButton) {

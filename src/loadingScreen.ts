@@ -1,5 +1,4 @@
 import { loadFonts } from "./fonts";
-import { upCounter } from "./functions";
 import { canvas } from "./main";
 import { GameState, stateVariables } from "./stateVariables";
 

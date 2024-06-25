@@ -3,7 +3,6 @@ import { Point } from "./shapes/point";
 import { FireProjectile } from "./weapons/fireProjectile";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
-import { upCounter } from "./functions";
 
 export class Character {
   charName: string;

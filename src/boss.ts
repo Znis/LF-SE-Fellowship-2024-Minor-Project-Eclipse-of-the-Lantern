@@ -1,4 +1,4 @@
-import { generateEnemy, generateRandomPickupItems, upCounter } from "./functions";
+import { generateEnemy, generateRandomPickupItems} from "./functions";
 import { Point } from "./shapes/point";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";

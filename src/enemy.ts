@@ -1,4 +1,3 @@
-import { loadGoblinImages, upCounter } from "./functions";
 import { Point } from "./shapes/point";
 import { playSound } from "./soundPlayingFunction";
 import { voice } from "./sounds";
