@@ -26,7 +26,7 @@ Press and hold SPACE key for 0.5 second to use the medkit.
 
 
 ## Usage
-Clone the repository and and open the folder then run the following commands.
+Clone the repository and open the folder then run the following commands.
 ```python
 npm install
 npm run dev
