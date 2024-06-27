@@ -112,13 +112,13 @@ Good luck and have fun!`;
     ctx.font = "18px Outfit";
     ctx.fillStyle = "#222";
     instructionLines.forEach((line, index) => {
-      ctx.fillText(line, canvas.width / 2, y + (index + 12) * lineHeight + 4);
+      ctx.fillText(line, canvas.width / 2, 0.35 * canvas.height + index * lineHeight + 50);
     });
 
     ctx.fillStyle = this.color;
 
     let buttonX = canvas.width - 170 - 0.1 * canvas.width;
-    let buttonY = canvas.height - 100;
+    let buttonY = 0.8 * canvas.height;
     const buttonWidth = 150;
     const buttonHeight = 40;
     const buttonRadius = 10;
@@ -161,7 +161,7 @@ Good luck and have fun!`;
     ctx.stroke();
 
     buttonX = canvas.width - 170 - 0.1 * canvas.width;
-    buttonY = canvas.height - buttonHeight - 120;
+    buttonY = 0.8 * canvas.height - buttonHeight - 20;
 
     this.isHoveringMuteButton
       ? (ctx.fillStyle = "red")
