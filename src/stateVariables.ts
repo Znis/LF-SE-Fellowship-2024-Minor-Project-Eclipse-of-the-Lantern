@@ -172,22 +172,22 @@ type difficultySetting = {
 
 export const difficultySetting: difficultySetting = {
   0: {
-    enemySpeed: 2,
-    enemyMinHealth: 1,
-    enemyMaxHealth: 3,
-    enemyAttackDamage: 0.5,
-  },
-  1: {
-    enemySpeed: 2.5,
+    enemySpeed: 3,
     enemyMinHealth: 2,
-    enemyMaxHealth: 5,
+    enemyMaxHealth: 4,
     enemyAttackDamage: 1,
   },
-  2: {
-    enemySpeed: 3,
+  1: {
+    enemySpeed: 3.5,
     enemyMinHealth: 3,
-    enemyMaxHealth: 6,
+    enemyMaxHealth: 5,
     enemyAttackDamage: 1.5,
+  },
+  2: {
+    enemySpeed: 4,
+    enemyMinHealth: 4,
+    enemyMaxHealth: 6,
+    enemyAttackDamage: 2,
   },
 };
 
