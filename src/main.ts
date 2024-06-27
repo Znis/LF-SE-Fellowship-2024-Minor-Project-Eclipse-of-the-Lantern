@@ -89,6 +89,12 @@ function draw() {
       stateVariables.gameState = GameState.gameFinish;
     }
 
+    if(stateVariables.gameState == GameState.gameFinish){
+      stateVariables.lantern.showLuminosity();
+      stateVariables.ui.renderBloodOverlay();
+      renderMainMenu();
+    }
+
     stateVariables.axe.calculateShockPoint();
 
     if (

@@ -122,7 +122,7 @@ export const voice: { [key: string]: Sound } = {
   bossroar: {
     audio: new Audio("./assets/sound/bossroar.mp3"),
     hasPlayed: false,
-    canPlayAgain: true,
+    canPlayAgain: false,
   },
   bosswakeup: {
     audio: new Audio("./assets/sound/bosswakeup.mp3"),
